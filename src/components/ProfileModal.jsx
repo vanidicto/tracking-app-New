@@ -21,7 +21,7 @@ const menuItems = [
 ];
 
 const ProfileModal = ({ isOpen, onClose }) => {
-  const { logout } = useAuth();
+  const { logout, currentUser } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -65,8 +65,8 @@ const ProfileModal = ({ isOpen, onClose }) => {
         {/* User Info */}
         <div className="profile-modal-user">
           <img src={avatar} alt="User Avatar" className="profile-modal-avatar" />
-          <h2 className="profile-modal-name">Eman Miranda</h2>
-          <p className="profile-modal-email">test@test.com</p>
+          <h2 className="profile-modal-name">{currentUser.displayName}</h2>
+          <p className="profile-modal-email">{currentUser.email}</p>
         </div>
 
         {/* Menu List */}

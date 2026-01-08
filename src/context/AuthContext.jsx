@@ -3,9 +3,10 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  updateProfile
 } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebaseConfig';
 
 const AuthContext = createContext();
@@ -22,6 +23,11 @@ export function AuthProvider({ children }) {
   async function signup(email, password, name) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
+    // Update the Auth profile with the display name
+    await updateProfile(user, {
+      displayName: name
+    });
     
     // Create the appUser document with the specific structure you requested
     await setDoc(doc(db, 'appUsers', user.uid), {
@@ -43,7 +49,19 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // If user is logged in but has no displayName, try to sync it from Firestore
+      if (user && !user.displayName) {
+        try {
+          const userDocRef = doc(db, 'appUsers', user.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists() && userDoc.data().name) {
+            await updateProfile(user, { displayName: userDoc.data().name });
+          }
+        } catch (error) {
+          console.error("Error syncing displayName:", error);
+        }
+      }
       setCurrentUser(user);
       setLoading(false);
     });
