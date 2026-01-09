@@ -80,36 +80,52 @@ const Places = () => {
       if (!Array.isArray(user.position) || user.position.length !== 2) return;
 
       const userLatLng = L.latLng(user.position[0], user.position[1]);
+      let insideZoneId = null;
+      let insideZoneName = null;
 
-      geofences.forEach((zone) => {
-        if (!zone.latlngs) return;
+      // Check all geofences
+      for (const zone of geofences) {
+        if (!zone.latlngs) continue;
         const circleCenter = L.latLng(zone.latlngs.lat, zone.latlngs.lng);
         const distance = userLatLng.distanceTo(circleCenter);
-
         const avatarVisualRadius = 10;
 
         if (distance <= zone.radius + avatarVisualRadius) {
+          insideZoneId = zone.id;
+          insideZoneName = zone.name;
+          
           const alertMessage = `${user.name} entered ${zone.name}`;
           currentAlerts.push(alertMessage);
-          const alertKey = `${user.id}-${zone.id}`;
-          activeKeys.add(alertKey);
-
-          // Track geofence hit only once per user-zone combination
-          if (!alertedUsersRef.current.has(alertKey)) {
-            alertedUsersRef.current.add(alertKey);
-            console.warn(`🚨 ${user.name} entered geofence: ${zone.name}`);
-            newlyDetected.push({ user, zone, message: alertMessage });
-          }
+          break; // Assume user is in one zone at a time (or prioritize the first one found)
         }
-      });
+      }
+
+      // --- Logic for State Transition ---
+      if (insideZoneId) {
+        // User is inside a zone
+        if (user.currentGeofenceId !== insideZoneId) {
+           // Transition: Entered new zone (or moved from one to another)
+           const alertMessage = `${user.name} entered ${insideZoneName}`;
+           const alertKey = `${user.id}-${insideZoneId}`;
+           
+           // Use local ref to debounce rapid updates before Firestore syncs back
+           if (!alertedUsersRef.current.has(alertKey)) {
+             alertedUsersRef.current.add(alertKey);
+             newlyDetected.push({ user, zone: { id: insideZoneId, name: insideZoneName }, message: alertMessage });
+           }
+        }
+      } else {
+        // User is NOT inside any zone
+        if (user.currentGeofenceId && user.deviceStatusId) {
+          // Transition: Left zone -> Clear status in Firestore
+          updateDoc(doc(db, 'deviceStatus', user.deviceStatusId), { currentGeofenceId: null })
+            .catch(e => console.error("Error clearing geofence status", e));
+        }
+      }
     });
 
-    // Clear alerts for users who left the zone
-    for (const key of alertedUsersRef.current) {
-      if (!activeKeys.has(key)) {
-        alertedUsersRef.current.delete(key);
-      }
-    }
+    // Clear local debounce cache if needed (optional, simple clear on unmount or logic change)
+    // For now, we rely on currentGeofenceId from DB as the truth.
 
     // For each new detection, write a notification to Firestore if not already present
     if (newlyDetected.length > 0) {
@@ -144,6 +160,11 @@ const Places = () => {
               time: serverTimestamp(),
               icon: user.avatar || null,
             });
+
+            // Update deviceStatus to persist "Inside Zone" state
+            if (user.deviceStatusId) {
+              await updateDoc(doc(db, 'deviceStatus', user.deviceStatusId), { currentGeofenceId: zone.id });
+            }
           }
         } catch (err) {
           console.error('Failed saving geofence notifications:', err);

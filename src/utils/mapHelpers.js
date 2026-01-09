@@ -57,6 +57,8 @@ export function buildUserWithDevice(userDoc, deviceMap) {
     sos: (deviceData.sos && (deviceData.sos.active ?? deviceData.sos)) || false,
     position: location,
     online: online,
+    currentGeofenceId: deviceData.currentGeofenceId || null,
+    deviceStatusId: deviceData.id || null,
   };
 }
 

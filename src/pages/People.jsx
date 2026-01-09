@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useBraceletUsers } from '../hooks/useUsers';
 import { getAuth } from "firebase/auth";
-import { collection, addDoc, doc, updateDoc, arrayUnion, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, arrayUnion, serverTimestamp, deleteDoc, arrayRemove, query, where, getDocs } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Trash2 } from "lucide-react";
 import LoadingSpinner from '../components/LoadingSpinner';
 
 /**
@@ -70,6 +70,41 @@ function People() {
   };
 
   const filteredUsers = sortAndFilterUsers(braceletUsers, searchQuery);
+
+  const handleDeleteBracelet = async (e, braceletId) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!window.confirm("Are you sure you want to delete this person? This action cannot be undone.")) return;
+
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      // 1. Remove from appUsers linkedBraceletsID
+      const appUserRef = doc(db, 'appUsers', user.uid);
+      await updateDoc(appUserRef, {
+        linkedBraceletsID: arrayRemove(braceletId)
+      });
+
+      // 2. Delete from braceletUsers collection
+      await deleteDoc(doc(db, 'braceletUsers', braceletId));
+
+      // 3. Delete from deviceStatus (cleanup)
+      const q = query(collection(db, 'deviceStatus'), where('userId', '==', braceletId));
+      const snapshot = await getDocs(q);
+      snapshot.forEach(async (docSnap) => {
+        await deleteDoc(docSnap.ref);
+      });
+
+      alert("Person deleted successfully.");
+      window.location.reload();
+    } catch (err) {
+      console.error("Error deleting person:", err);
+      alert("Failed to delete person.");
+    }
+  };
 
   /**
    * Handles the submission of the "Add Bracelet" form.
@@ -260,6 +295,20 @@ function People() {
                   </p>
                 </div>
               </div>
+              <button
+                onClick={(e) => handleDeleteBracelet(e, person.id)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  marginLeft: '10px',
+                  color: '#ef4444',
+                  padding: '5px'
+                }}
+                aria-label="Delete"
+              >
+                <Trash2 size={20} />
+              </button>
             </li>
           </Link>
         ))}

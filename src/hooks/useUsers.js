@@ -65,7 +65,7 @@ export function useBraceletUsers() {
         deviceSnap.docs.forEach((d) => {
           const dd = d.data();
           const uid = dd.userId || dd.userID || null;
-          if (uid) deviceMap.set(uid, dd);
+          if (uid) deviceMap.set(uid, { ...dd, id: d.id });
         });
 
         const merged = usersSnap.docs.map((u) => mapHelpers.buildUserWithDevice(u, deviceMap));
@@ -86,7 +86,7 @@ export function useBraceletUsers() {
             const uid = dd.userId || dd.userID || null;
             if (!uid) return;
             if (change.type === 'added' || change.type === 'modified') {
-              updatesByUser.set(uid, dd);
+              updatesByUser.set(uid, { ...dd, id: change.doc.id });
 
               // Check for SOS transition: True -> False (Incident Resolved)
               const newSos = (dd.sos && (dd.sos.active ?? dd.sos)) || false;
@@ -167,6 +167,8 @@ export function useBraceletUsers() {
                 sos: (dd.sos && (dd.sos.active ?? dd.sos)) || false,
                 position: loc || u.position, // Keep old position if new one is null
                 online: online,
+                currentGeofenceId: dd.currentGeofenceId ?? u.currentGeofenceId,
+                deviceStatusId: dd.id ?? u.deviceStatusId,
               };
             })
           );
