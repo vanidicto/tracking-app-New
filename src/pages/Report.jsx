@@ -76,6 +76,10 @@ const Report = () => {
     setSelectedIncident(null);
   };
 
+  if(!reports.length) return (
+    <div className='empty'>No reports</div>
+  )
+
   return (
     <div className="report-page-frame">
       <main className="app-main">

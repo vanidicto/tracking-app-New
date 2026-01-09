@@ -11,7 +11,8 @@ import * as mapHelpers from "../utils/mapHelpers";
 import { useBraceletUsers } from "../hooks/useUsers";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../config/firebaseConfig";
-import { collection, addDoc, serverTimestamp, query, where, getDocs, limit } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, limit, onSnapshot, deleteDoc, updateDoc, doc, setDoc } from "firebase/firestore";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -23,19 +24,15 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-const LOCAL_STORAGE_KEY = "pingme_geofences";
 // Notifications are saved to Firestore `notifications` collection
 
 /* ---------------------- Helpers ---------------------- */
 
 const Places = () => {
   const [map, setMap] = useState(null);
-  const { braceletUsers } = useBraceletUsers();
+  const { braceletUsers, loading } = useBraceletUsers();
   const [activeAlerts, setActiveAlerts] = useState([]);
-  const [geofences, setGeofences] = useState(() => {
-    const savedZones = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return savedZones ? JSON.parse(savedZones) : [];
-  });
+  const [geofences, setGeofences] = useState([]);
 
   const [zoneName, setZoneName] = useState("");
   const [pendingLayerId, setPendingLayerId] = useState(null);
@@ -44,10 +41,40 @@ const Places = () => {
   const alertedUsersRef = useRef(new Set());
   const { currentUser } = useAuth();
 
+  // Fetch Geofences from Firestore
+  useEffect(() => {
+    if (!currentUser) {
+      setGeofences([]);
+      return;
+    }
+
+    const q = query(
+      collection(db, "geofences"),
+      where("appUserId", "==", currentUser.uid)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const fetchedZones = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name,
+          radius: data.radius,
+          latlngs: data.coordinates, // Map coordinates {lat, lng} to latlngs for Leaflet
+          type: data.type,
+        };
+      });
+      setGeofences(fetchedZones);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
   // Check geofences for all users and trigger alerts (save to Firestore)
   useEffect(() => {
     const currentAlerts = [];
     const newlyDetected = [];
+    const activeKeys = new Set();
 
     braceletUsers.forEach((user) => {
       if (!Array.isArray(user.position) || user.position.length !== 2) return;
@@ -55,6 +82,7 @@ const Places = () => {
       const userLatLng = L.latLng(user.position[0], user.position[1]);
 
       geofences.forEach((zone) => {
+        if (!zone.latlngs) return;
         const circleCenter = L.latLng(zone.latlngs.lat, zone.latlngs.lng);
         const distance = userLatLng.distanceTo(circleCenter);
 
@@ -64,6 +92,7 @@ const Places = () => {
           const alertMessage = `${user.name} entered ${zone.name}`;
           currentAlerts.push(alertMessage);
           const alertKey = `${user.id}-${zone.id}`;
+          activeKeys.add(alertKey);
 
           // Track geofence hit only once per user-zone combination
           if (!alertedUsersRef.current.has(alertKey)) {
@@ -74,6 +103,13 @@ const Places = () => {
         }
       });
     });
+
+    // Clear alerts for users who left the zone
+    for (const key of alertedUsersRef.current) {
+      if (!activeKeys.has(key)) {
+        alertedUsersRef.current.delete(key);
+      }
+    }
 
     // For each new detection, write a notification to Firestore if not already present
     if (newlyDetected.length > 0) {
@@ -98,6 +134,7 @@ const Places = () => {
             }
 
             await addDoc(collection(db, 'notifications'), {
+              appUserName: currentUser.displayName,
               appUserId: currentUser.uid,
               braceletUserId: user.id,
               title: 'Geofence Alert',
@@ -115,11 +152,7 @@ const Places = () => {
     }
 
     setActiveAlerts(currentAlerts);
-  }, [braceletUsers, geofences]);
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(geofences));
-  }, [geofences]);
+  }, [braceletUsers, geofences, currentUser]);
 
   const handleZoneClick = (zone) => {
     if (map && zone.latlngs) {
@@ -140,58 +173,66 @@ const Places = () => {
     setPendingLayerId(layer._leaflet_id);
   };
 
-  const _onEdited = (e) => {
-    const updatedGeofences = [...geofences];
-    e.layers.eachLayer((layer) => {
+  const _onEdited = async (e) => {
+    e.layers.eachLayer(async (layer) => {
       const id = layer.options.id; // Use our custom id stored in options
-      const index = updatedGeofences.findIndex((f) => f.id === id);
-      if (index !== -1) {
-        updatedGeofences[index] = {
-          ...updatedGeofences[index],
-          latlngs: layer.getLatLng(),
-          radius: layer.getRadius(),
-        };
+      if (!id) return;
+
+      const newLatLng = layer.getLatLng();
+      const newRadius = layer.getRadius();
+
+      try {
+        const zoneRef = doc(db, "geofences", id);
+        await updateDoc(zoneRef, {
+          coordinates: { lat: newLatLng.lat, lng: newLatLng.lng },
+          radius: newRadius
+        });
+      } catch (err) {
+        console.error("Error updating geofence:", err);
       }
     });
-    setGeofences(updatedGeofences);
   };
 
   // --- UPDATED: Proper deletion logic ---
-  const _onDeleted = (e) => {
-    const deletedLayers = e.layers;
-    const deletedIds = [];
-
-    deletedLayers.eachLayer((layer) => {
-      // Leaflet-draw uses _leaflet_id internally,
-      // but for saved zones, we look for the ID we assigned
+  const _onDeleted = async (e) => {
+    e.layers.eachLayer(async (layer) => {
       const id = layer.options.id || layer._leaflet_id;
-      deletedIds.push(id);
+      // Only delete if it's a saved zone (has a string ID usually)
+      if (typeof id === 'string') {
+        try {
+          await deleteDoc(doc(db, "geofences", id));
+        } catch (err) {
+          console.error("Error deleting geofence:", err);
+        }
+      }
     });
-
-    // This updates the state, which triggers a re-render and removes the item from the list
-    setGeofences((prev) => prev.filter((f) => !deletedIds.includes(f.id)));
   };
 
-  const handleSaveZone = () => {
-    if (!zoneName || !pendingLayerRef.current) return;
+  const handleSaveZone = async () => {
+    if (!zoneName || !pendingLayerRef.current || !currentUser) return;
     const layer = pendingLayerRef.current;
+    const latLng = layer.getLatLng();
+    const radius = layer.getRadius();
 
-    // We generate a unique ID to keep track of this zone in state
-    const uniqueId = Date.now();
+    try {
+      const newDocRef = doc(collection(db, "geofences"));
+      await setDoc(newDocRef, {
+        appUserId: currentUser.uid,
+        coordinates: { lat: latLng.lat, lng: latLng.lng },
+        id: newDocRef.id,
+        name: zoneName,
+        radius: radius,
+        type: "circle"
+      });
 
-    const newGeofence = {
-      id: uniqueId,
-      name: zoneName,
-      type: "circle",
-      latlngs: layer.getLatLng(),
-      radius: layer.getRadius(),
-    };
-
-    layer.remove(); // Remove the "drawn" layer
-    setGeofences((prev) => [...prev, newGeofence]);
-    setPendingLayerId(null);
-    setZoneName("");
-    pendingLayerRef.current = null;
+      layer.remove(); // Remove the "drawn" layer
+      setPendingLayerId(null);
+      setZoneName("");
+      pendingLayerRef.current = null;
+    } catch (err) {
+      console.error("Error saving geofence:", err);
+      alert("Failed to save zone.");
+    }
   };
 
   const handleCancel = () => {
@@ -201,12 +242,14 @@ const Places = () => {
     pendingLayerRef.current = null;
   };
 
-  
+  if (loading) return <div className="loading"><LoadingSpinner/></div>;
+
   
     // Find a user with a valid position to center the map on.
   const initialCenterUser = braceletUsers.find(u => u.position && u.position.length === 2);
   const initialCenter = initialCenterUser ? initialCenterUser.position : [14.5921, 120.9755];
 
+  
 
   return (
     <div className="places-page-container">
