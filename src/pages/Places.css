@@ -3,33 +3,40 @@
 .places-page-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 126px); /* Adjust 126px if header/nav height differs */
+  height: calc(100vh - 60px);
+  /* Adjust for top bar height (60px) */
   width: 100%;
+  background-color: var(--pm-bg);
+  /* Ensure background is set */
 }
 
 .places-info-panel {
   padding: 16px;
-  background: var(--color-bg-main); /* UPDATED */
-  border-bottom: 1px solid #e0e0e0; /* UPDATED */
+  background-color: var(--pm-surface);
+  /* UPDATED from var(--color-bg-main) to match sidebar */
+  border-bottom: 1px solid var(--pm-border);
   flex-shrink: 0;
 }
 
 .places-info-panel h2 {
   margin: 0 0 8px 0;
   font-size: 1.2rem;
-  color: var(--color-text-primary); /* ADDED */
+  color: var(--pm-text);
+  /* ADDED */
 }
 
 .places-info-panel p {
   margin: 0 0 16px 0;
   font-size: 0.9rem;
-  color: var(--color-text-secondary); /* UPDATED */
+  color: var(--pm-text-muted);
+  /* UPDATED */
 }
 
 .places-map-container {
   flex-grow: 1;
   width: 100%;
-  background-color: var(--color-bg-secondary); /* UPDATED */
+  background-color: var(--color-bg-secondary);
+  /* UPDATED */
 }
 
 .leaflet-container {
@@ -42,34 +49,46 @@
 
 /* Save Zone Form */
 .save-zone-form {
-  background-color: var(--color-bg-secondary); /* UPDATED */
-  border: 1px solid #e0e0e0; /* UPDATED */
+  background-color: var(--pm-surface);
+  /* UPDATED */
+  border: 1px solid var(--pm-border);
+  /* UPDATED */
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 16px;
 }
+
 .save-zone-form h3 {
   margin: 0 0 8px 0;
-  color: var(--color-text-primary); /* ADDED */
+  color: var(--pm-text);
+  /* ADDED */
 }
+
 .save-zone-form p {
   font-size: 0.85rem;
   margin-bottom: 12px;
 }
+
 .zone-name-input {
   width: 100%;
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--pm-border);
+  background: var(--pm-bg);
+  color: var(--pm-text);
   font-size: 1rem;
-  box-sizing: border-box; /* Important */
+  box-sizing: border-box;
+  /* Important */
   margin-bottom: 12px;
 }
+
 .form-buttons {
   display: flex;
   gap: 8px;
 }
-.btn-save, .btn-cancel {
+
+.btn-save,
+.btn-cancel {
   flex: 1;
   padding: 10px;
   font-size: 0.9rem;
@@ -78,28 +97,35 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
 .btn-save {
-  background-color: var(--color-primary); /* UPDATED */
+  background-color: var(--pm-primary);
+  /* UPDATED */
   color: white;
 }
+
 .btn-cancel {
-  background-color: #ddd;
-  color: #333;
+  background-color: var(--pm-border);
+  color: var(--pm-text);
 }
 
 /* Geofence List */
 .geofence-list h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--color-text-primary); /* UPDATED */
+  color: var(--pm-text);
+  /* UPDATED */
   margin-bottom: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--pm-border);
   padding-bottom: 8px;
 }
+
 .no-zones-text {
   font-style: italic;
-  color: var(--color-text-secondary); /* UPDATED */
+  color: var(--pm-text-muted);
+  /* UPDATED */
 }
+
 .zone-items-list {
   list-style: none;
   padding: 0;
@@ -107,29 +133,37 @@
   max-height: 200px;
   overflow-y: auto;
 }
+
 .zone-item-h4 {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0px;
-  border-bottom: 5px solid #cec7c7;
+  border-bottom: 5px solid var(--pm-border);
   margin: 0;
+  color: var(--pm-text);
 }
+
 .zone-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 0px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--pm-border);
 }
+
 .zone-name {
   font-weight: 600;
-  color: var(--color-text-primary); /* UPDATED */
+  color: var(--pm-text);
+  /* UPDATED */
 }
+
 .zone-type {
   font-size: 0.8rem;
-  color: var(--color-text-secondary); /* UPDATED */
-  background-color: var(--color-bg-secondary); /* UPDATED */
+  color: var(--pm-text-muted);
+  /* UPDATED */
+  background-color: var(--pm-surface);
+  /* UPDATED */
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -144,9 +178,17 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* --- END NEW STYLES --- */
@@ -156,17 +198,23 @@
   .places-page-container {
     flex-direction: row;
   }
+
   .places-info-panel {
-    width: 350px; /* Increased width for form */
+    width: 350px;
+    /* Increased width for form */
     height: 100%;
     border-bottom: none;
-    border-right: 1px solid #e0e0e0; /* UPDATED */
+    border-right: 1px solid var(--pm-border);
+    /* UPDATED */
     overflow-y: auto;
   }
+
   .places-map-container {
     height: 100%;
   }
+
   .zone-items-list {
-    max-height: 40vh; /* Give more space on desktop */
+    max-height: 40vh;
+    /* Give more space on desktop */
   }
 }

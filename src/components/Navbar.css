@@ -5,23 +5,30 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 90px; /* Taller to accommodate floating design */
+  height: 90px;
+  /* Taller to accommodate floating design */
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Align icons to the top of the bar */
-  
+  align-items: flex-start;
+  /* Align icons to the top of the bar */
+
   /* This creates the floating effect */
-  max-width: 500px; /* Max width for larger screens */
-  margin: 0 auto 2px auto; /* Center it and add space at bottom */
-  
+  max-width: 500px;
+  /* Max width for larger screens */
+  margin: 0 auto 2px auto;
+  /* Center it and add space at bottom */
+
   /* Filter for a subtle blur effect like in Figma */
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: var(--pm-bg);
+  /* Use theme bg */
+  /* For transparency we might need rgba, but theme var is simple for now */
+  /* opacity: 0.95; */
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  
+
   border-radius: 25px;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--pm-border);
+  box-shadow: var(--pm-shadow-md);
   z-index: 1000;
 }
 
@@ -38,8 +45,9 @@
   flex-direction: column;
   align-items: center;
   flex-basis: 20%;
-  color: var(--color-text-secondary);
-  font-size: 0.7rem; /* 10px */
+  color: var(--pm-text-muted);
+  font-size: 0.7rem;
+  /* 10px */
   font-weight: 500;
 }
 

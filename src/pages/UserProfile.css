@@ -1,203 +1,357 @@
-/* src/pages/app/UserProfile.css (Re-designed for Simplicity) */
-
 .profile-page-container {
-  padding: 0 0 100px 0; /* Padding for navbar */
-  background-color: var(--color-bg-secondary); /* UPDATED */
   min-height: 100vh;
+  background-color: var(--pm-bg);
+  padding: 24px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll on mobile */
 }
 
+/* --- LAYOUT GRID --- */
 .profile-content {
-  max-width: 600px; /* Constrain width for readability */
+  max-width: 1100px;
+  /* Slightly tighter max-width for better focus */
   margin: 0 auto;
+  display: grid;
+  gap: 24px;
+  /* Mobile Default: Single Column */
+  grid-template-columns: 1fr;
+  width: 100%;
 }
 
-/* --- 1. Hero Section --- */
-.profile-hero {
-  padding: 24px 20px;
+/* Desktop: Sidebar + Main Content */
+@media (min-width: 900px) {
+  .profile-content {
+    grid-template-columns: 320px 1fr;
+    /* Slightly narrower sidebar */
+    align-items: stretch;
+  }
+}
+
+/* --- 1. SIDEBAR (Identity & Actions) --- */
+.profile-sidebar {
+  background: var(--pm-surface);
+  border-radius: 24px;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--color-bg-main); /* UPDATED */
-  border-bottom: 1px solid #e0e0e0; /* UPDATED */
-  position: relative; /* ADDED: For the back button */
+  border: 1px solid var(--pm-border);
+  box-shadow: var(--pm-shadow-sm);
+  position: relative;
+  /* height: fit-content; REMOVED to allow stretch */
+  height: auto;
+  min-height: 100%;
 }
 
-.profile-avatar-wrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 3px solid var(--color-bg-main); /* UPDATED */
-}
-
-.profile-avatar-img {
+/* Back Button Styling */
+.sidebar-back-wrapper {
+  align-self: flex-start;
+  margin-bottom: 24px;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
-.profile-name {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin: 16px 0 8px 0;
-  color: var(--color-text-primary); /* ADDED */
-}
-
-.profile-status-badge {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-.profile-status-badge .status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.profile-status-badge.online {
-  background-color: #e8f5e9; /* Light green */
-  color: var(--color-alert-green);
-}
-.profile-status-badge.online .status-dot {
-  background-color: var(--color-alert-green); /* UPDATED */
-}
-
-.profile-status-badge.offline {
-  background-color: #fbe9e7; /* Light red */
-  color: var(--color-alert-red);
-}
-.profile-status-badge.offline .status-dot {
-  background-color: var(--color-alert-red); /* UPDATED */
-}
-
-.profile-status-badge.panic {
-  background-color: #fbe9e7; /* Light red */
-  color: var(--color-alert-red);
-  font-weight: 600;
-}
-
-/* --- 2. Detail Sections --- */
-.profile-section {
-  margin: 20px 16px;
-}
-
-.profile-section-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-text-secondary); /* UPDATED */
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin: 0 0 8px 12px;
-}
-
-.profile-list-container {
-  background-color: var(--color-bg-main); /* UPDATED */
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.profile-list-item {
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  border-bottom: 1px solid #f0f0f0;
-}
-.profile-list-container .profile-list-item:last-child {
-  border-bottom: none;
-}
-
-.item-icon-wrapper {
+.page-back-btn {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  color: var(--pm-text);
+  cursor: pointer;
+  width: 44px;
+  /* Larger touch target */
+  height: 44px;
+  border-radius: 14px;
+  /* Modern squircle */
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  background-color: var(--color-bg-secondary); /* UPDATED */
-  border-radius: 8px;
-  margin-right: 16px;
-  color: var(--color-text-secondary); /* UPDATED */
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.item-label {
-  flex-grow: 1;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-text-primary); /* UPDATED */
-}
-
-.item-value {
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.item-action {
-  font-size: 1.2rem;
-  color: #ccc;
-  font-weight: 300;
-}
-
-/* Specific Colors */
-.red-text { color: var(--color-alert-red); } /* UPDATED */
-.green-text { color: var(--color-alert-green); } /* UPDATED */
-.orange-text { color: var(--color-alert-orange); } /* UPDATED */
-
-
-/* --- 3. Location Map --- */
-.profile-map-wrapper {
-  width: 100%;
-  height: 280px; /* 👈 visible height */
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.profile-map-wrapper .leaflet-container {
-  width: 100% !important;
-  height: 100% !important;
-  z-index: 1;
-}
-
-
-/* --- Mark Safe Button (from Report.css) --- */
-.mark-safe-button {
-  width: 100%;
-  padding: 12px 1.5rem;
-  margin-top: 20px; /* Space above the button */
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  background-color: var(--color-alert-green); /* UPDATED */
-  color: white;
-  transition: background-color 0.2s;
-}
-
-.mark-safe-button:hover {
-  background-color: #45a049;
-}
-
-/* --- THIS IS THE FIX FOR THE BACK BUTTON --- */
-.page-back-btn {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: none;
-  border: none;
-  color: var(--color-text-primary);
-  cursor: pointer;
-  padding: 5px;
-  z-index: 10;
-}
 .page-back-btn:hover {
-  color: var(--color-primary);
+  background: var(--pm-primary);
+  color: white;
+  transform: translateX(-4px);
+  /* Subtle shift left indicating "back" */
+  box-shadow: 0 4px 12px rgba(var(--pm-primary-rgb), 0.3);
+  border-color: transparent;
+}
+
+.profile-sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 32px;
+}
+
+.profile-avatar-large {
+  width: 110px;
+  /* Slightly smaller for balance */
+  height: 110px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 4px solid var(--pm-bg);
+  /* Use bg color for 'cutout' effect */
+}
+
+.profile-name-large {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pm-text);
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.profile-status-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pm-text-muted);
+  padding: 6px 14px;
+  background: var(--pm-bg);
+  border-radius: 20px;
+}
+
+.status-dot-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-dot-pulse::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.profile-status-inline.online {
+  color: var(--pm-success);
+}
+
+.status-dot-pulse.online {
+  background-color: var(--pm-success);
+}
+
+.profile-status-inline.offline {
+  color: var(--pm-text-muted);
+}
+
+.status-dot-pulse.offline {
+  background-color: var(--pm-text-muted);
+}
+
+
+/* Sidebar Actions */
+.sidebar-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.sidebar-btn.primary {
+  background: var(--pm-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.sidebar-btn.primary:hover {
+  background: #b91c1c;
+  transform: translateY(-2px);
+}
+
+.sidebar-btn.secondary {
+  background: transparent;
+  color: var(--pm-text);
+  border: 1px solid var(--pm-border);
+}
+
+.sidebar-btn.secondary:hover {
+  border-color: var(--pm-text);
+  background: var(--pm-surface);
+}
+
+
+/* --- 2. MAIN CONTENT AREA --- */
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  /* Fill the grid cell */
+}
+
+/* Stats Cards Row */
+.dashboard-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.dash-stat-card {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  border-radius: 20px;
+  /* Consistent rounding */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--pm-shadow-sm);
+  transition: transform 0.2s;
+}
+
+.dash-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--pm-shadow-md);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--pm-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value-large {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--pm-text);
+}
+
+/* Map Section */
+.dashboard-map-section {
+  background: var(--pm-surface);
+  border-radius: 24px;
+  border: 1px solid var(--pm-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  /* Minimal padding for a frame effect */
+  min-height: 300px;
+  flex-grow: 1;
+  /* Stretch to fill remaining height */
+  box-shadow: var(--pm-shadow-sm);
+}
+
+.map-header-overlay {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--pm-text);
+  margin: 0;
+}
+
+.map-coords {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--pm-text-muted);
+  font-size: 0.75rem;
+  background: var(--pm-bg);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--pm-border);
+}
+
+.dashboard-map-wrapper {
+  flex-grow: 1;
+  width: 100%;
+  border-radius: 18px;
+  /* Inner radius matching outer */
+  overflow: hidden;
+}
+
+
+/* --- MOBILE ADJUSTMENTS (Critical) --- */
+@media (max-width: 900px) {
+  .profile-page-container {
+    padding: 16px;
+    padding-bottom: 80px;
+    /* Space for scroll */
+  }
+
+  .profile-content {
+    gap: 16px;
+  }
+
+  .dashboard-stats-row {
+    /* Allow stats to scroll if too tight, or wrap */
+    overflow-x: auto;
+    padding-bottom: 4px;
+    /* for shadow clipping */
+  }
+
+  .dashboard-map-section {
+    height: 320px;
+    /* Compact map on mobile */
+  }
+
+  .profile-sidebar {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  /* Make sidebar horizontal-ish structure on mobile? 
+     Or keep stacked. Stacked is better for Focus. */
+
+  .profile-avatar-large {
+    width: 90px;
+    height: 90px;
+  }
+
+  .profile-name-large {
+    font-size: 1.35rem;
+  }
 }

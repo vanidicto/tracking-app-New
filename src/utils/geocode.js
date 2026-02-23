@@ -2,6 +2,10 @@
 // Utility for reverse geocoding using Nominatim (OpenStreetMap)
 
 export async function reverseGeocode(lat, lng) {
+  // Validate coordinates
+  if (!lat || !lng) return "Unknown Location";
+  if (lat === 0 && lng === 0) return "Unknown Location"; // Null Island check
+
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`;
   try {
     const response = await fetch(url, {

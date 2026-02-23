@@ -1,25 +1,5 @@
-.report-detail-modal-body {
-    padding: 0 24px 24px;
-}
+/* Report Detail Modal Styles */
 
-.report-detail-modal-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.report-detail-modal-label {
-    color: #555;
-}
-
-.report-detail-modal-value {
-    color: #111;
-    font-weight: 500;
-}
-
-
-/* Re-using existing modal styles from other components for consistency */
 .modal-backdrop {
     position: fixed;
     top: 0;
@@ -31,91 +11,82 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(4px);
+    padding: 40px;
+    /* Force spacing from edges */
 }
 
 .modal-content {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 500px;
+    background-color: var(--pm-bg);
+    border-radius: 20px;
+    box-shadow: var(--pm-shadow-md);
+    width: 100%;
+    max-width: 480px;
+    /* Slightly smaller width */
     overflow: hidden;
+    color: var(--pm-text);
+    border: 1px solid var(--pm-border);
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+    /* Significantly constrained height */
+    box-shadow: var(--pm-shadow-lg);
+    margin: 40px;
+    /* Ensure margin from screen edges */
 }
 
 .modal-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 16px 24px;
-    border-bottom: 1px solid #eee;
+    position: relative;
+    padding: 18px;
+    border-bottom: 1px solid var(--pm-border);
+    background: var(--pm-surface);
 }
 
 .modal-header h2 {
-    font-size: 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
     margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--pm-text-muted);
 }
 
 .modal-close-button {
-    background: none;
-    border: none;
+    position: absolute;
+    right: 18px;
+    background: var(--pm-bg);
+    border: 1px solid var(--pm-border);
     cursor: pointer;
-    padding: 4px;
+    color: var(--pm-text);
+    padding: 6px;
     border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
+    display: flex;
+    transition: all 0.2s;
 }
 
 .modal-close-button:hover {
-    background-color: #f3f4f6;
+    background-color: var(--pm-surface-2);
+    transform: rotate(90deg);
 }
 
-.modal-body {
-    padding: 24px;
+.report-detail-modal-body {
+    flex: 1;
+    /* Take remaining height */
+    overflow-y: auto;
+    /* Allow scrolling content */
+    min-height: 0;
+    /* Firefox flex fix */
 }
 
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-family: inherit;
-}
-
-.modal-create-button {
-    background-color: #3b82f6;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    width: 100%;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.modal-create-button:hover {
-    background-color: #2563eb;
-}
-
-/* Styles from UserProfile.css that are needed */
+/* User Profile Section */
 .profile-hero {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px;
-    text-align: center;
+    padding: 30px 24px 10px;
 }
 
 .profile-avatar-wrapper {
@@ -124,30 +95,158 @@
 }
 
 .profile-avatar-img {
-    width: 96px;
-    height: 96px;
+    width: 88px;
+    height: 88px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 4px solid var(--pm-surface);
+    box-shadow: var(--pm-shadow-sm);
 }
 
 .profile-name {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: var(--pm-text);
 }
 
+.status-badge {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Status Colors (matching Sidebar/Dashboard) */
+.status-success {
+    background: rgba(52, 199, 89, 0.15);
+    color: var(--pm-success);
+}
+
+.status-danger {
+    background: rgba(255, 59, 48, 0.15);
+    color: var(--pm-danger);
+}
+
+.status-warning {
+    background: rgba(255, 149, 0, 0.15);
+    color: var(--pm-warning);
+}
+
+.status-primary {
+    background: rgba(0, 122, 255, 0.15);
+    color: var(--pm-primary);
+}
+
+
+/* Incident Details Grid */
 .profile-section {
-    padding: 0 24px 24px;
+    padding: 20px 24px 30px;
 }
 
 .profile-section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--pm-text-muted);
+    margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--pm-border);
 }
 
+.profile-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* Detail Cards */
+.detail-card {
+    background: var(--pm-surface);
+    border: 1px solid var(--pm-border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.2s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--pm-primary);
+}
+
+.detail-card-full {
+    grid-column: span 2;
+}
+
+.detail-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--pm-bg);
+    color: var(--pm-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.detail-card-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--pm-text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.detail-card-value {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--pm-text);
+    word-break: break-word;
+    line-height: 1.3;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .modal-backdrop {
+        padding: 16px;
+        /* Reduce outer padding */
+    }
+
+    .modal-content {
+        margin: 0;
+        /* Remove extra margin as backdrop padding handles it */
+        max-height: 80vh;
+        /* Allow slightly more height on mobile */
+        width: 100%;
+    }
+
+    .profile-hero {
+        padding: 24px 20px 10px;
+    }
+
+    .profile-section {
+        padding: 16px 20px 24px;
+    }
+
+    .profile-grid-container {
+        grid-template-columns: 1fr;
+        /* Stack cards vertically */
+        gap: 10px;
+    }
+
+    .detail-card-full {
+        grid-column: auto;
+        /* Reset column span */
+    }
+
+    .profile-name {
+        font-size: 1.4rem;
+    }
+}

@@ -1,6 +1,6 @@
 // src/pages/app/UserProfile.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Phone, Wifi, Battery, ChevronLeft } from 'lucide-react'; 
+import { Heart, MessageSquare, Phone, Wifi, Battery, ChevronLeft } from 'lucide-react';
 import './UserProfile.css';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -42,7 +42,7 @@ const UserProfile = () => {
 
   // LOGIC FIX: Use person.online for connection status. 
   // person.braceletOn is now synced with online status via useUsers hook.
-  const isOnline = person.online; 
+  const isOnline = person.online;
   const isBraceletOn = person.braceletOn;
   const batteryLevel = person.battery;
   const userPosition =
@@ -60,79 +60,90 @@ const UserProfile = () => {
 
   return (
     <div className="profile-page-container">
-      <main className="profile-content">
-        {/* --- Hero Section --- */}
-        <section className="profile-hero">
-          <button
-            className="page-back-btn"
-            onClick={() => navigate(-1)}
-            aria-label="Go back"
-          >
-            <ChevronLeft size={28} />
-          </button>
 
-          <div className="profile-avatar-wrapper">
+      <div className="profile-content">
+
+        {/* --- LEFT SIDEBAR (IDENTITY) --- */}
+        <aside className="profile-sidebar">
+          {/* Back Button positioned nicely in sidebar */}
+          <div className="sidebar-back-wrapper">
+            <button
+              className="page-back-btn"
+              onClick={() => navigate(-1)}
+              title="Back"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          </div>
+
+          <div className="profile-sidebar-header">
             <img
               src={person.avatar}
-              alt={`${person.name}'s profile`}
-              className="profile-avatar-img"
+              alt={person.name}
+              className="profile-avatar-large"
             />
-          </div>
-          <h1 className="profile-name">{person.name}</h1>
-          <div
-            className={`profile-status-badge ${
-              isBraceletOn ? 'online' : 'offline'
-            }`}
-          >
-            <div className="status-dot"></div>
-            {isBraceletOn ? 'Bracelet Online' : 'Bracelet Offline'}
-          </div>
-        </section>
+            <h1 className="profile-name-large">{person.name}</h1>
 
-        {/* --- Device Status --- */}
-        <section className="profile-section">
-          <h2 className="profile-section-title">Device Status</h2>
-          <div className="profile-list-container">
-            <div className="profile-list-item">
-              <div className="item-icon-wrapper">
-                <Heart size={20} />
+            <div className={`profile-status-inline ${isBraceletOn ? 'online' : 'offline'}`}>
+              <div className={`status-dot-pulse ${isBraceletOn ? 'online' : 'offline'}`}></div>
+              <span>{isBraceletOn ? 'Bracelet Online' : 'Bracelet Offline'}</span>
+            </div>
+          </div>
+
+          <div className="sidebar-actions">
+            <button className="sidebar-btn primary">
+              <Phone size={20} />
+              <span>Call Now</span>
+            </button>
+            <button className="sidebar-btn secondary">
+              <MessageSquare size={20} />
+              <span>Message</span>
+            </button>
+          </div>
+        </aside>
+
+        {/* --- RIGHT MAIN CONTENT (DATA) --- */}
+        <main className="profile-main">
+
+          {/* 1. Stats Row */}
+          <div className="dashboard-stats-row">
+            <div className="dash-stat-card">
+              <div className="stat-header">
+                <Heart size={16} />
+                <span>Heart Rate</span>
               </div>
-              <span className="item-label">Pulse Rate</span>
-              <span className="item-value red-text">89 bpm</span>
+              <span className="stat-value-large" style={{ color: 'var(--pm-danger)' }}>89 BPM</span>
             </div>
 
-            <div className="profile-list-item">
-              <div className="item-icon-wrapper">
-                <Battery size={20} />
+            <div className="dash-stat-card">
+              <div className="stat-header">
+                <Battery size={16} />
+                <span>Battery Level</span>
               </div>
-              <span className="item-label">Bracelet Battery</span>
-              <span className={`item-value ${batteryColorClass}`}>
-                {batteryLevel}%
+              <span className={`stat-value-large ${batteryColorClass}`}>{batteryLevel}%</span>
+            </div>
+
+            <div className="dash-stat-card">
+              <div className="stat-header">
+                <Wifi size={16} />
+                <span>Signal Status</span>
+              </div>
+              <span className={`stat-value-large ${isOnline ? 'text-green' : 'text-red'}`}>
+                {isOnline ? 'Strong' : 'Weak'}
+              </span>
+            </div>
+          </div>
+
+          {/* 2. Large Map Canvas */}
+          <section className="dashboard-map-section">
+            <div className="map-header-overlay">
+              <h2 className="map-title">Live Location</h2>
+              <span className="map-coords">
+                {userPosition[0].toFixed(4)}, {userPosition[1].toFixed(4)}
               </span>
             </div>
 
-            <div className="profile-list-item">
-              <div className="item-icon-wrapper">
-                <Wifi size={20} />
-              </div>
-              <span className="item-label">Connection</span>
-              <span
-                className={`item-value ${
-                  isOnline ? 'green-text' : 'red-text'
-                }`}
-              >
-                {isOnline ? 'Connected' : 'Disconnected'}
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* --- Location & Contact --- */}
-        <section className="profile-section">
-          <h2 className="profile-section-title">Location & Contact</h2>
-          <div className="profile-list-container">
-            {/* ✅ Fixed: Map with explicit height and resize handler */}
-            <div className="profile-map-wrapper">
+            <div className="dashboard-map-wrapper">
               <MapContainer
                 center={userPosition}
                 zoom={18}
@@ -150,25 +161,11 @@ const UserProfile = () => {
                 />
               </MapContainer>
             </div>
+          </section>
 
-            <div className="profile-list-item">
-              <div className="item-icon-wrapper">
-                <MessageSquare size={20} />
-              </div>
-              <span className="item-label">Chat</span>
-              <span className="item-action">&gt;</span>
-            </div>
+        </main>
 
-            <div className="profile-list-item">
-              <div className="item-icon-wrapper">
-                <Phone size={20} />
-              </div>
-              <span className="item-label">Call</span>
-              <span className="item-action">&gt;</span>
-            </div>
-          </div>
-        </section>
-      </main>
+      </div>
     </div>
   );
 };

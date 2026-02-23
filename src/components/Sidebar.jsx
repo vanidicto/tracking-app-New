@@ -1,36 +1,44 @@
 // src/components/Sidebar.jsx
-import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'; // 1. Import useLocation
-import { Home, Users, Map, FileText, User, LogOut } from 'lucide-react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Home, Users, Map, FileText, LogOut } from 'lucide-react';
 import './Sidebar.css';
-import logo from '../assets/logo.png'; 
+import logo from '../assets/logo.png';
 import { useAuth } from '../context/AuthContext';
 
-
-// 2. Modify SidebarLink helper
+/**
+ * SidebarLink with FULL manual active-state control
+ */
 const SidebarLink = ({ to, icon: Icon, label }) => {
-  const location = useLocation(); // 3. Get location
+  const location = useLocation();
+  const path = location.pathname;
 
-  // 4. This is our special case:
-  // Check if the link is for 'People' AND the user is on a 'userProfile' page
-  const isPeopleActive = (to === '/app/people' && location.pathname.startsWith('/app/userProfile'));
+  let isActive = false;
+
+  // --- ACTIVE LOGIC ---
+  if (to === '/app') {
+    // Home should ONLY be active on exact /app
+    isActive = path === '/app';
+  } else if (to === '/app/people') {
+    // People is active on:
+    // /app/people
+    // /app/userProfile/:id
+    isActive =
+      path.startsWith('/app/people') ||
+      path.startsWith('/app/userProfile');
+  } else {
+    // Other pages (Places, Report)
+    isActive = path.startsWith(to);
+  }
 
   return (
-    <NavLink 
-      to={to} 
-      // 5. Combine NavLink's 'isActive' with our special 'isPeopleActive'
-      className={({ isActive }) => 
-        "sidebar-link" + ( (isActive || isPeopleActive) ? " active" : "" )
-      }
-    >
+    <Link to={to} className={`sidebar-link ${isActive ? 'active' : ''}`}>
       <Icon size={20} />
       <span>{label}</span>
-    </NavLink>
+    </Link>
   );
 };
 
-
 function Sidebar() {
-
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -39,25 +47,23 @@ function Sidebar() {
       await logout();
       navigate('/login');
     } catch (error) {
-      console.error("Failed to log out", error);
+      console.error('Failed to log out', error);
     }
   };
 
   return (
     <nav className="app-sidebar">
       <div className="sidebar-header">
-        <Link to="/">
+        <Link to="/app">
           <img src={logo} alt="PingMe Logo" className="sidebar-logo" />
         </Link>
       </div>
 
       <div className="sidebar-links">
-        {/* These links will now use the new SidebarLink logic */}
-        <SidebarLink to="/" icon={Home} label="Home" />
-        <SidebarLink to="/people" icon={Users} label="People" />
-        <SidebarLink to="/places" icon={Map} label="Places" />
-        <SidebarLink to="/report" icon={FileText} label="Report" />
-        
+        <SidebarLink to="/app" icon={Home} label="Home" />
+        <SidebarLink to="/app/people" icon={Users} label="People" />
+        <SidebarLink to="/app/places" icon={Map} label="Places" />
+        <SidebarLink to="/app/report" icon={FileText} label="Report" />
       </div>
 
       <div className="sidebar-footer">

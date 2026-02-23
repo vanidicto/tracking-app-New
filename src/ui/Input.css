@@ -1,0 +1,50 @@
+.pm-field { display: grid; gap: 8px; }
+
+.pm-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pm-text);
+}
+
+.pm-inputWrap {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  transition: box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.pm-inputWrap:focus-within {
+  border-color: rgba(164, 38, 44, 0.45);
+  box-shadow: var(--pm-focus);
+  background: #fff;
+}
+
+.pm-inputWrap--error {
+  border-color: rgba(231, 76, 60, 0.65);
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.18);
+}
+
+.pm-input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--pm-text);
+  padding: 12px 2px;
+  font-size: 14px;
+}
+
+.pm-input::placeholder { color: rgba(119,119,119,0.9); }
+
+.pm-rightSlot { display: inline-flex; align-items: center; }
+
+.pm-helper {
+  font-size: 12px;
+  color: var(--pm-text-muted);
+}
+
+.pm-helper--error { color: var(--pm-danger); font-weight: 600; }

@@ -1,60 +1,96 @@
-import { useState } from 'react';
-import { useAuth } from './AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import './Auth.css';
+import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebaseConfig";
+import { useNavigate, Link } from "react-router-dom";
+
+import HeaderNavbar from "../components/HeaderNavbar";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+
+import "../styles/auth.css";
 
 export default function Signup() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { signup } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  const handleSignup = async (e) => {
     e.preventDefault();
+    setFormError("");
+    setSubmitting(true);
 
     try {
-      setError('');
-      setLoading(true);
-      // This calls the context function which creates Auth User + Firestore Document
-      await signup(email, password, name);
-      navigate('/'); // Redirect to home/dashboard after successful signup
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/app");
     } catch (err) {
-      console.error(err);
-      setError('Failed to create an account. ' + err.message);
+      setFormError(err?.message || "Signup failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setLoading(false);
-  }
+  };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Create Account</h2>
-        {error && <div className="auth-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Full Name</label>
-            <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. John Doe" />
+    <>
+      <HeaderNavbar />
+
+      <div className="authPage">
+        <main className="authMain">
+          <div className="authCard">
+            <div className="authHeader">
+              <h1>Create an account</h1>
+              <p>Start using PingMe SafetyApp</p>
+            </div>
+
+            <form onSubmit={handleSignup} className="authForm">
+              <Input
+                label="Email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+
+              <Input
+                label="Password"
+                type={showPw ? "text" : "password"}
+                placeholder="Minimum 6 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                required
+                rightSlot={
+                  <button
+                    type="button"
+                    className="authLink"
+                    onClick={() => setShowPw((v) => !v)}
+                  >
+                    {showPw ? "Hide" : "Show"}
+                  </button>
+                }
+              />
+
+              {formError ? <div className="authError">{formError}</div> : null}
+
+              <Button variant="primary" size="lg" disabled={submitting}>
+                {submitting ? "Creating account..." : "Sign up"}
+              </Button>
+
+              <div className="authRow" style={{ justifyContent: "center" }}>
+                <span className="authFooterTextInline">
+                  Already have an account?{" "}
+                  <Link to="/login" className="authLink">Log in</Link>
+                </span>
+              </div>
+            </form>
           </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@example.com" />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="******" />
-          </div>
-          <button disabled={loading} type="submit" className="auth-btn">
-            {loading ? 'Creating Account...' : 'Sign Up'}
-          </button>
-        </form>
-        <div className="auth-footer">
-          Already have an account? <Link to="/login">Log In</Link>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 }

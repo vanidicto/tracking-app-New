@@ -1,0 +1,879 @@
+.landing {
+  min-height: 100vh;
+  /* Power Light Background: Deep blue-black with a top-center glow */
+  background:
+    radial-gradient(circle at 50% 0%, rgba(248, 56, 56, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(231, 76, 60, 0.08) 0%, transparent 40%),
+    var(--pm-bg);
+  color: var(--pm-text);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Circuit Traces Overlay */
+.landing::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Diagonal Tech Lines */
+  background-image:
+    repeating-linear-gradient(45deg,
+      transparent 0,
+      transparent 20px,
+      rgba(255, 255, 255, 0.03) 20px,
+      rgba(255, 255, 255, 0.03) 21px),
+    repeating-linear-gradient(-45deg,
+      transparent 0,
+      transparent 20px,
+      rgba(220, 38, 38, 0.02) 20px,
+      rgba(220, 38, 38, 0.02) 21px);
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 0;
+  /* Fade out at the bottom to blend */
+  mask-image: linear-gradient(to bottom, black 20%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+.landing-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  /* Start transparent at the top */
+  border-bottom: 1px solid transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* When scrolled: White Glass Effect */
+.landing-header.scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  /* Semi-transparent white */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  /* Subtle border when scrolled */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.landing-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  height: 72px;
+  /* Explicit height to match offset */
+}
+
+.landing-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+/* Dark mode adjustment for logo */
+/* Dark mode adjustment REMOVED to keep logo consistent */
+/* html.pm-dark .landing-logo { filter: brightness(0) invert(1); opacity: 0.9; } */
+
+.landing-brand-text {
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.landing-navlink {
+  color: var(--pm-text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  text-decoration: none;
+  /* Ensure no underline */
+}
+
+.landing-navlink:hover {
+  background: var(--pm-surface);
+  color: var(--pm-text);
+}
+
+.landing-actions {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.landing-hero {
+  padding: 130px 0 34px;
+  /* Increased top padding (54 + 76) to account for fixed header */
+}
+
+.landing-hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.landing-chip {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--pm-border);
+  background: var(--pm-surface);
+  font-size: 13px;
+  font-weight: 700;
+  width: fit-content;
+}
+
+.landing-hero-copy h1 {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.05;
+  margin: 14px 0 12px;
+}
+
+.landing-accent {
+  color: var(--pm-primary);
+}
+
+.landing-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--pm-text-muted);
+  max-width: 58ch;
+}
+
+.landing-cta {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.landing-foot {
+  margin-top: 14px;
+  font-size: 13px;
+}
+
+.landing-hero-visual {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.landing-hero-card {
+  position: relative;
+  position: relative;
+  width: 100%;
+  /* Allow full width scaling */
+  border-radius: var(--pm-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--pm-shadow-md);
+  border: 1px solid var(--pm-border);
+  /* UPDATED */
+}
+
+.landing-hero-img {
+  width: 100%;
+  height: 460px;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.05);
+}
+
+.landing-hero-overlay {
+  position: absolute;
+  inset: auto 14px 14px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.landing-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--pm-surface-2);
+  /* UPDATED for dark mode visibility */
+  border: 1px solid var(--pm-border);
+  font-weight: 800;
+  color: var(--pm-text);
+  /* Ensure text is visible */
+  box-shadow: var(--pm-shadow-sm);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.dot--success {
+  background: var(--pm-success);
+}
+
+.dot--danger {
+  background: var(--pm-danger);
+}
+
+.dot--primary {
+  background: var(--pm-primary);
+}
+
+.landing-section {
+  padding: 44px 0;
+}
+
+.landing-section-alt {
+  background: transparent;
+  /* Seamless "one pad" look */
+  position: relative;
+  border-top: none;
+  padding-top: 20px;
+}
+
+/* Removed ::before gradient separator */
+
+.landing-h2 {
+  margin: 0;
+  font-size: 26px;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-p {
+  margin: 10px 0 0;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.landing-card {
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.landing-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--pm-primary);
+  box-shadow: 0 10px 30px rgba(231, 76, 60, 0.15);
+  /* Primary glow */
+}
+
+.landing-card h3 {
+  margin: 0 0 8px;
+}
+
+/* --- How It Works: Circuit Theme --- */
+.landing-steps {
+  margin-top: 18px;
+  display: grid;
+  gap: 20px;
+  position: relative;
+  /* z-index: 1; -> Removed to allow line to sit behind if needed, or manage via children */
+}
+
+/* Connecting Line (Circuit Trace) - REMOVED per user request */
+.landing-steps::before {
+  display: none;
+}
+
+.landing-step {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  position: relative;
+  z-index: 1;
+  /* Sit ABOVE the line */
+  transition: all 0.3s ease;
+}
+
+.landing-step:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(231, 76, 60, 0.3);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
+}
+
+.step-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: monospace;
+  font-size: 16px;
+
+  /* Glowing styling */
+  background: #15191f;
+  /* match --pm-bg */
+  border: 2px solid var(--pm-primary);
+  color: var(--pm-primary);
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+  position: relative;
+  z-index: 2;
+  /* Higher than card base */
+}
+
+
+
+.landing-step h4 {
+  margin: 2px 0 6px;
+}
+
+.landing-final-cta {
+  margin-top: 24px;
+}
+
+.landing-final-card {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.landing-final-actions {
+  display: inline-flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Main Footer */
+.landing-footer {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--pm-border);
+  position: relative;
+  background: #0f1115;
+  /* Slightly darker footer */
+}
+
+/* Glowing Separator at BOTTOM of page */
+.landing-footer::after {
+  content: "";
+  position: absolute;
+  bottom: 0px;
+  /* At the very bottom edge */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--pm-primary), transparent);
+  box-shadow: 0 -2px 15px rgba(231, 76, 60, 0.8);
+  border-radius: 2px;
+}
+
+.landing-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.landing-footer-inner span {
+  background: linear-gradient(90deg, #fff, var(--pm-text-muted));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .landing-navlink {
+    display: none;
+  }
+
+  .landing-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-hero-visual {
+    justify-content: center;
+  }
+
+  .landing-hero-img {
+    height: 360px;
+  }
+
+  .landing-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-final-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .landing-footer-inner {
+    flex-direction: column;
+  }
+}
+
+/* --- NEW: CSS Radar Hero --- */
+.radar-container {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, var(--pm-surface-2) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.radar-circles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.radar-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--pm-primary);
+  opacity: 0.2;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(112, 17, 22, 0.1);
+}
+
+.circle-1 {
+  width: 150px;
+  height: 150px;
+}
+
+.circle-2 {
+  width: 280px;
+  height: 280px;
+}
+
+.circle-3 {
+  width: 400px;
+  height: 400px;
+  border-style: dashed;
+}
+
+.radar-scanner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 70%, rgba(98, 5, 10, 0.3));
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+.radar-center {
+  position: relative;
+  width: 20px;
+  height: 20px;
+}
+
+.radar-dot {
+  width: 100%;
+  height: 100%;
+  background: var(--pm-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--pm-primary);
+  position: relative;
+  z-index: 2;
+}
+
+.radar-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: var(--pm-primary);
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes scan {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes ping {
+
+  75%,
+  100% {
+    transform: translate(-50%, -50%) scale(4);
+    opacity: 0;
+  }
+}
+
+/* Positioning stats around the radar */
+.radar-stats {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Reuse existing .landing-stat but position absolutely */
+.landing-stat.stat-top-right {
+  position: absolute;
+  top: 10%;
+  right: 0;
+  animation: float 6s ease-in-out infinite;
+}
+
+.landing-stat.stat-bottom-left {
+  position: absolute;
+  bottom: 20%;
+  left: -20px;
+  animation: float 6s ease-in-out infinite 2s;
+}
+
+.landing-stat.stat-bottom-right {
+  position: absolute;
+  bottom: 10%;
+  right: 0;
+  animation: float 6s ease-in-out infinite 1s;
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Dev-only Admin quick link (shows only in dev because JSX is conditional) */
+.landing-admin-dev {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  z-index: 999;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--pm-surface);
+  /* UPDATED */
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--pm-border);
+  color: var(--pm-text);
+  font-weight: 800;
+  font-size: 12px;
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+.landing-admin-dev:hover {
+  opacity: 1;
+}
+
+/* --- NEW: Feature Card Icons --- */
+.landing-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(164, 38, 44, 0.1);
+  color: var(--pm-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.landing-card-icon.icon-danger {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--pm-danger);
+}
+
+/* --- NEW: Device Section --- */
+/* --- NEW: Device Section --- */
+.landing-section-device {
+  background: linear-gradient(180deg, transparent 0%, rgba(255, 252, 252, 0.3) 100%);
+  position: relative;
+  z-index: 1;
+}
+
+.landing-device-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.landing-specs {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: grid;
+  gap: 20px;
+}
+
+.landing-specs li {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.spec-icon {
+  color: var(--pm-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.landing-specs strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 2px;
+  color: var(--pm-text);
+}
+
+/* --- CSS Device Placeholder (Watch) --- */
+.landing-device-visual {
+  display: flex;
+  justify-content: center;
+  perspective: 1000px;
+}
+
+.device-placeholder {
+  width: 200px;
+  height: 200px;
+  background: #111;
+  border-radius: 40px;
+  position: relative;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  border: 4px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateY(-10deg) rotateX(10deg);
+  transition: transform 0.5s ease;
+}
+
+.device-placeholder:hover {
+  transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+}
+
+.device-screen {
+  width: 90%;
+  height: 90%;
+  background: #000;
+  border-radius: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fake UI on screen */
+.device-time {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.device-status {
+  margin-top: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(76, 175, 80, 0.2);
+  color: #4CAF50;
+  padding: 4px 8px;
+  border-radius: 99px;
+}
+
+/* Watch Strap pieces */
+.device-strap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Center it properly */
+  z-index: -1;
+  width: 140px;
+  height: 300px;
+  background: #222;
+  border-radius: 20px;
+}
+
+@media (max-width: 900px) {
+
+  /* Radar Mobile Scaling - Reduced to prevent overflow */
+  .radar-container {
+    width: 260px;
+    height: 260px;
+    margin: 20px auto 40px;
+    /* added bottom margin for stats space */
+  }
+
+  .radar-circles .circle-3 {
+    width: 260px;
+    height: 260px;
+  }
+
+  .radar-scanner {
+    width: 260px;
+    height: 260px;
+  }
+
+  .landing-stat {
+    scale: 0.8;
+    padding: 6px 10px;
+    font-size: 11px;
+    white-space: nowrap;
+    /* Prevent wrapping */
+  }
+
+  /* Pull stats CLOSER to center to avoid horizontal scroll */
+  .landing-stat.stat-top-right {
+    top: 0px;
+    right: 0px;
+    transform: translate(20%, -20%);
+  }
+
+  .landing-stat.stat-bottom-left {
+    bottom: 0px;
+    left: 0px;
+    transform: translate(-10%, 10%);
+  }
+
+  .landing-stat.stat-bottom-right {
+    bottom: 0px;
+    right: 0px;
+    transform: translate(10%, 10%);
+  }
+
+  /* Device Section Mobile Layout */
+  .landing-device-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+
+  /* Content first on mobile (Title/Specs) */
+  .landing-device-content {
+    order: 1;
+  }
+
+  /* Visual second (below specs) */
+  .landing-device-visual {
+    order: 2;
+    margin-top: 80px;
+    /* Increased to account for Strap overhang (75px) */
+    margin-bottom: 20px;
+    perspective: none;
+  }
+
+  .device-placeholder {
+    transform: rotateY(0deg) rotateX(0deg);
+    width: 150px;
+    height: 150px;
+    border-radius: 28px;
+  }
+
+  /* General Landing Adjustments */
+  .landing-navlink {
+    display: none;
+  }
+
+  /* Hero Content */
+  .landing-hero {
+    padding: 34px 0 20px;
+  }
+
+  .landing-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  /* Typography Scaling */
+  .landing-hero-copy h1 {
+    font-size: 32px;
+    /* Fixed safe size for mobile */
+  }
+
+  .landing-sub {
+    font-size: 15px;
+  }
+
+  .landing-hero-visual {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .landing-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .landing-final-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+  }
+
+  .landing-final-actions {
+    justify-content: center;
+  }
+
+  .landing-footer-inner {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+}

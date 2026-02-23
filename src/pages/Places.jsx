@@ -1,6 +1,6 @@
 // src/pages/app/Places.jsx
 
-import {MapContainer,TileLayer,FeatureGroup,Marker,Popup,Circle,} from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Circle, } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -33,6 +33,15 @@ const Places = () => {
   const { braceletUsers, loading } = useBraceletUsers();
   const [activeAlerts, setActiveAlerts] = useState([]);
   const [geofences, setGeofences] = useState([]);
+
+  // Fix map rendering issues
+  useEffect(() => {
+    if (map) {
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 200);
+    }
+  }, [map]);
 
   const [zoneName, setZoneName] = useState("");
   const [pendingLayerId, setPendingLayerId] = useState(null);
@@ -94,7 +103,7 @@ const Places = () => {
         if (distance <= zone.radius + avatarVisualRadius) {
           insideZoneId = zone.id;
           insideZoneName = zone.name;
-          
+
           const alertMessage = `${user.name} entered ${zone.name}`;
           currentAlerts.push(alertMessage);
           break; // Assume user is in one zone at a time (or prioritize the first one found)
@@ -105,15 +114,15 @@ const Places = () => {
       if (insideZoneId) {
         // User is inside a zone
         if (user.currentGeofenceId !== insideZoneId) {
-           // Transition: Entered new zone (or moved from one to another)
-           const alertMessage = `${user.name} entered ${insideZoneName}`;
-           const alertKey = `${user.id}-${insideZoneId}`;
-           
-           // Use local ref to debounce rapid updates before Firestore syncs back
-           if (!alertedUsersRef.current.has(alertKey)) {
-             alertedUsersRef.current.add(alertKey);
-             newlyDetected.push({ user, zone: { id: insideZoneId, name: insideZoneName }, message: alertMessage });
-           }
+          // Transition: Entered new zone (or moved from one to another)
+          const alertMessage = `${user.name} entered ${insideZoneName}`;
+          const alertKey = `${user.id}-${insideZoneId}`;
+
+          // Use local ref to debounce rapid updates before Firestore syncs back
+          if (!alertedUsersRef.current.has(alertKey)) {
+            alertedUsersRef.current.add(alertKey);
+            newlyDetected.push({ user, zone: { id: insideZoneId, name: insideZoneName }, message: alertMessage });
+          }
         }
       } else {
         // User is NOT inside any zone
@@ -159,7 +168,7 @@ const Places = () => {
               type: 'Geofence',
               time: serverTimestamp(),
               icon: user.avatar || null,
-            });    
+            });
 
             // Update deviceStatus to persist "Inside Zone" state
             if (user.deviceStatusId) {
@@ -238,7 +247,7 @@ const Places = () => {
     try {
       const newDocRef = doc(collection(db, "geofences"));
       await setDoc(newDocRef, {
-        appUserName: currentUser.displayName,        
+        appUserName: currentUser.displayName,
         appUserId: currentUser.uid,
         coordinates: { lat: latLng.lat, lng: latLng.lng },
         id: newDocRef.id,
@@ -264,14 +273,14 @@ const Places = () => {
     pendingLayerRef.current = null;
   };
 
-  if (loading) return <div className="loading"><LoadingSpinner/></div>;
+  if (loading) return <LoadingSpinner />;
 
-  
-    // Find a user with a valid position to center the map on.
+
+  // Find a user with a valid position to center the map on.
   const initialCenterUser = braceletUsers.find(u => u.position && u.position.length === 2);
   const initialCenter = initialCenterUser ? initialCenterUser.position : [14.5921, 120.9755];
 
-  
+
 
   return (
     <div className="places-page-container">
@@ -331,38 +340,38 @@ const Places = () => {
       <div className="places-map-container">
         <MapContainer
           center={initialCenter}
-          zoom={20}
-          style={{ height: "100%", width: "100%" }}
+          zoom={15}
+          style={{ height: "100%", minHeight: "500px", width: "100%" }}
           whenReady={(m) => setMap(m.target)}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
           {/* Render real user markers */}
-          {braceletUsers.map((user) => 
+          {braceletUsers.map((user) =>
             user.position && (
-            <Marker
-              key={user.id}
-              position={user.position}
-              icon={mapHelpers.createCustomIcon(user)}
-            >
-              <Popup className="custom-popup">
-                <div className="popup-content">
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="popup-image"
-                  />
-                  <div className="popup-info">
-                    <h3>{user.name}</h3>
-                    <p>Battery: {user.battery}%</p>
-                    <p>
-                      Status: {user.online ? "🟢 Online" : "🔴 Offline"}
-                    </p>
-                    <p>Pulse: {user.pulseRate ?? "—"}</p>
+              <Marker
+                key={user.id}
+                position={user.position}
+                icon={mapHelpers.createCustomIcon(user)}
+              >
+                <Popup className="custom-popup">
+                  <div className="popup-content">
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className="popup-image"
+                    />
+                    <div className="popup-info">
+                      <h3>{user.name}</h3>
+                      <p>Battery: {user.battery}%</p>
+                      <p>
+                        Status: {user.online ? "🟢 Online" : "🔴 Offline"}
+                      </p>
+                      <p>Pulse: {user.pulseRate ?? "—"}</p>
+                    </div>
                   </div>
-                </div>
-              </Popup>
-            </Marker>
+                </Popup>
+              </Marker>
             )
           )}
 

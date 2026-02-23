@@ -1,0 +1,53 @@
+.pm-btn {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.pm-btn:active { transform: translateY(1px); }
+
+.pm-btn[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pm-btn--sm { padding: 10px 12px; font-size: 13px; }
+.pm-btn--md { padding: 12px 16px; font-size: 14px; }
+.pm-btn--lg { padding: 14px 18px; font-size: 15px; }
+
+.pm-btn--primary {
+  background: var(--pm-primary);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(164, 38, 44, 0.25);
+}
+.pm-btn--primary:hover { filter: brightness(1.05); }
+
+.pm-btn--secondary {
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  border-color: var(--pm-border);
+}
+.pm-btn--secondary:hover { background: #f1f1f1; }
+
+.pm-btn--ghost {
+  background: transparent;
+  color: var(--pm-text);
+  border-color: var(--pm-border);
+}
+.pm-btn--ghost:hover { background: var(--pm-surface); }
+
+.pm-btn--danger {
+  background: var(--pm-danger);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(231, 76, 60, 0.22);
+}
+.pm-btn--danger:hover { filter: brightness(1.05); }

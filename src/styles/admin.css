@@ -1,0 +1,22 @@
+/* Admin scope overrides — apply by wrapping layout in .pm-admin */
+.pm-admin {
+  /* Light Dashboard Theme */
+  --pm-bg: #f4f6f8;
+  /* Soft cool gray background */
+  --pm-surface: #ffffff;
+  /* White cards/containers */
+  --pm-surface-2: #ffffff;
+
+  --pm-text: #1a1c23;
+  /* Deep slate for high contrast */
+  --pm-text-muted: #64748b;
+  /* Cool gray for secondary text */
+
+  --pm-border: #e2e8f0;
+  /* Subtle border */
+  --pm-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --pm-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  /* Keep brand focus ring but maybe adjust if needed */
+  --pm-focus: 0 0 0 3px rgba(164, 38, 44, 0.2);
+}

@@ -6,8 +6,8 @@
   left: 0;
   right: 0;
   height: 60px;
-  background-color: var(--color-bg-main);
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--pm-bg);
+  border-bottom: 1px solid var(--pm-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,9 +25,10 @@
   background: none;
   border: none;
   padding: 5px;
-  color: var(--color-text-secondary);
+  color: var(--pm-text-muted);
   cursor: pointer;
-  position: relative; /* Add this */
+  position: relative;
+  /* Add this */
 }
 
 /* Add this new rule for the badge */
@@ -43,6 +44,7 @@
   font-weight: bold;
   border: 1px solid white;
 }
+
 .topbar-icon-btn:hover {
   color: var(--color-primary);
 }
@@ -50,14 +52,15 @@
 /* --- MOBILE STYLES (default) --- */
 .topbar-logo-desktop,
 .topbar-desktop-profile-btn {
-  display: none; /* Hide desktop elements on mobile */
+  display: none;
+  /* Hide desktop elements on mobile */
 }
 
 .topbar-mobile-menu-btn {
   background: none;
   border: none;
   padding: 5px;
-  color: var(--color-text-primary);
+  color: var(--pm-text);
   cursor: pointer;
 }
 
@@ -71,18 +74,21 @@
 /* --- DESKTOP STYLES (matches image_18b042.jpg) --- */
 @media (min-width: 768px) {
   .app-topbar {
-    left: 240px; /* Make room for the sidebar */
+    left: 240px;
+    /* Make room for the sidebar */
   }
-  
+
   .topbar-mobile-menu-btn,
   .topbar-mobile-search {
-    display: none; /* Hide mobile elements on desktop */
+    display: none;
+    /* Hide mobile elements on desktop */
   }
 
   .topbar-logo-desktop {
     display: block;
     height: 30px;
   }
+
   .topbar-logo-desktop img {
     height: 100%;
     width: auto;
@@ -99,6 +105,7 @@
     cursor: pointer;
     overflow: hidden;
   }
+
   .topbar-desktop-profile-btn img {
     width: 100%;
     height: 100%;

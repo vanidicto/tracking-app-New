@@ -2,199 +2,256 @@
 
 /* Base Styles */
 .report-page-frame {
-    /* --- VIBE-CODE: REMOVED min-height: 100vh; --- */
-    background-color: var(--color-bg-secondary); /* UPDATED from #f9f9f9 */
-    display: flex;
-    flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    /* --- VIBE-CODE: REMOVED padding-bottom: 70px; --- */
-    box-sizing: border-box; /* ADDED this for better padding control */
+  min-height: 100vh;
+  /* Restore min-height */
+  background-color: var(--pm-bg);
+  /* Use page background code */
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 .app-main {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 /* Incident List Styles */
 .incident-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    background-color: white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: var(--pm-bg);
+  box-shadow: var(--pm-shadow-sm);
 }
 
 /* --- CRITICAL FIX: <li> is now the container, Link is the content --- */
 
 /* The <li> is now the row container, remove its padding */
 .incident-item {
-    padding: 0; 
-    border-bottom: 1px solid #e5e5e5;
+  padding: 0;
+  border-bottom: 1px solid var(--pm-border);
 }
 
 .incident-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 /* The <Link> tag now gets all the flex styles and padding */
 .incident-link-wrapper {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    cursor: pointer;
-    transition: background-color 0.1s;
-    text-decoration: none;
-    color: inherit;
-    width: 100%; /* Ensure it fills the li */
-    box-sizing: border-box; /* Include padding in width */
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  text-decoration: none;
+  color: var(--pm-text);
+  width: 100%;
+  /* Ensure it fills the li */
+  box-sizing: border-box;
+  /* Include padding in width */
 }
 
 .incident-link-wrapper:hover {
-    background-color: #f5f5f5;
+  background-color: var(--pm-surface);
 }
+
 /* --- END CRITICAL FIX --- */
 
 
 /* --- ICON STYLES (No changes) --- */
 .incident-icon-wrapper {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    flex-shrink: 0;
-    color: white; 
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+  color: white;
 }
-.incident-icon-wrapper.red { background-color: var(--color-primary); } /* UPDATED */
-.incident-type.red { color: var(--color-primary); font-weight: 700; } /* UPDATED */
-.incident-icon-wrapper.orange { background-color: var(--color-alert-orange); } /* UPDATED */
-.incident-type.orange { color: var(--color-alert-orange); font-weight: 600; } /* UPDATED */
-.incident-icon-wrapper.blue { background-color: #3498db; }
-.incident-type.blue { color: #3498db; font-weight: 600; }
+
+.incident-icon-wrapper.red {
+  background-color: var(--color-primary);
+}
+
+/* UPDATED */
+.incident-type.red {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* UPDATED */
+.incident-icon-wrapper.orange {
+  background-color: var(--color-alert-orange);
+}
+
+/* UPDATED */
+.incident-type.orange {
+  color: var(--color-alert-orange);
+  font-weight: 600;
+}
+
+/* UPDATED */
+.incident-icon-wrapper.blue {
+  background-color: #3498db;
+}
+
+.incident-type.blue {
+  color: #3498db;
+  font-weight: 600;
+}
+
 /* --- END ICON STYLES --- */
 
 
 .incident-details {
-    flex-grow: 1;
-    min-width: 0;
+  flex-grow: 1;
+  min-width: 0;
 }
 
 .incident-type {
-    font-size: 1.05rem;
-    font-weight: 600;
-    margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .incident-date-location {
-    font-size: 0.85rem;
-    color: var(--color-text-secondary); /* UPDATED */
-    margin: 3px 0 0 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-size: 0.85rem;
+  color: var(--pm-text-muted);
+  /* UPDATED */
+  margin: 3px 0 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .incident-time-wrapper {
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-    margin-left: 10px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: 10px;
 }
 
 .incident-date-right {
-    font-size: 0.85rem;
-    color: var(--color-text-primary); /* UPDATED */
-    margin-right: 8px;
-    flex-shrink: 0;
-    white-space: nowrap;
+  font-size: 0.85rem;
+  color: var(--pm-text-muted);
+  /* UPDATED */
+  margin-right: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .chevron-icon {
-    color: #bbb;
-    flex-shrink: 0;
+  color: var(--pm-text-muted);
+  flex-shrink: 0;
 }
 
 /* --- Report Detail Modal/Page Styles (No changes) --- */
 .report-detail-card {
-    background-color: var(--color-bg-main); /* UPDATED */
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    padding: 30px 20px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    position: relative;
+  background-color: var(--pm-bg);
+  /* UPDATED */
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  box-shadow: var(--pm-shadow-md);
+  border-radius: 10px;
+  position: relative;
+  color: var(--pm-text);
 }
+
 .close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #999;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pm-text-muted);
 }
+
 .detail-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
 }
+
 .detail-name {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 10px 0 5px 0;
-    color: var(--color-text-primary); /* ADDED */
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 10px 0 5px 0;
+  color: var(--pm-text);
+  /* ADDED */
 }
+
 .detail-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #eee;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--pm-border);
 }
+
 .detail-panic-text {
-    color: var(--color-primary); /* UPDATED */
-    font-weight: 600;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 15px;
-    width: 100%;
-    text-align: center;
+  color: var(--pm-danger);
+  /* UPDATED */
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--pm-border);
+  padding-bottom: 15px;
+  width: 100%;
+  text-align: center;
 }
+
 .detail-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #f5f5f5;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--pm-border);
 }
+
 .detail-label {
-    font-weight: 500;
-    color: var(--color-text-primary); /* UPDATED */
+  font-weight: 500;
+  color: var(--pm-text-muted);
+  /* UPDATED */
 }
+
 .detail-value {
-    font-weight: 600;
-    color: var(--color-text-secondary); /* UPDATED */
+  font-weight: 600;
+  color: var(--pm-text);
+  /* UPDATED */
 }
-.detail-value.red { color: var(--color-alert-red); } /* UPDATED */
-.detail-value.green { color: var(--color-alert-green); } /* UPDATED */
+
+.detail-value.red {
+  color: var(--color-alert-red);
+}
+
+/* UPDATED */
+.detail-value.green {
+  color: var(--color-alert-green);
+}
+
+/* UPDATED */
 
 /* --- NEW "Mark Safe" Button Style --- */
 .mark-safe-button {
   width: 100%;
   padding: 12px 1.5rem;
-  margin-top: 20px; /* Space above the button */
+  margin-top: 20px;
+  /* Space above the button */
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background-color: var(--color-alert-green); /* UPDATED */
+  background-color: var(--pm-success);
+  /* UPDATED */
   color: white;
   transition: background-color 0.2s;
 }
@@ -220,18 +277,26 @@
 }
 
 .modal-content {
-  background-color: var(--color-bg-main); /* UPDATED */
+  background-color: var(--pm-bg);
+  /* UPDATED */
   width: 90%;
   max-width: 400px;
   border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   animation: modal-fade-in 0.2s ease-out;
 }
 
 @keyframes modal-fade-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal-header {
@@ -239,20 +304,21 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--pm-border);
 }
 
 .modal-header h2 {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
-  color: var(--color-text-primary); /* ADDED */
+  color: var(--pm-text);
+  /* ADDED */
 }
 
 .modal-close-button {
   background: none;
   border: none;
-  color: #888;
+  color: var(--pm-text-muted);
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -266,7 +332,8 @@
 
 .modal-body p {
   font-size: 0.9rem;
-  color: var(--color-text-secondary); /* UPDATED */
+  color: var(--pm-text-muted);
+  /* UPDATED */
   line-height: 1.5;
   margin-top: 0;
   margin-bottom: 16px;
@@ -280,19 +347,25 @@
   display: block;
   font-size: 0.9rem;
   font-weight: 500;
-  color: var(--color-text-primary); /* UPDATED */
+  color: var(--pm-text);
+  /* UPDATED */
   margin-bottom: 8px;
 }
 
-.modal-body .form-group textarea { /* Changed from input */
+.modal-body .form-group textarea {
+  /* Changed from input */
   width: 100%;
   padding: 10px 12px;
   font-size: 1rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--pm-border);
+  background: var(--pm-bg);
+  color: var(--pm-text);
   border-radius: 6px;
   box-sizing: border-box;
-  font-family: inherit; /* Make textarea use app font */
-  resize: vertical; /* Allow vertical resize */
+  font-family: inherit;
+  /* Make textarea use app font */
+  resize: vertical;
+  /* Allow vertical resize */
 }
 
 .modal-create-button {
@@ -303,7 +376,8 @@
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  background-color: var(--color-primary); /* UPDATED */
+  background-color: var(--pm-primary);
+  /* UPDATED */
   color: white;
   transition: background-color 0.2s;
 }
@@ -311,4 +385,5 @@
 .modal-create-button:hover {
   background-color: #8c2025;
 }
+
 /* --- END NEW MODAL STYLES --- */

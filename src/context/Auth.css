@@ -101,3 +101,48 @@
 .auth-footer a:hover {
   text-decoration: underline;
 }
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pm-surface);
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+}
+
+.auth-title {
+  margin: 0;
+  font-size: 26px;
+  text-align: center;
+}
+
+.auth-subtitle {
+  margin: 6px 0 20px;
+  text-align: center;
+  color: var(--pm-text-muted);
+  font-size: 14px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-footer a {
+  color: var(--pm-primary);
+  font-weight: 700;
+}

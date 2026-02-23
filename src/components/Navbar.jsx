@@ -5,8 +5,8 @@ import { Home, Users, Map, FileText } from 'lucide-react';
 
 // Helper component for nav icons
 const NavIcon = ({ to, activePath, icon: Icon, label }) => {
-  const isActive = to === '/' 
-    ? activePath === '/' 
+  const isActive = to === '/app' 
+    ? activePath === '/app' 
     : activePath.startsWith(to);
 
   return (
@@ -24,10 +24,10 @@ function Navbar() {
   return (
     <footer className="app-navbar">
       <div className="nav-items-container">
-        <NavIcon to="/" activePath={path} icon={Home} label="Home" />
-        <NavIcon to="/people" activePath={path} icon={Users} label="People" />
-        <NavIcon to="/places" activePath={path} icon={Map} label="Places" />
-        <NavIcon to="/report" activePath={path} icon={FileText} label="Report" />
+        <NavIcon to="/app" activePath={path} icon={Home} label="Home" />
+        <NavIcon to="/app/people" activePath={path} icon={Users} label="People" />
+        <NavIcon to="/app/places" activePath={path} icon={Map} label="Places" />
+        <NavIcon to="/app/report" activePath={path} icon={FileText} label="Report" />
       </div>
       
     </footer>

@@ -1,54 +1,96 @@
-import { useState } from 'react';
-import { useAuth } from './AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import './Auth.css';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../config/firebaseConfig";
+
+import HeaderNavbar from "../components/HeaderNavbar";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+
+import "../styles/auth.css";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { login } = useAuth();
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  const onSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+    setSubmitting(true);
 
     try {
-      setError('');
-      setLoading(true);
-      await login(email, password);
-      navigate('/'); // Redirect to home/dashboard
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/app");
     } catch (err) {
-      console.error(err);
-      setError('Failed to log in. Please check your credentials.');
+      setFormError(err?.message || "Login failed. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setLoading(false);
-  }
+  };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Welcome Back</h2>
-        {error && <div className="auth-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Email</label>
-            <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+    <>
+      <HeaderNavbar />
+
+      <div className="authPage">
+        <main className="authMain">
+          <div className="authCard">
+            <div className="authHeader">
+              <h1>Welcome back</h1>
+              <p>Log in to continue monitoring and responding to alerts.</p>
+            </div>
+
+            <form className="authForm" onSubmit={onSubmit}>
+              <Input
+                label="Email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+
+              <Input
+                label="Password"
+                type={showPw ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+                rightSlot={
+                  <button
+                    type="button"
+                    className="authLink"
+                    onClick={() => setShowPw((v) => !v)}
+                  >
+                    {showPw ? "Hide" : "Show"}
+                  </button>
+                }
+              />
+
+              {formError ? <div className="authError">{formError}</div> : null}
+
+              <Button variant="primary" size="lg" disabled={submitting}>
+                {submitting ? "Logging in..." : "Log in"}
+              </Button>
+
+              <div className="authRow">
+                <span className="authFooterTextInline">
+                  Don’t have an account?{" "}
+                  <Link to="/signup" className="authLink">Sign up</Link>
+                </span>
+              </div>
+            </form>
           </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
-          <button disabled={loading} type="submit" className="auth-btn">
-            {loading ? 'Logging in...' : 'Log In'}
-          </button>
-        </form>
-        <div className="auth-footer">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
 }

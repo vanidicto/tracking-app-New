@@ -1,14 +1,11 @@
-// src/components/TopBar.jsx
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './TopBar.css';
-import { Bell, Menu } from 'lucide-react';
-import logo from '../assets/logo.png';
-import avatar from '../assets/red.webp';
-import ProfileModal from './ProfileModal';
-import NotificationModal from './NotificationModal';
-import { useAuth } from '../context/AuthContext';
-import { db } from '../config/firebaseConfig';
+import { useState, useEffect } from "react";
+import "./TopBar.css";
+import { Bell, Menu } from "lucide-react";
+import avatar from "../assets/red.webp";
+import ProfileModal from "./ProfileModal";
+import NotificationModal from "./NotificationModal";
+import { useAuth } from "../context/AuthContext";
+import { db } from "../config/firebaseConfig";
 import {
   collection,
   query,
@@ -17,7 +14,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-} from 'firebase/firestore';
+} from "firebase/firestore";
 
 const TopBar = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -25,7 +22,6 @@ const TopBar = () => {
   const { currentUser } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) {
@@ -35,8 +31,8 @@ const TopBar = () => {
     }
 
     const q = query(
-      collection(db, 'notifications'),
-      where('appUserId', '==', currentUser.uid)
+      collection(db, "notifications"),
+      where("appUserId", "==", currentUser.uid)
     );
 
     const unsub = onSnapshot(
@@ -52,7 +48,7 @@ const TopBar = () => {
         setLoading(false);
       },
       (err) => {
-        console.error('Notifications listener error:', err);
+        console.error("Notifications listener error:", err);
         setLoading(false);
       }
     );
@@ -64,19 +60,19 @@ const TopBar = () => {
     e.stopPropagation();
     if (alreadyRead) return;
     try {
-      await updateDoc(doc(db, 'notifications', id), { read: true });
+      await updateDoc(doc(db, "notifications", id), { read: true });
     } catch (err) {
-      console.error('Failed to mark notification read:', err);
+      console.error("Failed to mark notification read:", err);
     }
   };
 
   const deleteNotification = async (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this notification?')) return;
+    if (!window.confirm("Are you sure you want to delete this notification?")) return;
     try {
-      await deleteDoc(doc(db, 'notifications', id));
+      await deleteDoc(doc(db, "notifications", id));
     } catch (err) {
-      console.error('Failed to delete notification:', err);
+      console.error("Failed to delete notification:", err);
     }
   };
 
@@ -85,6 +81,7 @@ const TopBar = () => {
   return (
     <>
       <header className="app-topbar">
+        {/* Mobile menu (sidebar/profile) */}
         <button
           className="topbar-mobile-menu-btn"
           onClick={() => setIsProfileModalOpen(true)}
@@ -92,14 +89,10 @@ const TopBar = () => {
           <Menu size={26} />
         </button>
 
-        <div className="topbar-logo-desktop">
-          <img src={logo} alt="PingMe" />
-        </div>
+        {/* Center placeholder (keeps spacing consistent) */}
+        <div className="topbar-spacer" />
 
-        <div className="topbar-mobile-search">
-          <span>Search Location</span>
-        </div>
-
+        {/* Actions */}
         <div className="topbar-actions">
           <button
             className="topbar-icon-btn"

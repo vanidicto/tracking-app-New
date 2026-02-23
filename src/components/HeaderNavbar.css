@@ -1,0 +1,120 @@
+/* HeaderNavbar.css - Matches Landing.css Theme */
+.pm-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  /* Light Theme Background: Transparent or slightly froasted white */
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  /* Subtle dark border */
+  transition: all 0.3s ease;
+}
+
+.pm-header-inner {
+  /* Match .pm-container from global.css exactly for alignment */
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  /* Match Landing.css .landing-header-inner padding */
+  padding: 14px 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pm-brand {
+  display: inline-flex;
+  /* Match Landing.css strict display type */
+  align-items: center;
+  gap: 10px;
+  /* Match Landing.css gap */
+  text-decoration: none;
+  color: #1f2937;
+  /* Static Dark Text */
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.pm-brand-logo {
+  height: 44px;
+  /* Increased to 44px to match Landing.css */
+  width: auto;
+  object-fit: contain;
+  display: block;
+  /* Normal logo (no invert) */
+  filter: none;
+  opacity: 1;
+}
+
+.pm-brand-text {
+  font-size: 18px;
+}
+
+.pm-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pm-navlink {
+  color: #4b5563;
+  /* Muted Dark Text */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.pm-navlink:hover {
+  color: #111;
+  /* Dark Black on hover */
+}
+
+.pm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Ghost Button (Log in) - Light style */
+.pm-btn-ghost {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #1f2937;
+}
+
+.pm-btn-ghost:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Primary Button (Sign up) - Neon style */
+.pm-btn-primary {
+  background: var(--pm-primary, #e74c3c);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.pm-btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .pm-navlink {
+    display: none;
+  }
+}

@@ -17,6 +17,7 @@
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+
 .profile-modal-backdrop.open {
   opacity: 1;
   visibility: visible;
@@ -29,15 +30,16 @@
   width: 85%;
   max-width: 320px;
   height: 100%;
-  background-color: var(--color-bg-main);
-  box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+  background-color: var(--pm-bg);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  
+
   /* Slide-in animation */
   transform: translateX(-100%);
   transition: transform 0.3s ease-out;
 }
+
 .profile-modal-content.open {
   transform: translateX(0);
 }
@@ -47,16 +49,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 60px; /* Match TopBar height */
+  height: 60px;
+  /* Match TopBar height */
 }
+
 .modal-header-logo {
   height: 25px;
   width: auto;
 }
+
+/* Invert logo in dark mode */
+html.pm-dark .modal-header-logo {
+  filter: brightness(0) invert(1);
+}
+
 .modal-close-btn {
   background: none;
   border: none;
-  color: var(--color-text-primary);
+  color: var(--pm-text);
   cursor: pointer;
   padding: 5px;
 }
@@ -67,8 +77,9 @@
   flex-direction: column;
   align-items: center;
   padding: 10px 20px 30px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--pm-border);
 }
+
 .profile-modal-avatar {
   width: 80px;
   height: 80px;
@@ -76,79 +87,135 @@
   object-fit: cover;
   margin-bottom: 15px;
 }
+
 .profile-modal-name {
   font-size: 1.3rem;
   font-weight: 600;
   margin: 0;
+  color: var(--pm-text);
+  /* Ensure visible in dark mode */
 }
+
 .profile-modal-email {
   font-size: 0.9rem;
-  color: var(--color-text-secondary);
+  color: var(--pm-text-muted);
   margin: 4px 0 0 0;
 }
 
-/* --- Nav List --- */
-.profile-modal-nav {
-  flex-grow: 1; /* Pushes footer down */
-  padding: 20px;
+/* --- Menu List --- */
+.profile-modal-menu {
+  flex: 1;
   overflow-y: auto;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  /* Spacing between items */
 }
-.profile-nav-item {
+
+.profile-menu-item {
   display: flex;
   align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
   text-decoration: none;
-  color: var(--color-text-primary);
+  color: var(--pm-text);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.profile-menu-item:hover {
+  background-color: var(--pm-surface);
+  transform: translateX(4px);
+  /* Subtle slide */
+}
+
+.profile-menu-icon {
+  color: var(--pm-text-muted);
+  transition: color 0.2s ease;
+}
+
+.profile-menu-item:hover .profile-menu-icon {
+  color: var(--pm-primary);
+}
+
+.profile-menu-label {
   font-size: 1rem;
   font-weight: 500;
-  padding: 14px 0;
-  border-bottom: 1px solid #f0f0f0;
 }
-.profile-nav-item:last-child {
-  border-bottom: none;
+
+/* --- Toggle Switch for Dark Mode --- */
+.profile-menu-toggle {
+  margin-left: auto;
+  /* Push to right */
 }
-.nav-item-icon {
-  color: var(--color-text-secondary);
-  margin-right: 20px;
-  width: 24px; /* Align icons */
+
+/* --- Footer / Logout --- */
+.profile-modal-footer {
+  padding: 20px;
+  border-top: 1px solid var(--pm-border);
+  margin-top: auto;
 }
-.nav-item-label {
-  flex-grow: 1;
+
+.profile-logout-btn {
+  color: var(--pm-danger);
+  justify-content: flex-start;
+  /* Ensure left align */
+  padding-left: 16px;
+}
+
+.profile-logout-btn:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  /* Light red bg */
+  color: var(--pm-danger);
 }
 
 /* --- Toggle Switch --- */
 .toggle-switch {
-  width: 44px;
-  height: 24px;
-  background-color: #ccc;
-  border-radius: 12px;
+  width: 36px;
+  height: 20px;
+  background-color: var(--pm-border);
+  border-radius: 999px;
   position: relative;
-  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
+
+.toggle-switch.active {
+  background-color: var(--pm-primary);
+}
+
 .toggle-knob {
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 20px;
-  height: 20px;
-  background-color: white;
-  border-radius: 50%;
   transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-/* We can add 'active' logic later */
-/* .toggle-switch.active { background-color: var(--color-primary); } */
-/* .toggle-switch.active .toggle-knob { transform: translateX(20px); } */
 
-
-/* --- Footer --- */
-.profile-modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid #f0f0f0;
+.toggle-switch.active .toggle-knob {
+  transform: translateX(16px);
 }
-.footer-logout-btn {
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+
+/* Scrollbar styling for menu */
+.profile-modal-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.profile-modal-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.profile-modal-menu::-webkit-scrollbar-thumb {
+  background-color: var(--pm-border);
 }

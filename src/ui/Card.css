@@ -1,0 +1,6 @@
+.pm-card-ui {
+  background: var(--pm-surface-2);
+  border: 1px solid var(--pm-border);
+  border-radius: var(--pm-radius-md);
+  box-shadow: var(--pm-shadow-sm);
+}

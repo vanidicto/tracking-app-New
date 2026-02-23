@@ -127,7 +127,7 @@ function People() {
       const user = auth.currentUser;
 
       if (!user) {
-        
+
         alert("You must be logged in to add a bracelet.");
         setIsSubmitting(false);
         return;
@@ -188,7 +188,7 @@ function People() {
       setEmergencyNameInput('');
       setEmergencyContactInput('');
       setIsModalOpen(false);
-      
+
       // Reload to fetch the new list (since useBraceletUsers uses getDocs once)
       window.location.reload();
 
@@ -200,76 +200,123 @@ function People() {
     }
   };
 
-  if (loading) return <div className="loading"><LoadingSpinner/></div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">{error}</div>;
 
   return (
     <main className="app-main page-frame">
       <div className="search-container" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         <div style={{ position: 'relative', flex: 1 }}>
-          <input type="text" placeholder="Search Name" className="search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '100%' }}/>
+          <input type="text" placeholder="Search Name" className="search-input" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} style={{ width: '100%' }} />
           <div className="search-icon">
             <SearchIcon />
           </div>
         </div>
-        
+
         {/* Add Bracelet Button */}
-        <button onClick={() => setIsModalOpen(true)}style={{backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '50%', width: '40px',  height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center',cursor: 'pointer'}}>
+        <button onClick={() => setIsModalOpen(true)} style={{ backgroundColor: '#000', color: '#fff', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <Plus size={24} />
         </button>
       </div>
 
       {/* Add Bracelet Modal */}
       {isModalOpen && (
-        <div className="modal-backdrop" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal-content" style={{ background: 'white', padding: '20px', borderRadius: '12px', width: '90%', maxWidth: '350px', position: 'relative' }}>
-            <button onClick={() => setIsModalOpen(false)} style={{ position: 'absolute', top: '10px', right: '10px', background: 'none', border: 'none', cursor: 'pointer' }}><X size={24} /></button>
-            <h2 style={{ marginTop: 0, marginBottom: '15px' }}>Add New Bracelet</h2>
-            <form onSubmit={handleAddBracelet}>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Name</label>
-                <input type="text" value={newBraceletName} onChange={(e) => setNewBraceletName(e.target.value)} placeholder="e.g. Sister" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc', boxSizing: 'border-box' }} required />
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Email</label>
-                <input type="email" value={newBraceletEmail} onChange={(e) => setNewBraceletEmail(e.target.value)} placeholder="contact@example.com" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Contact Number</label>
-                <input type="tel" value={newContactNo} onChange={(e) => setNewContactNo(e.target.value)} placeholder="e.g. 09666045678" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ccc' }} />
-              </div>
-
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontWeight: 'bold' }}>Emergency Contacts</label>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                  <input value={emergencyNameInput} onChange={(e) => setEmergencyNameInput(e.target.value)} placeholder="Name" style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <input value={emergencyContactInput} onChange={(e) => setEmergencyContactInput(e.target.value)} placeholder="Contact No." style={{ flex: 1, padding: '8px', borderRadius: '6px', border: '1px solid #ccc' }} />
-                  <button type="button" onClick={() => {
-                    const name = emergencyNameInput.trim();
-                    const contact = emergencyContactInput.trim();
-                    if (!name || !contact) return;
-                    setEmergencyContacts((s) => [...s, { name, contactNo: contact }]);
-                    setEmergencyNameInput('');
-                    setEmergencyContactInput('');
-                  }} style={{ padding: '8px 10px', borderRadius: '6px', background: '#000', color: '#fff', border: 'none', cursor: 'pointer' }}>Add</button>
-                </div>
-                {emergencyContacts.length > 0 && (
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {emergencyContacts.map((ec, idx) => (
-                      <li key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-                        <div style={{ fontSize: '14px' }}>{ec.name} — {ec.contactNo}</div>
-                        <button type="button" onClick={() => setEmergencyContacts((s) => s.filter((_, i) => i !== idx))} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}><X size={16} /></button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-
-              <button type="submit" disabled={isSubmitting} style={{ width: '100%', padding: '12px', background: '#000', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
-                {isSubmitting ? 'Adding...' : 'Add Bracelet'}
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Add New Bracelet</h2>
+              <button onClick={() => setIsModalOpen(false)} className="modal-close">
+                <X size={24} />
               </button>
+            </div>
+
+            <form onSubmit={handleAddBracelet} className="modal-form">
+              <div className="modal-body">
+                <div className="form-group">
+                  <label className="form-label">Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={newBraceletName}
+                    onChange={(e) => setNewBraceletName(e.target.value)}
+                    placeholder="e.g. Sister"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-input"
+                    value={newBraceletEmail}
+                    onChange={(e) => setNewBraceletEmail(e.target.value)}
+                    placeholder="contact@example.com"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Contact Number</label>
+                  <input
+                    type="tel"
+                    className="form-input"
+                    value={newContactNo}
+                    onChange={(e) => setNewContactNo(e.target.value)}
+                    placeholder="e.g. 09666045678"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Emergency Contacts</label>
+                  <div className="emergency-row">
+                    <input
+                      className="form-input"
+                      value={emergencyNameInput}
+                      onChange={(e) => setEmergencyNameInput(e.target.value)}
+                      placeholder="Name"
+                    />
+                    <input
+                      className="form-input"
+                      value={emergencyContactInput}
+                      onChange={(e) => setEmergencyContactInput(e.target.value)}
+                      placeholder="Contact No."
+                    />
+                    <button type="button" className="btn-add-contact" onClick={() => {
+                      const name = emergencyNameInput.trim();
+                      const contact = emergencyContactInput.trim();
+                      if (!name || !contact) return;
+                      setEmergencyContacts((s) => [...s, { name, contactNo: contact }]);
+                      setEmergencyNameInput('');
+                      setEmergencyContactInput('');
+                    }}>
+                      Add
+                    </button>
+                  </div>
+
+                  {emergencyContacts.length > 0 && (
+                    <ul className="contact-list">
+                      {emergencyContacts.map((ec, idx) => (
+                        <li key={idx} className="contact-item">
+                          <span>{ec.name} — {ec.contactNo}</span>
+                          <button
+                            type="button"
+                            onClick={() => setEmergencyContacts((s) => s.filter((_, i) => i !== idx))}
+                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--pm-text-muted)' }}
+                          >
+                            <X size={16} />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="submit" className="btn-submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Adding...' : 'Add Bracelet'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -277,7 +324,7 @@ function People() {
 
       <ul className="people-list">
         {filteredUsers.map((person) => (
-          <Link key={person.id} to={`/userProfile/${person.id}`} state={{ personData: person }}>
+          <Link key={person.id} to={`/app/userProfile/${person.id}`} state={{ personData: person }}>
             <li
               className={`person-item ${person.sos ? 'sos' : ''}`}
             >
@@ -285,10 +332,10 @@ function People() {
               <img src={person.avatar} alt={person.name} className="avatar" />
               <div className="person-details">
                 <p className="person-name">{person.name}</p>
-                
+
               </div>
               <div className="person-status">
-                <p className="percentage" style={person.online?{color:'#34A853'}:{color: "#000000"}}>{person.battery}%</p>
+                <p className="percentage" style={person.online ? { color: '#34A853' } : { color: "#000000" }}>{person.battery}%</p>
                 <div className="safety-status-wrapper">
                   <p className="bracelet-status">
                     Bracelet: {person.online && person.braceletOn ? 'ON' : 'OFF'}
