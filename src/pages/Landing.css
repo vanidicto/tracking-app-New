@@ -365,12 +365,11 @@
   font-family: monospace;
   font-size: 16px;
 
-  /* Glowing styling */
-  background: #15191f;
-  /* match --pm-bg */
+  /* Red Stroke (Outline) styling */
+  background: transparent;
   border: 2px solid var(--pm-primary);
   color: var(--pm-primary);
-  box-shadow: 0 0 15px rgba(231, 76, 60, 0.4);
+  box-shadow: none;
   position: relative;
   z-index: 2;
   /* Higher than card base */
