@@ -122,3 +122,26 @@
     display: none;
   }
 }
+
+@media (max-width: 400px) {
+  .pm-header-inner {
+    padding: 10px 0;
+    height: 60px;
+    /* Reduced from 72px */
+  }
+
+  .pm-brand-logo {
+    height: 32px;
+    /* Scaled down */
+  }
+
+  .pm-header-right {
+    gap: 8px;
+  }
+
+  .pm-btn {
+    padding: 0 10px;
+    height: 34px;
+    font-size: 12px;
+  }
+}

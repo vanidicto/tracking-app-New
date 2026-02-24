@@ -63,3 +63,18 @@
     display: none;
   }
 }
+
+@media (max-width: 400px) {
+  .app-navbar {
+    height: 75px;
+    /* Reduced from 90px */
+  }
+
+  .nav-items-container {
+    padding-top: 12px;
+  }
+
+  .nav-item {
+    font-size: 0.65rem;
+  }
+}

@@ -134,3 +134,17 @@
   font-weight: 800;
   font-size: 13px;
 }
+
+@media (max-width: 400px) {
+  .authMain {
+    padding: 20px 12px;
+  }
+
+  .authCard {
+    padding: 20px;
+  }
+
+  .authHeader h1 {
+    font-size: 20px;
+  }
+}
