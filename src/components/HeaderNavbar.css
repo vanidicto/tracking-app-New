@@ -1,16 +1,18 @@
 /* HeaderNavbar.css - Matches Landing.css Theme */
 .pm-header {
+  /* Force Light Theme colors */
+  --header-bg: rgba(255, 255, 255, 0.85);
+  --header-border: rgba(0, 0, 0, 0.05);
+
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  /* Light Theme Background: Transparent or slightly froasted white */
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--header-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  /* Subtle dark border */
+  border-bottom: 1px solid var(--header-border);
   transition: all 0.3s ease;
 }
 
@@ -61,8 +63,8 @@
 }
 
 .pm-navlink {
-  color: #4b5563;
-  /* Muted Dark Text */
+  color: #4b5563 !important;
+  /* Force light theme text */
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
@@ -70,8 +72,7 @@
 }
 
 .pm-navlink:hover {
-  color: #111;
-  /* Dark Black on hover */
+  color: #111 !important;
 }
 
 .pm-btn {
@@ -90,14 +91,14 @@
 
 /* Ghost Button (Log in) - Light style */
 .pm-btn-ghost {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  color: #1f2937;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: #1f2937 !important;
 }
 
 .pm-btn-ghost:hover {
-  background: rgba(0, 0, 0, 0.08);
-  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Primary Button (Sign up) - Neon style */

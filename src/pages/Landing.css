@@ -1,4 +1,14 @@
 .landing {
+  /* Force Light Theme */
+  --pm-bg: #FFFFFF;
+  --pm-surface: #F9F9F9;
+  --pm-surface-2: #FFFFFF;
+  --pm-text: #222222;
+  --pm-text-muted: #777777;
+  --pm-border: rgba(34, 34, 34, 0.12);
+  --pm-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --pm-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.12);
+
   min-height: 100vh;
   /* Power Light Background: Deep blue-black with a top-center glow */
   background:
