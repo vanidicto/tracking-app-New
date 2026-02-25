@@ -207,6 +207,75 @@ html.pm-dark .modal-header-logo {
   transform: translateX(16px);
 }
 
+/* --- DESKTOP DROPDOWN TRANSFORMATION --- */
+@media (min-width: 768px) {
+  .profile-modal-backdrop {
+    background-color: transparent;
+    /* Click-anywhere-to-close without darkening whole screen */
+  }
+
+  .profile-modal-content {
+    top: 70px;
+    /* Below TopBar (60px) + some spacing */
+    right: 20px;
+    left: auto;
+    /* Remove left positioning */
+    width: 300px;
+    height: auto;
+    max-height: calc(100vh - 100px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--pm-border);
+
+    /* Animation: Fade & Slide from Top */
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  .profile-modal-content.open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* Simplify for dropdown feel */
+  .profile-modal-header {
+    display: none;
+    /* No need for logo/close btn in dropdown */
+  }
+
+  .profile-modal-user {
+    padding: 24px 20px 20px 20px;
+  }
+
+  .profile-modal-avatar {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 12px;
+  }
+
+  .profile-modal-name {
+    font-size: 1.1rem;
+  }
+
+  .profile-modal-menu {
+    padding: 10px;
+    gap: 4px;
+  }
+
+  .profile-menu-item {
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .profile-modal-footer {
+    padding: 10px;
+  }
+
+  .profile-logout-btn {
+    padding-left: 14px;
+  }
+}
+
 /* Scrollbar styling for menu */
 .profile-modal-menu::-webkit-scrollbar {
   width: 6px;

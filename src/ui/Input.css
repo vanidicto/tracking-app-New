@@ -1,4 +1,7 @@
-.pm-field { display: grid; gap: 8px; }
+.pm-field {
+  display: grid;
+  gap: 8px;
+}
 
 .pm-label {
   font-size: 13px;
@@ -34,17 +37,36 @@
   outline: none;
   background: transparent;
   color: var(--pm-text);
-  padding: 12px 2px;
+  padding: 14px 4px;
   font-size: 14px;
 }
 
-.pm-input::placeholder { color: rgba(119,119,119,0.9); }
+.pm-input::placeholder {
+  color: rgba(119, 119, 119, 0.7);
+}
 
-.pm-rightSlot { display: inline-flex; align-items: center; }
+.pm-leftSlot,
+.pm-rightSlot {
+  display: inline-flex;
+  align-items: center;
+  color: var(--pm-text-muted);
+  font-size: 18px;
+}
+
+.pm-leftSlot {
+  padding-left: 4px;
+}
+
+.pm-rightSlot {
+  padding-right: 4px;
+}
 
 .pm-helper {
   font-size: 12px;
   color: var(--pm-text-muted);
 }
 
-.pm-helper--error { color: var(--pm-danger); font-weight: 600; }
+.pm-helper--error {
+  color: var(--pm-danger);
+  font-weight: 600;
+}

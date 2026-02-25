@@ -4,6 +4,7 @@ export default function Input({
   label,
   helperText,
   error,
+  leftSlot,
   rightSlot,
   className = '',
   ...props
@@ -13,6 +14,7 @@ export default function Input({
       {label && <label className="pm-label">{label}</label>}
 
       <div className={`pm-inputWrap ${error ? 'pm-inputWrap--error' : ''}`.trim()}>
+        {leftSlot ? <div className="pm-leftSlot">{leftSlot}</div> : null}
         <input className="pm-input" {...props} />
         {rightSlot ? <div className="pm-rightSlot">{rightSlot}</div> : null}
       </div>

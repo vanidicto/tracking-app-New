@@ -1,26 +1,34 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebaseConfig";
-import { useNavigate, Link } from "react-router-dom";
+import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 
-import HeaderNavbar from "../components/HeaderNavbar";
-import Button from "../ui/Button";
+import logo from "../assets/logo.png";
 import Input from "../ui/Input";
 
 import "../styles/auth.css";
 
 export default function Signup() {
+  const navigate = useNavigate();
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const navigate = useNavigate();
-
   const handleSignup = async (e) => {
     e.preventDefault();
     setFormError("");
+
+    if (password !== confirmPassword) {
+      setFormError("Passwords do not match.");
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -34,63 +42,100 @@ export default function Signup() {
   };
 
   return (
-    <>
-      <HeaderNavbar />
-
-      <div className="authPage">
-        <main className="authMain">
-          <div className="authCard">
-            <div className="authHeader">
-              <h1>Create an account</h1>
-              <p>Start using PingMe SafetyApp</p>
+    <div className="authPage">
+      <main className="authMain">
+        <div className="authCard">
+          <div className="authLeft">
+            <div className="authLogoContainer">
+              <Link to="/">
+                <img src={logo} alt="PingMe Logo" className="authLogo" />
+              </Link>
             </div>
 
-            <form onSubmit={handleSignup} className="authForm">
+            <div className="authHeader">
+              <h1>Join PingMe's trusted Network</h1>
+              <p>Sign up to request help when it's needed the most.</p>
+            </div>
+          </div>
+
+          <div className="authRight">
+            <form className="authForm" onSubmit={handleSignup}>
+              <Input
+                label="Full Name"
+                type="text"
+                placeholder="Enter full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                leftSlot={<User size={18} />}
+              />
+
               <Input
                 label="Email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+                leftSlot={<Mail size={18} />}
               />
 
               <Input
                 label="Password"
                 type={showPw ? "text" : "password"}
-                placeholder="Minimum 6 characters"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
                 required
+                leftSlot={<Lock size={18} />}
                 rightSlot={
                   <button
                     type="button"
-                    className="authLink"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex' }}
                     onClick={() => setShowPw((v) => !v)}
                   >
-                    {showPw ? "Hide" : "Show"}
+                    {showPw ? <EyeOff size={18} color="#888" /> : <Eye size={18} color="#888" />}
                   </button>
                 }
               />
 
-              {formError ? <div className="authError">{formError}</div> : null}
+              <Input
+                label="Confirm Password"
+                type={showPw ? "text" : "password"}
+                placeholder="Enter password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                autoComplete="new-password"
+                required
+                leftSlot={<Lock size={18} />}
+                rightSlot={
+                  <button
+                    type="button"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex' }}
+                    onClick={() => setShowPw((v) => !v)}
+                  >
+                    {showPw ? <EyeOff size={18} color="#888" /> : <Eye size={18} color="#888" />}
+                  </button>
+                }
+              />
 
-              <Button variant="primary" size="lg" disabled={submitting}>
-                {submitting ? "Creating account..." : "Sign up"}
-              </Button>
+              {formError ? <div className="authError" style={{ textAlign: 'center', color: '#fff', background: 'rgba(231, 76, 60, 0.8)', padding: '8px', borderRadius: '8px', fontSize: '12px' }}>{formError}</div> : null}
 
-              <div className="authRow" style={{ justifyContent: "center" }}>
-                <span className="authFooterTextInline">
-                  Already have an account?{" "}
-                  <Link to="/login" className="authLink">Log in</Link>
-                </span>
+              <div className="authBtnContainer">
+                <button className="authBtnMaroon" type="submit" disabled={submitting}>
+                  {submitting ? "Signing up..." : "Sign up"}
+                </button>
+              </div>
+
+              <div className="authFooter">
+                Already have an account? <Link to="/login">Login</Link>
               </div>
             </form>
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </main>
+    </div>
   );
 }

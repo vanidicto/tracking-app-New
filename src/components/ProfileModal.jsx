@@ -38,9 +38,10 @@ export default function ProfileModal({ isOpen, onClose }) {
     localStorage.setItem(DARK_KEY, darkMode ? "1" : "0");
   }, [darkMode]);
 
-  // Prevent body scroll when modal open
+  // Prevent body scroll when modal open (mobile only)
   React.useEffect(() => {
-    if (isOpen) document.body.classList.add("modal-open");
+    const isMobile = window.innerWidth < 768;
+    if (isOpen && isMobile) document.body.classList.add("modal-open");
     else document.body.classList.remove("modal-open");
 
     return () => document.body.classList.remove("modal-open");

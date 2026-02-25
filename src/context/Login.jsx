@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../config/firebaseConfig";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
-import HeaderNavbar from "../components/HeaderNavbar";
-import Button from "../ui/Button";
+import logo from "../assets/logo.png";
 import Input from "../ui/Input";
 
 import "../styles/auth.css";
@@ -34,63 +34,74 @@ export default function Login() {
   };
 
   return (
-    <>
-      <HeaderNavbar />
-
-      <div className="authPage">
-        <main className="authMain">
-          <div className="authCard">
-            <div className="authHeader">
-              <h1>Welcome back</h1>
-              <p>Log in to continue monitoring and responding to alerts.</p>
+    <div className="authPage">
+      <main className="authMain">
+        <div className="authCard">
+          <div className="authLeft">
+            <div className="authLogoContainer">
+              <Link to="/">
+                <img src={logo} alt="PingMe Logo" className="authLogo" />
+              </Link>
             </div>
 
+            <div className="authHeader">
+              <h1>Welcome Back to PingMe!</h1>
+              <p>Log in to stay connected with your community.</p>
+            </div>
+          </div>
+
+          <div className="authRight">
             <form className="authForm" onSubmit={onSubmit}>
               <Input
                 label="Email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 required
+                leftSlot={<Mail size={18} />}
               />
 
               <Input
                 label="Password"
                 type={showPw ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 required
+                leftSlot={<Lock size={18} />}
                 rightSlot={
                   <button
                     type="button"
-                    className="authLink"
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, display: 'flex' }}
                     onClick={() => setShowPw((v) => !v)}
                   >
-                    {showPw ? "Hide" : "Show"}
+                    {showPw ? <EyeOff size={18} color="#888" /> : <Eye size={18} color="#888" />}
                   </button>
                 }
               />
 
-              {formError ? <div className="authError">{formError}</div> : null}
+              <div className="forgotPwdLink">
+                <Link to="/forgot-password">Forgot Password?</Link>
+              </div>
 
-              <Button variant="primary" size="lg" disabled={submitting}>
-                {submitting ? "Logging in..." : "Log in"}
-              </Button>
+              {formError ? <div className="authError" style={{ textAlign: 'center', color: '#fff', background: 'rgba(231, 76, 60, 0.8)', padding: '8px', borderRadius: '8px', fontSize: '12px' }}>{formError}</div> : null}
 
-              <div className="authRow">
-                <span className="authFooterTextInline">
-                  Don’t have an account?{" "}
-                  <Link to="/signup" className="authLink">Sign up</Link>
-                </span>
+              <div className="authBtnContainer">
+                <button className="authBtnMaroon" type="submit" disabled={submitting}>
+                  {submitting ? "Logging in..." : "Login"}
+                </button>
+              </div>
+
+              <div className="authFooter">
+                Don't have an account? <Link to="/signup">Sign Up</Link>
               </div>
             </form>
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </main>
+    </div>
   );
 }
