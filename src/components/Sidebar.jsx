@@ -1,9 +1,8 @@
 // src/components/Sidebar.jsx
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Home, Users, Map, FileText, LogOut } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Home, Users, Map, FileText } from 'lucide-react';
 import './Sidebar.css';
 import logo from '../assets/logo.png';
-import { useAuth } from '../context/AuthContext';
 
 /**
  * SidebarLink with FULL manual active-state control
@@ -39,18 +38,6 @@ const SidebarLink = ({ to, icon: Icon, label }) => {
 };
 
 function Sidebar() {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Failed to log out', error);
-    }
-  };
-
   return (
     <nav className="app-sidebar">
       <div className="sidebar-header">
@@ -64,13 +51,6 @@ function Sidebar() {
         <SidebarLink to="/app/people" icon={Users} label="People" />
         <SidebarLink to="/app/places" icon={Map} label="Places" />
         <SidebarLink to="/app/report" icon={FileText} label="Report" />
-      </div>
-
-      <div className="sidebar-footer">
-        <button className="sidebar-link logout-button" onClick={handleLogout}>
-          <LogOut size={20} />
-          <span>Log Out</span>
-        </button>
       </div>
     </nav>
   );
