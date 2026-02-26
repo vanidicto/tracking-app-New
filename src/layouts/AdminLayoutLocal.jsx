@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Cpu, MapPinned, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Cpu, MessageSquare, LogOut } from "lucide-react";
 import "../styles/admin.css";
 import "./AdminLayout.css";
 import logo from "../assets/logo.png"; // Import Logo
@@ -28,7 +28,7 @@ export default function AdminLayoutLocal() {
           <AdminLink to="/admin" icon={LayoutDashboard} label="Dashboard" end />
           <AdminLink to="/admin/users" icon={Users} label="User Management" />
           <AdminLink to="/admin/devices" icon={Cpu} label="Device Management" />
-          <AdminLink to="/admin/monitor" icon={MapPinned} label="Global Monitoring" />
+          <AdminLink to="/admin/support" icon={MessageSquare} label="Support Help Desk" />
         </nav>
 
         <div className="admin-sidebar-footer">

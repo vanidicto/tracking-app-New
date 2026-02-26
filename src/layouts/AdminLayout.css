@@ -6,36 +6,33 @@
   grid-template-columns: 260px 1fr;
 }
 
-/* Light Sidebar Theme (User Preference) */
+/* Light Sidebar Theme (Lighter Red) */
 .admin-sidebar {
-  border-right: 1px solid var(--pm-border);
-  background: var(--pm-surface);
-  /* White */
+  border-right: 1px solid rgba(164, 38, 44, 0.1);
+  background: var(--pm-sidebar-bg, #fff0f2);
+  /* Fallback to light red if var not present */
   display: flex;
   flex-direction: column;
   padding: 16px;
   color: var(--pm-text-muted);
-  /* Darker muted text */
-  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03);
+  box-shadow: 2px 0 12px rgba(164, 38, 44, 0.05);
 }
 
 .admin-brand {
   display: flex;
   gap: 12px;
   align-items: center;
-  padding: 5 2px;
-  height: 48px;
-  border-bottom: 1px solid var(--pm-border);
-  margin-bottom: 23px;
+  padding: 8px 12px;
+  height: 60px;
+  border-bottom: 1px solid rgba(164, 38, 44, 0.1);
+  margin-bottom: 24px;
   box-sizing: border-box;
 }
 
 .admin-brand-logo-img {
-  height: 55px;
-  /* Slightly larger */
+  height: 44px;
   width: auto;
   object-fit: contain;
-  /* Normal colors for light background */
   filter: none;
   opacity: 1;
 }
@@ -43,18 +40,19 @@
 .admin-brand-title {
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--pm-text);
-  /* Dark Text */
+  color: #8c1c21;
+  /* Dark red for better contrast */
   font-size: 16px;
 }
 
 .admin-brand-sub {
   font-size: 11px;
-  color: var(--pm-text-muted);
+  color: #a4262c;
+  /* Theme primary for subtitle */
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 12px;
-  margin-right: 15px;
+  margin-top: 2px;
+  opacity: 0.8;
 }
 
 .admin-nav {
@@ -70,31 +68,34 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 8px;
-  color: var(--pm-text-muted);
+  color: #4b5563;
+  /* Dark slate for base contrast */
   font-weight: 600;
-  /* Bolder for visibility */
   border: 1px solid transparent;
   transition: all 0.2s ease;
   font-size: 14px;
 }
 
 .admin-link:hover {
-  background: var(--pm-bg);
-  /* Slight gray on hover */
-  color: var(--pm-text);
+  background: rgba(164, 38, 44, 0.05);
+  /* Slight red hover */
+  color: #8c1c21;
 }
 
 .admin-link.active {
-  background: rgba(164, 38, 44, 0.08);
-  /* Brand tint */
-  color: var(--pm-primary);
+  background: white;
+  /* White pill on light red */
+  color: #a4262c;
+  /* Solid primary */
+  border: 1px solid rgba(164, 38, 44, 0.1);
   font-weight: 700;
-  box-shadow: none;
+  box-shadow: 0 1px 3px rgba(164, 38, 44, 0.08);
+  /* Small red shadow */
 }
 
 .admin-sidebar-footer {
   padding: 16px 0 4px;
-  border-top: 1px solid var(--pm-border);
+  border-top: 1px solid rgba(164, 38, 44, 0.1);
   margin-top: auto;
 }
 
@@ -102,12 +103,13 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 12px;
   padding: 10px 12px;
   border-radius: 8px;
   border: 1px solid transparent;
   background: transparent;
-  color: var(--pm-text-muted);
+  color: #4b5563;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
@@ -115,8 +117,9 @@
 }
 
 .admin-logout:hover {
-  background: #fef2f2;
+  background: white;
   color: var(--pm-danger);
+  border: 1px solid rgba(231, 76, 60, 0.2);
 }
 
 .admin-main {

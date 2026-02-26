@@ -25,11 +25,15 @@ export default function AdminUsers() {
     setRows(updated);
   };
 
+  const onPasswordReset = (email) => {
+    alert(`Password reset link sent to: ${email}`);
+  };
+
   return (
     <div className="admin-page">
       <div className="admin-page-header">
         <h2>User Management</h2>
-        <p className="muted">Ban/Unban stored in LocalStorage</p>
+        <p className="muted">Manage accounts while preserving physical location privacy.</p>
       </div>
 
       <div className="admin-toolbar">
@@ -46,9 +50,10 @@ export default function AdminUsers() {
           <thead>
             <tr>
               <th>User</th>
-              <th>Role</th>
+              <th>Registration Date</th>
+              <th>Paired Status</th>
               <th>Status</th>
-              <th style={{ textAlign: "right" }}>Action</th>
+              <th style={{ textAlign: "right", minWidth: "180px" }}>Actions</th>
             </tr>
           </thead>
 
@@ -57,30 +62,42 @@ export default function AdminUsers() {
               <tr key={u.id}>
                 <td>
                   <div className="u-cell">
-                    <div className="u-main">{u.email}</div>
-                    <div className="u-sub">{u.name}</div>
+                    <div className="u-main">{u.name}</div>
+                    <div className="u-sub">{u.email}</div>
                   </div>
                 </td>
 
                 <td>
-                  <span className="u-role-text">
-                    {u.role}
+                  <span className="u-role-text">{u.regDate || "N/A"}</span>
+                </td>
+
+                <td>
+                  <span className={`u-status-text ${u.paired ? "active" : "neutral"}`}>
+                    {u.paired ? "Yes" : "No"}
                   </span>
                 </td>
 
                 <td>
                   <span className={`u-status-text ${u.banned ? "banned" : "active"}`}>
-                    {u.banned ? "banned" : "active"}
+                    {u.banned ? "Suspended" : "Active"}
                   </span>
                 </td>
 
                 <td style={{ textAlign: "right" }}>
                   <button
+                    className="admin-btn admin-btn-ghost"
+                    style={{ marginRight: "0.5rem", fontSize: "0.80rem", padding: "0.25rem 0.5rem" }}
+                    onClick={() => onPasswordReset(u.email)}
+                    type="button"
+                  >
+                    Reset PWD
+                  </button>
+                  <button
                     className={`admin-action ${u.banned ? "ok" : "danger"}`}
                     onClick={() => onToggleBan(u.id)}
                     type="button"
                   >
-                    {u.banned ? "Unban" : "Ban"}
+                    {u.banned ? "Unsuspend" : "Suspend"}
                   </button>
                 </td>
               </tr>
@@ -88,7 +105,7 @@ export default function AdminUsers() {
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={4} className="empty-row">No users found.</td>
+                <td colSpan={5} className="empty-row">No users found.</td>
               </tr>
             )}
           </tbody>

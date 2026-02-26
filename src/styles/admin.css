@@ -7,6 +7,9 @@
   /* White cards/containers */
   --pm-surface-2: #ffffff;
 
+  --pm-sidebar-bg: #fff0f2;
+  /* Very soft light red matching the primary color faintly */
+
   --pm-text: #1a1c23;
   /* Deep slate for high contrast */
   --pm-text-muted: #64748b;

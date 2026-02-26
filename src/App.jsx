@@ -30,7 +30,7 @@ import AdminLayoutLocal from "./layouts/AdminLayoutLocal";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminDevices from "./pages/admin/AdminDevices";
-import AdminMonitor from "./pages/admin/AdminMonitor";
+import AdminSupport from "./pages/admin/AdminSupport";
 
 function App() {
   return (
@@ -51,7 +51,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="devices" element={<AdminDevices />} />
-              <Route path="monitor" element={<AdminMonitor />} />
+              <Route path="support" element={<AdminSupport />} />
             </Route>
           </Route>
 
