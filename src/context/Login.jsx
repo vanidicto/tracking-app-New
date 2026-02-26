@@ -25,7 +25,7 @@ export default function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/app");
+      navigate("/app", { replace: true });
     } catch (err) {
       setFormError(err?.message || "Login failed. Please try again.");
     } finally {

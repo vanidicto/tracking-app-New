@@ -33,7 +33,7 @@ export default function Signup() {
 
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/app");
+      navigate("/app", { replace: true });
     } catch (err) {
       setFormError(err?.message || "Signup failed. Please try again.");
     } finally {
