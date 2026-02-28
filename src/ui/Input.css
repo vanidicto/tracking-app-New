@@ -45,6 +45,16 @@
   color: rgba(119, 119, 119, 0.7);
 }
 
+/* Override default browser autofill styling */
+.pm-input:-webkit-autofill,
+.pm-input:-webkit-autofill:hover,
+.pm-input:-webkit-autofill:focus,
+.pm-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--pm-surface, #fff) inset !important;
+  -webkit-text-fill-color: var(--pm-text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .pm-leftSlot,
 .pm-rightSlot {
   display: inline-flex;

@@ -5,6 +5,7 @@ import { db } from '../config/firebaseConfig';
 import { useBraceletUsers } from '../hooks/useUsers';
 import { useAuth } from '../context/AuthContext';
 import ReportDetailModal from '../components/ReportDetailModal';
+import LoadingSpinner from '../components/LoadingSpinner'
 import './Report.css';
 
 const Report = () => {
@@ -77,7 +78,7 @@ const Report = () => {
   };
 
   if(!reports.length) return (
-    <div className='empty'>No reports</div>
+    <LoadingSpinner />
   )
 
   return (
