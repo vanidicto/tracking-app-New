@@ -6,24 +6,21 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "./Places.css";
 import { useState, useRef, useEffect } from "react";
-import L from "leaflet";
 import * as mapHelpers from "../../utils/mapHelpers";
 import { useBraceletUsers } from "../../hooks/useUsers";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../config/firebaseConfig";
-import { collection, addDoc, serverTimestamp, query, where, getDocs, limit, onSnapshot, deleteDoc, updateDoc, doc, setDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { Layers, X } from "lucide-react";
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+// New decoupled modules
+import * as geofenceService from "../../services/geofenceService";
+import * as geofenceUtils from "../../utils/geofenceUtils";
+import * as notificationService from "../../services/notificationService";
+
+// Initialize Leaflet icons (Boilerplate moved to mapHelpers)
+mapHelpers.setupLeafletIcons();
 
 // Notifications are saved to Firestore `notifications` collection
 
@@ -88,6 +85,8 @@ const Places = () => {
 
   // State for the name of a new zone being created
   const [zoneName, setZoneName] = useState("");
+  // Local loading state while saving to Firestore
+  const [isSaving, setIsSaving] = useState(false);
   // Leaflet ID of a temporary layer being drawn but not yet saved
   const [pendingLayerId, setPendingLayerId] = useState(null);
 
@@ -137,114 +136,26 @@ const Places = () => {
 
   /**
    * Effect: Geofence Monitoring Logic.
-   * This effect runs whenever bracelet users or geofences update.
-   * It calculates the distance between each user and each geofence.
    */
   useEffect(() => {
-    const currentAlerts = [];
-    const newlyDetected = [];
-
-
-    braceletUsers.forEach((user) => {
-      // Ensure user has a valid position array [lat, lng]
-      if (!Array.isArray(user.position) || user.position.length !== 2) return;
-
-      const userLatLng = L.latLng(user.position[0], user.position[1]);
-      let insideZoneId = null;
-      let insideZoneName = null;
-
-      // Iterate through all geofences to check if user is inside
-      for (const zone of geofences) {
-        if (!zone.latlngs) continue;
-        const circleCenter = L.latLng(zone.latlngs.lat, zone.latlngs.lng);
-        const distance = userLatLng.distanceTo(circleCenter);
-
-        // Small buffer for visual overlap
-        const avatarVisualRadius = 10;
-
-        // If distance is less than or equal to radius + buffer, user is "inside"
-        if (distance <= zone.radius + avatarVisualRadius) {
-          insideZoneId = zone.id;
-          insideZoneName = zone.name;
-
-          const alertMessage = `${user.name} entered ${zone.name}`;
-          currentAlerts.push(alertMessage);
-          break; // Stop checking other zones for this user once inside one
-        }
-      }
-
-      /* --- Logic for State Transition (Entry/Exit) --- */
-      if (insideZoneId) {
-        // User is currently inside a zone
-        if (user.currentGeofenceId !== insideZoneId) {
-          // They just entered this zone (or moved from another)
-          const alertMessage = `${user.name} entered ${insideZoneName}`;
-          const alertKey = `${user.id}-${insideZoneId}`;
-
-          // Local debounce check to prevent multi-writing before state syncs
-          if (!alertedUsersRef.current.has(alertKey)) {
-            alertedUsersRef.current.add(alertKey);
-            newlyDetected.push({ user, zone: { id: insideZoneId, name: insideZoneName }, message: alertMessage });
-          }
-        }
-      } else {
-        // User is NOT inside any zone
-        if (user.currentGeofenceId && user.deviceStatusId) {
-          // Transition: They just left their previous zone -> Clear status in Firestore
-          updateDoc(doc(db, 'deviceStatus', user.deviceStatusId), { currentGeofenceId: null })
-            .catch(e => console.error("Error clearing geofence status", e));
-        }
-      }
-    });
-
-    /**
-     * Async block to save newly detected "Entries" as notifications in Firestore.
-     */
-    if (newlyDetected.length > 0) {
-      (async () => {
-        try {
-          if (!currentUser) return;
-
-          for (const det of newlyDetected) {
-            const { user, zone, message } = det;
-
-            // Optional: Prevent exact duplicate notifications from flooding
-            const dupQ = query(
-              collection(db, 'notifications'),
-              where('appUserId', '==', currentUser.uid),
-              where('braceletUserId', '==', user.id),
-              where('message', '==', message),
-              limit(1)
-            );
-            const dupSnap = await getDocs(dupQ);
-            if (!dupSnap.empty) {
-              continue; // Skip if a notification like this already exists
-            }
-
-            // Create a notification doc for the app user to see
-            await addDoc(collection(db, 'notifications'), {
-              appUserId: currentUser.uid,
-              braceletUserId: user.id,
-              title: 'Geofence Alert',
-              message: message,
-              read: false,
-              type: 'Geofence',
-              time: serverTimestamp(),
-              icon: user.avatar || null,
-            });
-
-            // Update the user's status to reflect their current zone
-            if (user.deviceStatusId) {
-              await updateDoc(doc(db, 'deviceStatus', user.deviceStatusId), { currentGeofenceId: zone.id });
-            }
-          }
-        } catch (err) {
-          console.error('Failed saving geofence notifications:', err);
-        }
-      })();
-    }
+    const { currentAlerts, newlyDetected, usersToUpdateOffline } = geofenceUtils.checkGeofenceTransitions(
+      braceletUsers,
+      geofences,
+      alertedUsersRef.current
+    );
 
     setActiveAlerts(currentAlerts);
+
+    // Update statuses for users who left their zones
+    usersToUpdateOffline.forEach(status => {
+      updateDoc(doc(db, 'deviceStatus', status.id), { currentGeofenceId: null })
+        .catch(e => console.error("Error clearing geofence status", e));
+    });
+
+    // Save notifications for entries
+    if (newlyDetected.length > 0) {
+      newlyDetected.forEach(det => notificationService.saveGeofenceNotification(currentUser, det));
+    }
   }, [braceletUsers, geofences, currentUser]);
 
   /**
@@ -257,6 +168,8 @@ const Places = () => {
         animate: true,
         duration: 1.5,
       });
+      // Close the sidebar immediately after navigating
+      setIsMonitorOpen(false);
     }
   };
 
@@ -278,23 +191,13 @@ const Places = () => {
 
   /**
    * Callback for when existing layers are edited on the map via the UI.
-   * Syncs changes (lat/lng/radius) back to Firestore.
-   * @param {Object} e Leaflet draw event.
    */
-  const _onEdited = async (e) => {
+  const _onEdited = (e) => {
     e.layers.eachLayer(async (layer) => {
       const id = layer.options.id;
       if (!id) return;
-
-      const newLatLng = layer.getLatLng();
-      const newRadius = layer.getRadius();
-
       try {
-        const zoneRef = doc(db, "geofences", id);
-        await updateDoc(zoneRef, {
-          coordinates: { lat: newLatLng.lat, lng: newLatLng.lng },
-          radius: newRadius
-        });
+        await geofenceService.updateGeofence(id, layer.getLatLng(), layer.getRadius());
       } catch (err) {
         console.error("Error updating geofence:", err);
       }
@@ -303,52 +206,38 @@ const Places = () => {
 
   /**
    * Callback for when layers are deleted from the map via the UI.
-   * Removes corresponding documents from Firestore.
-   * @param {Object} e Leaflet draw event.
    */
-  const _onDeleted = async (e) => {
+  const _onDeleted = (e) => {
     e.layers.eachLayer(async (layer) => {
-      const id = layer.options.id || layer._leaflet_id;
-      // Only delete if it's a saved zone (using its document ID)
-      if (typeof id === 'string') {
-        try {
-          await deleteDoc(doc(db, "geofences", id));
-        } catch (err) {
-          console.error("Error deleting geofence:", err);
-        }
+      try {
+        await geofenceService.deleteGeofence(layer.options.id || layer._leaflet_id);
+      } catch (err) {
+        console.error("Error deleting geofence:", err);
       }
     });
   };
 
   /**
-   * Saves the newly drawn zone to the database with the name entered in the form.
+   * Saves the newly drawn zone to the database.
    */
   const handleSaveZone = async () => {
     if (!zoneName || !pendingLayerRef.current || !currentUser) return;
+
+    setIsSaving(true);
     const layer = pendingLayerRef.current;
-    const latLng = layer.getLatLng();
-    const radius = layer.getRadius();
 
     try {
-      const newDocRef = doc(collection(db, "geofences"));
-      await setDoc(newDocRef, {
-        appUserName: currentUser.displayName,
-        appUserId: currentUser.uid,
-        coordinates: { lat: latLng.lat, lng: latLng.lng },
-        id: newDocRef.id,
-        name: zoneName,
-        radius: radius,
-        type: "circle"
-      });
-
-      layer.remove(); // Remove the temporary "drawn" layer from Leaflet
+      await geofenceService.saveGeofence(currentUser, zoneName, layer.getLatLng(), layer.getRadius());
+      layer.remove();
       setPendingLayerId(null);
       setZoneName("");
       pendingLayerRef.current = null;
-      setIsMonitorOpen(false); // Close the monitor after saving
+      setIsMonitorOpen(false);
     } catch (err) {
       console.error("Error saving geofence:", err);
       alert("Failed to save zone.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -425,10 +314,10 @@ const Places = () => {
                   placeholder="e.g. Home / School"
                 />
                 <div className="form-buttons">
-                  <button onClick={handleSaveZone} className="btn-save">
-                    Save Zone
+                  <button onClick={handleSaveZone} className="btn-save" disabled={isSaving}>
+                    {isSaving ? "Saving..." : "Save Zone"}
                   </button>
-                  <button onClick={handleCancel} className="btn-cancel">
+                  <button onClick={handleCancel} className="btn-cancel" disabled={isSaving}>
                     Cancel
                   </button>
                 </div>

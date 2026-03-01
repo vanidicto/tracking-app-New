@@ -1,6 +1,19 @@
 // src/utils/mapHelpers.js
 import L from 'leaflet';
 
+/**
+ * Ensures Leaflet's default icons are correctly mapped to CDN URLs.
+ * This is necessary for some build systems where local image imports fail.
+ */
+export function setupLeafletIcons() {
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+  });
+}
+
 // Parse Firestore timestamps from SDK or REST format into JS Date (or null)
 export function parseFirestoreDate(value) {
   if (!value) return null;
