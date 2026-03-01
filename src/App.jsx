@@ -6,21 +6,18 @@ import Signup from "./context/Signup";
 import { ToastProvider } from "./context/ToastContext";
 import AppLayout from "./layouts/AppLayout";
 
-import People from "./pages/People";
-import UserProfile from "./pages/UserProfile";
-import Places from "./pages/Places";
-import Report from "./pages/Report";
-import Home from "./pages/Home";
-import Landing from "./pages/Landing";
+import People from "./pages/people/People";
+import UserProfile from "./pages/user-profile/UserProfile";
+import Places from "./pages/places/Places";
+import Report from "./pages/report/Report";
+import Home from "./pages/home-page/Home";
+import Landing from "./pages/landing-page/Landing";
 
 import "./App.css";
 
-import Account from "./pages/Account";
-import MyRoom from "./pages/MyRoom";
-import PrivacySecurity from "./pages/PrivacySecurity";
-import HelpArticles from "./pages/HelpArticles";
-import ChatSupport from "./pages/ChatSupport";
-import About from "./pages/About";
+import Account from "./pages/account/Account";
+import HelpArticles from "./pages/help-articles/HelpArticles";
+import About from "./pages/about/About";
 
 // Mock Admin (NO Firebase)
 import AdminLocalRoute from "./components/AdminLocalRoute";
@@ -66,10 +63,7 @@ function App() {
 
               {/* Profile modal routes */}
               <Route path="account" element={<Account />} />
-              <Route path="my-room" element={<MyRoom />} />
-              <Route path="privacy" element={<PrivacySecurity />} />
               <Route path="help" element={<HelpArticles />} />
-              <Route path="support" element={<ChatSupport />} />
               <Route path="about" element={<About />} />
             </Route>
           </Route>

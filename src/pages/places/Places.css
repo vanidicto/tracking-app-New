@@ -1,43 +1,25 @@
-/* src/pages/app/Places.css */
+/* src/pages/places/Places.css */
 
 .places-page-container {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 160px);
-  /* Adjust for top bar height (60px) + bottom navbar (100px) */
+  position: relative;
   width: 100%;
+  height: calc(100vh - 60px);
+  /* Adjust for fixed TopBar */
+  overflow: hidden;
   background-color: var(--pm-bg);
-  /* Ensure background is set */
 }
 
-.places-info-panel {
-  padding: 16px;
-  background-color: var(--pm-surface);
-  /* UPDATED from var(--color-bg-main) to match sidebar */
-  border-bottom: 1px solid var(--pm-border);
-  flex-shrink: 0;
-}
 
-.places-info-panel h2 {
-  margin: 0 0 8px 0;
-  font-size: 1.2rem;
-  color: var(--pm-text);
-  /* ADDED */
-}
-
-.places-info-panel p {
-  margin: 0 0 16px 0;
-  font-size: 0.9rem;
-  color: var(--pm-text-muted);
-  /* UPDATED */
-}
 
 .places-map-container {
-  flex-grow: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  background-color: var(--color-bg-secondary);
-  /* UPDATED */
+  height: 100%;
+  z-index: 10;
 }
+
 
 .leaflet-container {
   width: 100%;
@@ -45,177 +27,465 @@
   z-index: 1;
 }
 
-/* --- NEW STYLES --- */
+/* --- Floating Toggle Button --- */
+.monitor-toggle-btn {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
+  background: var(--pm-primary);
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(164, 38, 44, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-/* Save Zone Form */
+.monitor-toggle-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(164, 38, 44, 0.4);
+}
+
+.monitor-toggle-btn.active {
+  background: white;
+  color: var(--pm-primary);
+  transform: rotate(90deg);
+}
+
+.pulse-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: #ffc107;
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: pulse-ring 1.5s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+
+  100% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
+}
+
+/* --- Monitor Popup Overlay --- */
+.places-monitor-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 950;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fade-in 0.2s ease;
+}
+
+.places-info-panel {
+  width: 100%;
+  max-width: 450px;
+  max-height: 80vh;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: slide-up 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+  z-index: 951;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.monitor-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pm-text);
+}
+
+.close-btn {
+  background: #f5f5f5;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--pm-text-muted);
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #eee;
+  color: var(--pm-text);
+  transform: rotate(90deg);
+}
+
+.places-info-panel>p {
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  color: var(--pm-text-muted);
+}
+
+/* --- Alert Box Polish --- */
+.alert-box {
+  background: rgba(164, 38, 44, 0.1);
+  border: 1.5px solid var(--pm-primary);
+  padding: 14px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  animation: soft-pulse 2s infinite ease-in-out;
+}
+
+.alert-box strong {
+  color: var(--pm-primary);
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.alert-box p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--pm-text);
+  font-weight: 500;
+}
+
+@keyframes soft-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(164, 38, 44, 0.2);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(164, 38, 44, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(164, 38, 44, 0);
+  }
+}
+
+/* --- Save Zone Form Polish --- */
 .save-zone-form {
-  background-color: var(--pm-surface);
-  /* UPDATED */
-  border: 1px solid var(--pm-border);
-  /* UPDATED */
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
   padding: 16px;
-  margin-bottom: 16px;
+  border: 1px solid var(--pm-border);
 }
 
 .save-zone-form h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
   color: var(--pm-text);
-  /* ADDED */
-}
-
-.save-zone-form p {
-  font-size: 0.85rem;
-  margin-bottom: 12px;
 }
 
 .zone-name-input {
   width: 100%;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
   border: 1px solid var(--pm-border);
-  background: var(--pm-bg);
+  background: white;
   color: var(--pm-text);
-  font-size: 1rem;
-  box-sizing: border-box;
-  /* Important */
-  margin-bottom: 12px;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.zone-name-input:focus {
+  outline: none;
+  border-color: var(--pm-primary);
 }
 
 .form-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .btn-save,
 .btn-cancel {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   font-size: 0.9rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 6px;
+  font-weight: 700;
+  border-radius: 12px;
   cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
 }
 
 .btn-save {
   background-color: var(--pm-primary);
-  /* UPDATED */
   color: white;
+  border: none;
 }
 
 .btn-cancel {
-  background-color: var(--pm-border);
+  background-color: #f1f1f1;
   color: var(--pm-text);
+  border: none;
 }
 
-/* Geofence List */
+.btn-save:active,
+.btn-cancel:active {
+  transform: scale(0.98);
+}
+
+/* --- Scrollable Geofence List --- */
+.geofence-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  /* Important for flex child overflow */
+}
+
 .geofence-list h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--pm-text);
-  /* UPDATED */
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--pm-border);
-  padding-bottom: 8px;
-}
-
-.no-zones-text {
-  font-style: italic;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--pm-text-muted);
-  /* UPDATED */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
 }
 
 .zone-items-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 200px;
   overflow-y: auto;
+  padding-right: 4px;
+  /* Space for scrollbar */
 }
 
-.zone-item-h4 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0px;
-  border-bottom: 5px solid var(--pm-border);
-  margin: 0;
-  color: var(--pm-text);
+/* Custom Scrollbar */
+.zone-items-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.zone-items-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.zone-items-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
 .zone-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0px;
-  border-bottom: 1px solid var(--pm-border);
+  padding: 14px 16px;
+  background: white;
+  border-radius: 14px;
+  margin-bottom: 8px;
+  border: 1px solid var(--pm-border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zone-item:hover {
+  background: #fafafa;
+  border-color: var(--pm-primary);
+  transform: translateX(4px);
 }
 
 .zone-name {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--pm-text);
-  /* UPDATED */
+  font-size: 0.95rem;
 }
 
 .zone-type {
-  font-size: 0.8rem;
-  color: var(--pm-text-muted);
-  /* UPDATED */
-  background-color: var(--pm-surface);
-  /* UPDATED */
-  padding: 2px 6px;
-  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--pm-primary);
+  background: rgba(164, 38, 44, 0.08);
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
 }
 
-.alert-box {
-  background: #ffcccc;
-  border: 2px solid #A4262C;
-  padding: 10px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  animation: pulse 2s infinite;
-}
+/* --- Responsive Mobile Layout --- */
+@media (max-width: 767px) {
+  .monitor-toggle-btn {
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
+    /* Above Bottom Navbar */
+    top: 10px;
+    left: 15px;
 
-  50% {
-    transform: scale(1.02);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* --- END NEW STYLES --- */
-
-
-@media (min-width: 768px) {
-  .places-page-container {
-    flex-direction: row;
-    height: calc(100vh - 60px);
   }
 
   .places-info-panel {
-    width: 350px;
-    /* Increased width for form */
-    height: 100%;
-    border-bottom: none;
-    border-right: 1px solid var(--pm-border);
-    /* UPDATED */
-    overflow-y: auto;
+    padding: 24px;
+    border-radius: 24px;
+    max-height: 70vh;
+    width: 90vw;
+    margin-bottom: 20px;
   }
 
-  .places-map-container {
-    height: 100%;
+  .monitor-header h2 {
+    font-size: 1.3rem;
   }
+}
 
-  .zone-items-list {
-    max-height: 40vh;
-    /* Give more space on desktop */
+@media (min-width: 768px) {
+  .places-info-panel {
+    width: 450px;
   }
+}
+
+/* --- Fix Leaflet Controls Visibility Behind TopBar --- */
+.places-map-container .leaflet-top.leaflet-right {
+
+  /* Aligns with the toggle button height (60px header + 20px) */
+  right: 5px !important;
+  z-index: 1000 !important;
+}
+
+/* --- Customized Leaflet Draw Toolbar (Matching Toggle Button Vibe) --- */
+.leaflet-draw-toolbar {
+  border: none !important;
+  margin-top: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+
+}
+
+
+.leaflet-draw-toolbar a {
+  background-color: var(--pm-primary) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 20px !important;
+  /* Match toggle button radius */
+  width: 50px !important;
+  height: 50px !important;
+  line-height: 54px !important;
+
+  margin-bottom: 10px !important;
+  /* Forces gap between ALL buttons */
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background-image: none !important;
+  /* Remove default spritesheet */
+  box-shadow: 0 4px 15px rgba(164, 38, 44, 0.3) !important;
+}
+
+
+.leaflet-draw-toolbar a:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(164, 38, 44, 0.4) !important;
+  background-color: var(--pm-primary) !important;
+}
+
+.leaflet-draw-toolbar a.leaflet-disabled {
+  background-color: #852929 !important;
+  box-shadow: none !important;
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* Custom White SVG Icons for Toolbar Buttons */
+.leaflet-draw-draw-circle::after,
+.leaflet-draw-edit-edit::after,
+.leaflet-draw-edit-remove::after {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-color: white;
+}
+
+.leaflet-draw-draw-circle::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3C/svg%3E") no-repeat center;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3C/svg%3E") no-repeat center;
+}
+
+.leaflet-draw-edit-edit::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+}
+
+.leaflet-draw-edit-remove::after {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+}
+
+/* --- Styling for the Actions (Save/Cancel sub-menus) --- */
+.leaflet-draw-actions {
+  left: auto !important;
+  right: 65px !important;
+  /* Positioned to the left of the new larger buttons */
+  top: 10px !important;
+  background-color: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+  padding: 8px !important;
+  border: 1px solid var(--pm-border) !important;
+}
+
+.leaflet-draw-actions li {
+  margin: 0 5px !important;
+}
+
+.leaflet-draw-actions a {
+  background-color: transparent !important;
+  color: var(--pm-text) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 0 15px !important;
+  box-shadow: none !important;
+  transition: all 0.2s !important;
+}
+
+.leaflet-draw-actions a:hover {
+  background-color: #f5f5f5 !important;
+  color: var(--pm-primary) !important;
+  transform: none !important;
+}
+
+/* Ensure the Map occupies full space */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Info, Target, Cpu, Users } from "lucide-react";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import "./About.css";
 
 export default function About() {

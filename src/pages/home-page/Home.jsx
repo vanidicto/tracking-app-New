@@ -112,7 +112,7 @@ function Home() {
     if (u?.position && mapRef.current) {
       const [lat, lng] = u.position;
       if (!isNaN(lat) && !isNaN(lng)) {
-        mapRef.current.flyTo([lat, lng], 19, { duration: 0.8 });
+        mapRef.current.flyTo([lat, lng], 18, { duration: 0.8 });
       }
     }
   };
@@ -124,13 +124,16 @@ function Home() {
       <div className="home-map">
         <MapContainer
           center={getInitialCenter()}
-          zoom={15}
+          zoom={18}
+          zoomControl={false}
+          attributionControl={false}
           style={{ height: "100%", width: "100%" }}
         >
           <MapController mapRef={mapRef} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            keepBuffer={8}
           />
 
           {braceletUsers.map((person) => (

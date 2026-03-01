@@ -7,7 +7,7 @@ import useIsMobile from '../../hooks/useIsMobile';
 import MobileSplashScreen from '../../components/MobileSplashScreen';
 import './Landing.css';
 
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 
 export default function Landing() {
   const isDev = import.meta.env.DEV;

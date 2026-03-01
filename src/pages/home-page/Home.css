@@ -232,8 +232,8 @@ body {
 /* Mobile: panel hidden already via component CSS; map becomes full width */
 @media (max-width: 767px) {
   .home-layout {
-    height: calc(100vh - 160px);
-    min-height: calc(100vh - 160px);
+    height: 100vh;
+    min-height: 100vh;
   }
 
   .home-map {
