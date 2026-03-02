@@ -6,7 +6,7 @@ import { useBraceletUsers } from '../../hooks/useUsers';
 import { getAuth } from "firebase/auth";
 import { collection, addDoc, doc, updateDoc, arrayUnion, serverTimestamp, deleteDoc, arrayRemove, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
-import { Plus, X, Trash2 } from "lucide-react";
+import { Plus, X, Trash2, User, CreditCard } from "lucide-react";
 import LoadingSpinner from '../../components/LoadingSpinner';
 
 /**
@@ -35,12 +35,15 @@ function People() {
   const { braceletUsers, loading, error } = useBraceletUsers();
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Bracelet Information
   const [newBraceletName, setNewBraceletName] = useState('');
-  const [newBraceletEmail, setNewBraceletEmail] = useState('');
-  const [newContactNo, setNewContactNo] = useState('');
-  const [emergencyContacts, setEmergencyContacts] = useState([]);
-  const [emergencyNameInput, setEmergencyNameInput] = useState('');
-  const [emergencyContactInput, setEmergencyContactInput] = useState('');
+  const [newBraceletSerial, setNewBraceletSerial] = useState('');
+
+  // Emergency Contact
+  const [emergencyName, setEmergencyName] = useState('');
+  const [emergencyContact, setEmergencyContact] = useState('');
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
@@ -140,11 +143,10 @@ function People() {
       const newBraceletUser = {
         name: newBraceletName,
         ownerAppUserId: user.uid,
-        email: newBraceletEmail || null,
-        "contactNo#": newContactNo || null,
+        serialNumber: newBraceletSerial,
         emergencyContacts: [{
-          name: emergencyNameInput,
-          contactNo: emergencyContactInput
+          name: emergencyName,
+          contactNo: emergencyContact
         }],
         avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${newBraceletName}`,
       };
@@ -182,11 +184,9 @@ function People() {
 
       alert("Bracelet added successfully!");
       setNewBraceletName('');
-      setNewBraceletEmail('');
-      setNewContactNo('');
-      setEmergencyContacts([]);
-      setEmergencyNameInput('');
-      setEmergencyContactInput('');
+      setNewBraceletSerial('');
+      setEmergencyName('');
+      setEmergencyContact('');
       setIsModalOpen(false);
 
       // Reload to fetch the new list (since useBraceletUsers uses getDocs once)
@@ -221,100 +221,102 @@ function People() {
 
       {/* Add Bracelet Modal */}
       {isModalOpen && (
-        <div className="modal-backdrop">
-          <div className="modal-content">
-            <div className="modal-header">
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content">
+            <div className="add-bracelet-modal-header">
               <h2 className="modal-title">Add New Bracelet</h2>
-              <button onClick={() => setIsModalOpen(false)} className="modal-close">
-                <X size={24} />
-              </button>
             </div>
 
-            <form onSubmit={handleAddBracelet} className="modal-form">
-              <div className="modal-body">
-                <div className="form-group">
-                  <label className="form-label">Name</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    value={newBraceletName}
-                    onChange={(e) => setNewBraceletName(e.target.value)}
-                    placeholder="e.g. Sister"
-                    required
-                  />
-                </div>
+            <form onSubmit={handleAddBracelet} className="add-bracelet-form">
+              <div className="add-bracelet-body">
 
-                <div className="form-group">
-                  <label className="form-label">Email</label>
-                  <input
-                    type="email"
-                    className="form-input"
-                    value={newBraceletEmail}
-                    onChange={(e) => setNewBraceletEmail(e.target.value)}
-                    placeholder="contact@example.com"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Contact Number</label>
-                  <input
-                    type="tel"
-                    className="form-input"
-                    value={newContactNo}
-                    onChange={(e) => setNewContactNo(e.target.value)}
-                    placeholder="e.g. 09666045678"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Emergency Contacts</label>
-                  <div className="emergency-row">
-                    <input
-                      className="form-input"
-                      value={emergencyNameInput}
-                      onChange={(e) => setEmergencyNameInput(e.target.value)}
-                      placeholder="Name"
-                    />
-                    <input
-                      className="form-input"
-                      value={emergencyContactInput}
-                      onChange={(e) => setEmergencyContactInput(e.target.value)}
-                      placeholder="Contact No."
-                    />
-                    <button type="button" className="btn-add-contact" onClick={() => {
-                      const name = emergencyNameInput.trim();
-                      const contact = emergencyContactInput.trim();
-                      if (!name || !contact) return;
-                      setEmergencyContacts((s) => [...s, { name, contactNo: contact }]);
-                      setEmergencyNameInput('');
-                      setEmergencyContactInput('');
-                    }}>
-                      Add
-                    </button>
+                {/* Left Column: Bracelet Information */}
+                <div className="add-bracelet-column">
+                  <div className="form-section-header">
+                    <span className="section-slash">|</span> BRACELET INFORMATION
                   </div>
 
-                  {emergencyContacts.length > 0 && (
-                    <ul className="contact-list">
-                      {emergencyContacts.map((ec, idx) => (
-                        <li key={idx} className="contact-item">
-                          <span>{ec.name} — {ec.contactNo}</span>
-                          <button
-                            type="button"
-                            onClick={() => setEmergencyContacts((s) => s.filter((_, i) => i !== idx))}
-                            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--pm-text-muted)' }}
-                          >
-                            <X size={16} />
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="form-group-custom">
+                    <label className="form-label-custom">Name of Bracelet <span className="req-asterisk">*</span></label>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <User size={18} strokeWidth={1.5} color="#9ca3af" />
+                      </div>
+                      <input
+                        type="text"
+                        className="form-input-custom"
+                        value={newBraceletName}
+                        onChange={(e) => setNewBraceletName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group-custom">
+                    <label className="form-label-custom">Bracelet Serial Number <span className="req-asterisk">*</span></label>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <CreditCard size={18} strokeWidth={1.5} color="#9ca3af" />
+                      </div>
+                      <input
+                        type="text"
+                        className="form-input-custom"
+                        value={newBraceletSerial}
+                        onChange={(e) => setNewBraceletSerial(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <p className="form-hint">You can find the serial number on the back of the bracelet</p>
+                  </div>
                 </div>
+
+                {/* Right Column: Emergency Contact */}
+                <div className="add-bracelet-column">
+                  <div className="form-section-header">
+                    <span className="section-slash">|</span> EMERGENCY CONTACT
+                  </div>
+
+                  <div className="form-group-custom">
+                    <label className="form-label-custom">Name <span className="req-asterisk">*</span></label>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <User size={18} strokeWidth={1.5} color="#9ca3af" />
+                      </div>
+                      <input
+                        type="text"
+                        className="form-input-custom"
+                        value={emergencyName}
+                        onChange={(e) => setEmergencyName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group-custom">
+                    <label className="form-label-custom">Contact Number <span className="req-asterisk">*</span></label>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <CreditCard size={18} strokeWidth={1.5} color="#9ca3af" />
+                      </div>
+                      <input
+                        type="tel"
+                        className="form-input-custom"
+                        value={emergencyContact}
+                        onChange={(e) => setEmergencyContact(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              <div className="modal-footer">
-                <button type="submit" className="btn-submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Adding...' : 'Add Bracelet'}
+              <div className="add-bracelet-footer">
+                <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-next" disabled={isSubmitting}>
+                  {isSubmitting ? 'Saving...' : 'Next'}
                 </button>
               </div>
             </form>

@@ -147,7 +147,7 @@
 
 
 /* Modal Styles */
-.modal-backdrop {
+.add-bracelet-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -158,25 +158,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px;
 }
 
-.modal-content {
+@media (min-width: 900px) {
+  .add-bracelet-backdrop {
+    padding-left: 250px;
+    /* Offset by sidebar width to center modal in the main workspace */
+  }
+}
+
+.add-bracelet-modal-content {
   background: var(--pm-surface);
-  border-radius: 16px;
-  width: 90%;
-  max-width: 450px;
-  /* Slightly wider */
+  border-radius: 8px;
+  width: 100%;
+  max-width: 850px;
   max-height: 85vh;
-  /* Less than 90 to show backdrop clearly */
   position: relative;
   box-shadow: var(--pm-shadow-md);
   border: 1px solid var(--pm-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* Important for sticky children */
   padding: 0;
-  /* Removing padding from container */
 }
 
 /* New Header/Body/Footer Structure */
@@ -363,5 +367,236 @@
 @media (min-width: 768px) {
   .page-frame {
     min-height: calc(100vh - 60px);
+  }
+}
+
+/* ========================================================
+   ADD NEW BRACELET MODAL - REDESIGN STYLES
+   ======================================================== */
+
+.add-bracelet-modal-header {
+  background-color: #7c0f16;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  border-bottom: none;
+}
+
+.add-bracelet-modal-header .modal-title {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.add-bracelet-form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.add-bracelet-body {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .add-bracelet-body {
+    flex-direction: row;
+    gap: 40px;
+    padding: 30px;
+  }
+}
+
+.add-bracelet-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section-header {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7c0f16;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.section-slash {
+  color: #7c0f16;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.form-group-custom {
+  margin-bottom: 24px;
+}
+
+.form-label-custom {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--pm-text);
+  margin-bottom: 10px;
+}
+
+.req-asterisk {
+  color: #7c0f16;
+  margin-left: 2px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-wrapper {
+  position: absolute;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.form-input-custom {
+  width: 100%;
+  padding: 14px 14px 14px 44px;
+  /* Space for absolute icon */
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+  color: var(--pm-text);
+  background-color: var(--pm-bg);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-input-custom:focus {
+  outline: none;
+  border-color: #7c0f16;
+  box-shadow: 0 0 0 2px rgba(124, 15, 22, 0.1);
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: #7c0f16;
+  margin: 6px 0 0 5px;
+}
+
+.add-bracelet-footer {
+  padding: 20px 30px;
+  border-top: 1px solid var(--pm-border);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  background: var(--pm-surface);
+}
+
+.btn-cancel {
+  background: transparent;
+  border: none;
+  color: var(--pm-text);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+.btn-cancel:hover {
+  text-decoration: underline;
+}
+
+.btn-next {
+  background-color: #7c0f16;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 40px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+}
+
+.btn-next:hover {
+  background-color: #5c0a10;
+}
+
+.btn-next:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========================================================
+   Mobile Responsiveness for Add Bracelet
+   ======================================================== */
+@media (max-width: 767px) {
+  .add-bracelet-backdrop {
+    padding: 16px;
+  }
+
+  .add-bracelet-modal-content {
+    width: 92%;
+    /* Prevent touching the screen edges */
+    max-height: 75vh;
+    /* Tighter vertical limit to enforce clean scrolling */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-bracelet-modal-header {
+    padding: 16px 20px;
+    flex-shrink: 0;
+  }
+
+  .add-bracelet-modal-header .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .add-bracelet-form {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .add-bracelet-body {
+    padding: 20px;
+    gap: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  .form-section-header {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  .form-group-custom {
+    margin-bottom: 16px;
+  }
+
+  .add-bracelet-footer {
+    padding: 16px 20px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .btn-next,
+  .btn-cancel {
+    padding: 10px 20px;
+    font-size: 0.95rem;
   }
 }
