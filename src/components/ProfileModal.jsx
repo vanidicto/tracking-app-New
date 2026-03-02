@@ -8,7 +8,7 @@ import { X, User, Shield, Phone, Lock, HelpCircle, Info, Moon, LogOut, Watch } f
 
 const menuItems = [
   { icon: User, label: "Account", to: "/app/account" },
-  { icon: Watch, label: "My Bracelet", to: "/app/support" },
+  { icon: Watch, label: "My Bracelet", to: "/app/my-bracelet" },
   { icon: HelpCircle, label: "Help Articles", to: "/app/help" },
   { icon: Info, label: "About", to: "/app/about" },
   { icon: Moon, label: "Dark mode", toggle: true },

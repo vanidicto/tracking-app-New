@@ -16,6 +16,7 @@ import Landing from "./pages/landing-page/Landing";
 import "./App.css";
 
 import Account from "./pages/account/Account";
+import MyBracelet from "./pages/my-bracelet/MyBracelet";
 import HelpArticles from "./pages/help-articles/HelpArticles";
 import About from "./pages/about/About";
 
@@ -63,6 +64,7 @@ function App() {
 
               {/* Profile modal routes */}
               <Route path="account" element={<Account />} />
+              <Route path="my-bracelet" element={<MyBracelet />} />
               <Route path="help" element={<HelpArticles />} />
               <Route path="about" element={<About />} />
             </Route>

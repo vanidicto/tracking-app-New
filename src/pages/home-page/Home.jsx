@@ -9,16 +9,6 @@ import { useBraceletUsers } from "../../hooks/useUsers";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import HomeSidePanel from "../../components/HomeSidePanel";
 
-import L from "leaflet";
-
-// Fix Leaflet's default icon path issues in Webpack/Vite
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
-
 function Home() {
   const { braceletUsers, loading } = useBraceletUsers();
 
@@ -50,25 +40,35 @@ function Home() {
     return list;
   }, [braceletUsers, query, filter]);
 
+  const fetchedIds = useRef(new Set());
+
   // Fetch addresses safely (not inside render)
   useEffect(() => {
-    let cancelled = false;
+    let active = true;
 
     async function run() {
-      for (const u of filteredUsers) {
-        if (cancelled) return;
-        if (!u?.position || addressCache[u.id]) continue;
+      // Iterate over braceletUsers since the Map renders all users (not just filteredUsers)
+      for (const u of braceletUsers) {
+        if (!active) break;
+        if (!u?.position) continue;
+
+        // Use a ref to track if we've initiated a fetch, avoiding stale state reads
+        if (fetchedIds.current.has(u.id)) continue;
 
         const [lat, lng] = u.position || [];
         if (isNaN(lat) || isNaN(lng)) continue;
         // Skip default/null island coordinates
         if (lat === 0 && lng === 0) continue;
 
+        // Mark as being fetched
+        fetchedIds.current.add(u.id);
+
         setAddressCache((prev) => ({ ...prev, [u.id]: "Fetching location…" }));
 
         const addr = await reverseGeocode(lat, lng);
 
-        if (cancelled) return;
+        // Intentionally NOT returning early if `active` becomes false.
+        // We want the pending reverseGeocode to resolve and overwrite "Fetching location..."
         setAddressCache((prev) => ({
           ...prev,
           [u.id]: addr || "Address not found",
@@ -81,11 +81,9 @@ function Home() {
 
     run();
     return () => {
-      cancelled = true;
+      active = false;
     };
-    // NOTE: intentionally not including addressCache in deps to prevent loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filteredUsers]);
+  }, [braceletUsers]);
 
   const getInitialCenter = () => {
     const sosUser = braceletUsers.find((u) => u.sos && u.online && u.position);

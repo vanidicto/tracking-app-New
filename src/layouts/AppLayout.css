@@ -17,3 +17,8 @@
     padding-bottom: 0;
   }
 }
+
+/* --- NO NAVIGATION OVERRIDE --- */
+.app-content-main.no-navigation {
+  padding: 0 !important;
+}
