@@ -189,42 +189,26 @@ export default function Landing() {
         <section className="landing-section landing-section-alt" id="how">
           <div className="pm-container">
             <h2 className="landing-h2">How it works</h2>
-            <div className="landing-steps">
-              <div className="landing-step">
-                <div className="step-num">1</div>
-                <div>
-                  <h4>Create an account</h4>
-                  <p className="pm-muted">Sign up and log in to access the tracking dashboard.</p>
-                </div>
-              </div>
-              <div className="landing-step">
-                <div className="step-num">2</div>
-                <div>
-                  <h4>Link bracelet users</h4>
-                  <p className="pm-muted">Add bracelet IDs and store emergency contacts for each person.</p>
-                </div>
-              </div>
-              <div className="landing-step">
-                <div className="step-num">3</div>
-                <div>
-                  <h4>Monitor and respond</h4>
-                  <p className="pm-muted">View locations, alerts, and reports in one place.</p>
-                </div>
-              </div>
-            </div>
+            <div className="landing-cards">
+              <Card className="landing-card">
+                <div className="landing-card-icon"><span className="landing-step-icon-text">1</span></div>
+                <h3>Create an account</h3>
+                <p className="pm-muted">Sign up and log in to access the tracking dashboard.</p>
+              </Card>
 
-            <div className="landing-final-cta">
-              <Card className="landing-final-card">
-                <div>
-                  <h3>Ready to try PingMe?</h3>
-                  <p className="pm-muted">Create your account and start monitoring in minutes.</p>
-                </div>
-                <div className="landing-final-actions">
-                  <Link to="/signup"><Button variant="primary" size="md">Sign up</Button></Link>
-                  <Link to="/login"><Button variant="ghost" size="md">Log in</Button></Link>
-                </div>
+              <Card className="landing-card">
+                <div className="landing-card-icon"><span className="landing-step-icon-text">2</span></div>
+                <h3>Link bracelet users</h3>
+                <p className="pm-muted">Add bracelet IDs and store emergency contacts for each person.</p>
+              </Card>
+
+              <Card className="landing-card">
+                <div className="landing-card-icon"><span className="landing-step-icon-text">3</span></div>
+                <h3>Monitor and respond</h3>
+                <p className="pm-muted">View locations, alerts, and reports in one place.</p>
               </Card>
             </div>
+
           </div>
         </section>
 

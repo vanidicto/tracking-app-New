@@ -303,101 +303,21 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.landing-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--pm-primary);
-  box-shadow: 0 10px 30px rgba(231, 76, 60, 0.15);
-  /* Primary glow */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .landing-card h3 {
   margin: 0 0 8px;
 }
 
-/* --- How It Works: Circuit Theme --- */
-.landing-steps {
-  margin-top: 18px;
-  display: grid;
-  gap: 20px;
-  position: relative;
-  /* z-index: 1; -> Removed to allow line to sit behind if needed, or manage via children */
-}
-
-/* Connecting Line (Circuit Trace) - REMOVED per user request */
-.landing-steps::before {
-  display: none;
-}
-
-.landing-step {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 20px;
-  align-items: start;
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(8px);
-  position: relative;
-  z-index: 1;
-  /* Sit ABOVE the line */
-  transition: all 0.3s ease;
-}
-
-.landing-step:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(231, 76, 60, 0.3);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
-}
-
-.step-num {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* --- How It Works: Icon Text --- */
+.landing-step-icon-text {
+  font-size: 20px;
   font-weight: 700;
   font-family: monospace;
-  font-size: 16px;
-
-  /* Red Stroke (Outline) styling */
-  background: transparent;
-  border: 2px solid var(--pm-primary);
-  color: var(--pm-primary);
-  box-shadow: none;
-  position: relative;
-  z-index: 2;
-  /* Higher than card base */
 }
 
-
-
-.landing-step h4 {
-  margin: 2px 0 6px;
-}
-
-.landing-final-cta {
-  margin-top: 24px;
-}
-
-.landing-final-card {
-  padding: 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 14px;
-}
-
-.landing-final-actions {
-  display: inline-flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+/* Removed .landing-final CTA styles */
 
 /* Main Footer */
 .landing-footer {
@@ -460,10 +380,7 @@
     grid-template-columns: 1fr;
   }
 
-  .landing-final-card {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+  /* Removed .landing-final-card styles */
 
   .landing-footer-inner {
     flex-direction: column;
@@ -884,16 +801,7 @@
     gap: 12px;
   }
 
-  .landing-final-card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 18px;
-  }
-
-  .landing-final-actions {
-    justify-content: center;
-  }
+  /* Removed .landing-final-card and .landing-final-actions styles */
 
   .landing-footer-inner {
     flex-direction: column;
