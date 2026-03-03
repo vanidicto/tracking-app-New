@@ -34,7 +34,7 @@
   left: 20px;
   width: 50px;
   height: 50px;
-  border-radius: 20px;
+  border-radius: 12px;
   background: var(--pm-primary);
   color: white;
   border: none;
@@ -43,19 +43,18 @@
   justify-content: center;
   cursor: pointer;
   z-index: 100;
-  box-shadow: 0 4px 15px rgba(164, 38, 44, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .monitor-toggle-btn:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(164, 38, 44, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
 .monitor-toggle-btn.active {
-  background: white;
-  color: var(--pm-primary);
-  transform: rotate(90deg);
+  background: var(--pm-primary);
+  color: white;
 }
 
 .pulse-indicator {
@@ -387,35 +386,39 @@
 
 
 .leaflet-draw-toolbar a {
-  background-color: var(--pm-primary) !important;
   color: white !important;
   border: none !important;
-  border-radius: 20px !important;
-  /* Match toggle button radius */
+  border-radius: 50% !important;
+  /* Circular buttons */
   width: 50px !important;
   height: 50px !important;
-  line-height: 54px !important;
-
-  margin-bottom: 10px !important;
-  /* Forces gap between ALL buttons */
+  line-height: 50px !important;
+  margin-bottom: 12px !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background-image: none !important;
-  /* Remove default spritesheet */
-  box-shadow: 0 4px 15px rgba(164, 38, 44, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
 }
 
-
-.leaflet-draw-toolbar a:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(164, 38, 44, 0.4) !important;
+.leaflet-draw-draw-circle {
   background-color: var(--pm-primary) !important;
 }
 
+.leaflet-draw-edit-edit,
+.leaflet-draw-edit-remove {
+  background-color: rgba(60, 60, 60, 0.8) !important;
+  backdrop-filter: blur(4px);
+}
+
+.leaflet-draw-toolbar a:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
 .leaflet-draw-toolbar a.leaflet-disabled {
-  background-color: #852929 !important;
+  background-color: var(--pm-border) !important;
   box-shadow: none !important;
   cursor: default;
   opacity: 0.6;
@@ -453,7 +456,7 @@
   right: 65px !important;
   /* Positioned to the left of the new larger buttons */
   top: 10px !important;
-  background-color: white !important;
+  background-color: var(--pm-surface-2) !important;
   border-radius: 16px !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
   padding: 8px !important;
@@ -479,7 +482,7 @@
 }
 
 .leaflet-draw-actions a:hover {
-  background-color: #f5f5f5 !important;
+  background-color: var(--pm-surface) !important;
   color: var(--pm-primary) !important;
   transform: none !important;
 }
@@ -488,4 +491,58 @@
 .leaflet-container {
   width: 100%;
   height: 100%;
+}
+
+/* --- DARK MODE OVERRIDES --- */
+html.pm-dark .places-info-panel {
+  background: rgba(30, 30, 30, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.pm-dark .monitor-toggle-btn.active {
+  background: var(--pm-surface-2);
+}
+
+html.pm-dark .close-btn {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html.pm-dark .close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html.pm-dark .save-zone-form {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+html.pm-dark .zone-item {
+  background: var(--pm-surface);
+}
+
+html.pm-dark .zone-item:hover {
+  background: var(--pm-surface-2);
+}
+
+html.pm-dark .zone-items-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html.pm-dark .leaflet-draw-actions {
+  background-color: var(--pm-surface-2) !important;
+}
+
+html.pm-dark .leaflet-draw-actions a:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+html.pm-dark .monitor-toggle-btn,
+html.pm-dark .leaflet-draw-draw-circle {
+  background-color: var(--pm-surface-2) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html.pm-dark .monitor-toggle-btn:hover,
+html.pm-dark .leaflet-draw-draw-circle:hover {
+  background-color: var(--pm-surface) !important;
 }
