@@ -1,0 +1,329 @@
+/* Shared Layout for Menu Sub-pages (Account, My Bracelet, etc.) */
+
+.br-page {
+    --maroon: var(--pm-primary);
+    --bg: var(--pm-bg);
+    --surface: var(--pm-surface);
+    --text: var(--pm-text);
+    --text-muted: var(--maroon);
+    /* For labels/headers */
+    --border: var(--pm-border);
+    --radius: 12px;
+
+    min-height: 100vh;
+    background-color: var(--bg);
+    display: flex;
+    flex-direction: column;
+    color: var(--text);
+    font-family: var(--pm-font);
+}
+
+/* Navbar */
+.br-navbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+}
+
+.br-nav-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.br-nav-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--maroon);
+    margin: 0;
+}
+
+.br-nav-spacer {
+    width: 40px;
+}
+
+/* Main Content */
+.br-main {
+    flex: 1;
+    width: 100%;
+    max-width: 600px;
+    /* Limit for desktop readability */
+    margin: 0 auto;
+    padding: 40px 24px;
+}
+
+/* Avatar Section */
+.br-avatar-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.br-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.br-avatar-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    opacity: 0.8;
+    margin: 0;
+}
+
+.br-avatar-circle {
+    width: 120px;
+    height: 120px;
+    background-color: var(--maroon);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.br-avatar-edit {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Sections */
+.br-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.br-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.br-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.br-section-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-muted);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.br-indicator {
+    width: 3px;
+    height: 14px;
+    background-color: var(--maroon);
+    border-radius: 2px;
+}
+
+.br-edit-link {
+    background: none;
+    border: none;
+    color: var(--maroon);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Input Styling */
+.br-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.br-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    opacity: 0.9;
+}
+
+.br-required {
+    color: var(--pm-danger);
+}
+
+.br-input-group {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 16px;
+    height: 48px;
+    background: var(--surface);
+    transition: border-color 0.2s;
+}
+
+.br-input-group:focus-within {
+    border-color: var(--maroon);
+}
+
+.br-icon {
+    color: var(--text-muted);
+    opacity: 0.6;
+    margin-right: 12px;
+}
+
+.br-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    color: var(--text);
+    background: transparent;
+}
+
+.br-input:focus,
+.br-input:focus-visible {
+    outline: none;
+    box-shadow: none !important;
+}
+
+.br-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    opacity: 0.8;
+}
+
+.br-hint-center {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+/* Footer Actions */
+.br-footer {
+    padding: 16px 24px 32px;
+    display: flex;
+    gap: 16px;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.br-btn-secondary {
+    flex: 1;
+    height: 44px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.br-btn-primary {
+    flex: 1;
+    height: 44px;
+    background: var(--maroon);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.br-btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+/* Dark Mode Specific Overrides for Menu Layout */
+html.pm-dark .br-page {
+    --text-muted: #D1D1D1;
+    /* Lighter for dark mode labels */
+}
+
+html.pm-dark .br-nav-back svg {
+    color: var(--text);
+}
+
+html.pm-dark .br-icon {
+    opacity: 0.8;
+}
+
+html.pm-dark .br-input::placeholder {
+    color: #888;
+}
+
+
+/* iPhone SE specific adjustments */
+@media (max-width: 375px) {
+    .br-main {
+        padding: 30px 16px;
+    }
+
+    .br-nav-title {
+        font-size: 16px;
+    }
+
+    .br-avatar-circle {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* Desktop adaptations */
+@media (min-width: 900px) {
+    .br-main {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 40px;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .br-form-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    .br-footer {
+        max-width: 1000px;
+        justify-content: flex-end;
+        gap: 24px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+
+    .br-btn-secondary,
+    .br-btn-primary {
+        max-width: 200px;
+    }
+}

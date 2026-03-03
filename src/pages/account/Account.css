@@ -1,218 +1,80 @@
-.account-container {
-    padding: 24px;
-    max-width: 600px;
-    margin: 0 auto;
-    color: var(--color-text-primary);
+@import "../../styles/MenuLayout.css";
+
+/* Account Page Styling - Specific Overrides */
+
+.account-danger-section .br-section-title {
+    color: var(--pm-danger);
+    /* Keep danger red */
 }
 
-.account-header {
-    margin-top: 0;
-    margin-bottom: 8px;
-    font-size: 24px;
-}
-
-.account-subtitle {
-    color: var(--color-text-secondary);
-    font-size: 14px;
-    margin-bottom: 32px;
-}
-
-/* Avatar / Photo Upload */
-.account-photo-section {
+.br-danger-card {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 32px;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid rgba(164, 38, 44, 0.3);
+    border-radius: var(--radius);
 }
 
-.account-avatar-wrapper {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: var(--color-bg-secondary);
-    border: 2px solid var(--pm-border, #e2e8f0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    cursor: pointer;
+.br-danger-icon {
+    color: var(--pm-danger);
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
-.account-avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.br-danger-content {
+    flex: 1;
 }
 
-.account-avatar-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.account-avatar-wrapper:hover .account-avatar-overlay {
-    opacity: 1;
-}
-
-/* Form Section */
-.account-form-section {
-    background: var(--color-bg-main);
-    border: 1px solid var(--pm-border, #e2e8f0);
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 32px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.account-input-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.account-input-group label {
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.account-input {
-    padding: 12px;
-    border: 1px solid var(--pm-border, #cbd5e1);
-    border-radius: 8px;
-    font-size: 14px;
-    background: var(--color-bg-main);
-    color: var(--color-text-primary);
-    transition: border-color 0.2s;
-}
-
-.account-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 2px rgba(164, 38, 44, 0.2);
-}
-
-.account-input:disabled {
-    background: var(--color-bg-secondary);
-    color: var(--color-text-secondary);
-    cursor: not-allowed;
-}
-
-.account-save-btn {
-    width: 100%;
-    padding: 12px;
-    background: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-}
-
-.account-save-btn:hover {
-    background: var(--color-primary-dark);
-}
-
-.account-save-btn:disabled {
-    background: #cbd5e1;
-    cursor: not-allowed;
-}
-
-/* Danger Zone */
-.account-danger-zone {
-    border: 1px solid #fca5a5;
-    background: #fef2f2;
-    border-radius: 12px;
-    padding: 24px;
-}
-
-.account-danger-title {
-    color: var(--color-alert-red);
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 8px;
-    font-size: 16px;
-}
-
-.account-danger-text {
-    color: #7f1d1d;
+.br-danger-text {
     font-size: 13px;
-    margin-bottom: 16px;
+    color: var(--text);
+    opacity: 0.7;
+    margin: 0 0 12px 0;
+    line-height: 1.5;
 }
 
-.account-delete-btn {
+.br-btn-delete {
+    padding: 8px 16px;
     background: transparent;
-    color: var(--color-alert-red);
-    border: 1px solid var(--color-alert-red);
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
+    border: 1px solid var(--pm-danger);
+    color: var(--pm-danger);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
-    width: auto;
     transition: all 0.2s;
 }
 
-.account-delete-btn:hover {
-    background: var(--color-alert-red);
-    color: white;
+.br-btn-delete:hover {
+    background: var(--pm-danger);
+    color: #fff;
 }
 
-/* Responsiveness (iPhone SE - 320px) */
-@media (max-width: 375px) {
-    .account-container {
-        padding: 16px;
+.br-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.br-avatar-section .br-avatar-wrapper {
+    cursor: pointer;
+}
+
+.br-avatar-section .br-avatar-wrapper:hover .br-avatar-circle {
+    opacity: 0.9;
+}
+
+/* Dark Mode Overrides for Account */
+html.pm-dark .br-danger-card {
+    background: rgba(164, 38, 44, 0.1);
+    border-color: rgba(164, 38, 44, 0.4);
+}
+
+@media (min-width: 900px) {
+    .account-danger-section {
+        grid-column: span 1;
     }
-
-    .account-form-section,
-    .account-danger-zone {
-        padding: 16px;
-    }
-
-    .account-delete-btn {
-        width: 100%;
-    }
-}
-
-/* Dark Mode Overrides */
-html.pm-dark .account-form-section {
-    background: #1e1e1e;
-    border-color: #333;
-}
-
-html.pm-dark .account-avatar-wrapper {
-    background-color: #333;
-    border-color: #444;
-}
-
-html.pm-dark .account-input {
-    background: #121212;
-    border-color: #444;
-}
-
-html.pm-dark .account-input:disabled {
-    background: #2a2a2a;
-}
-
-html.pm-dark .account-danger-zone {
-    background: rgba(231, 76, 60, 0.1);
-    border-color: rgba(231, 76, 60, 0.3);
-}
-
-html.pm-dark .account-danger-text {
-    color: #fca5a5;
 }

@@ -132,8 +132,6 @@ html.pm-dark .modal-header-logo {
 
 .profile-menu-item:hover {
   background-color: var(--pm-surface);
-  transform: translateX(4px);
-  /* Subtle slide */
 }
 
 .profile-menu-icon {

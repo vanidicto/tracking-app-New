@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import "./TopBar.css";
 import { Bell, Menu } from "lucide-react";
 import avatar from "../assets/red.webp";
-import ProfileModal from "./ProfileModal";
 import NotificationModal from "./NotificationModal";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../config/firebaseConfig";
@@ -16,8 +15,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 
-const TopBar = () => {
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+const TopBar = ({ onProfileClick }) => {
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const { currentUser } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -84,7 +82,7 @@ const TopBar = () => {
         {/* Mobile menu (sidebar/profile) */}
         <button
           className="topbar-mobile-menu-btn"
-          onClick={() => setIsProfileModalOpen(true)}
+          onClick={onProfileClick}
         >
           <Menu size={26} />
         </button>
@@ -106,17 +104,12 @@ const TopBar = () => {
 
           <button
             className="topbar-desktop-profile-btn"
-            onClick={() => setIsProfileModalOpen(true)}
+            onClick={onProfileClick}
           >
             <img src={avatar} alt="Profile" />
           </button>
         </div>
       </header>
-
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-      />
 
       <NotificationModal
         isOpen={isNotificationsModalOpen}

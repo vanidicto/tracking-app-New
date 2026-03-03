@@ -1,127 +1,157 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import fallbackAvatar from '../../assets/red.webp';
+import { ChevronLeft, Plus, Pencil, User, CreditCard, Phone } from 'lucide-react';
 import './MyBracelet.css';
 
 const MyBracelet = () => {
     const navigate = useNavigate();
     const { currentUser } = useAuth();
 
-    const [braceletName, setBraceletName] = useState('ABCD E. FG');
-    const [serialNumber, setSerialNumber] = useState('123456MNL');
-    const [contactName, setContactName] = useState(currentUser?.displayName || 'Juan Dela Cruz');
-    const [contactNumber, setContactNumber] = useState('0912345678');
+    const [step, setStep] = useState('add'); // 'add' or 'confirm'
 
-    const displayAvatar = currentUser?.photoURL || fallbackAvatar;
+    const [formData, setFormData] = useState({
+        braceletName: 'ABCD E. FG',
+        serialNumber: '123456MNL',
+        emergencyName: 'Juan Dela Cruz',
+        emergencyNumber: '0912345678'
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleNext = () => setStep('confirm');
+    const handleBack = () => {
+        if (step === 'confirm') setStep('add');
+        else navigate('/app', { state: { openProfile: true } });
+    };
+
+    const isConfirm = step === 'confirm';
 
     return (
-        <div className="mobile-container">
-            <div className="br-scrollable-content">
-                {/* Header Section */}
-                <div className="br-header-section">
-                    <div className="br-header-top">
-                        <button className="br-back-button" onClick={() => navigate('/app')}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                        </button>
-                        <h1 className="br-header-title">Confirm User Details</h1>
-                        <div className="br-header-right-placeholder"></div>
-                    </div>
+        <div className="br-page">
+            <header className="br-navbar">
+                <button className="br-nav-back" onClick={handleBack}>
+                    <ChevronLeft size={24} color="#444" />
+                </button>
+                <h1 className="br-nav-title">
+                    {isConfirm ? "Confirm User Details" : "Add Bracelet User"}
+                </h1>
+                <div className="br-nav-spacer"></div>
+            </header>
 
-                    <div className="br-profile-image-container">
-                        <div className="br-profile-circle">
-                            <img
-                                src={displayAvatar}
-                                alt="User Avatar"
-                                style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-                            />
+            <main className="br-main">
+                <div className="br-avatar-section">
+                    <div className="br-avatar-wrapper">
+                        <div className="br-avatar-circle">
+                            <Plus size={48} color="#fff" strokeWidth={2.5} />
+                            {isConfirm && (
+                                <button className="br-avatar-edit" onClick={() => setStep('add')}>
+                                    <Pencil size={12} color="#A4262C" />
+                                </button>
+                            )}
                         </div>
+                        <p className="br-avatar-label">Upload Profile Photo</p>
                     </div>
                 </div>
 
-                {/* Form Content */}
-                <div className="br-form-content">
-                    {/* Bracelet Info Section */}
+                <div className="br-form-container">
+                    {/* Bracelet Information Section */}
                     <div className="br-section">
                         <div className="br-section-header">
-                            <h2><span className="br-vertical-line"></span> BRACELET INFORMATION</h2>
-                            <button className="br-edit-text-btn">Edit</button>
+                            <h2 className="br-section-title">
+                                <span className="br-indicator"></span>
+                                BRACELET INFORMATION
+                            </h2>
+                            {isConfirm && <button className="br-edit-link" onClick={() => setStep('add')}>Edit</button>}
                         </div>
 
-                        <div className="br-input-group">
-                            <label>Name of Bracelet</label>
-                            <div className="br-input-wrapper">
-                                <span className="br-input-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                                </span>
+                        <div className="br-field">
+                            <label className="br-label">Name of Bracelet {!isConfirm && <span className="br-required">*</span>}</label>
+                            <div className="br-input-group">
+                                <User size={18} className="br-icon" />
                                 <input
+                                    className="br-input"
                                     type="text"
-                                    value={braceletName}
-                                    onChange={(e) => setBraceletName(e.target.value)}
+                                    name="braceletName"
+                                    placeholder="Enter bracelet name"
+                                    value={formData.braceletName}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
 
-                        <div className="br-input-group">
-                            <label>Bracelet Serial Number</label>
-                            <div className="br-input-wrapper">
-                                <span className="br-input-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
-                                </span>
+                        <div className="br-field">
+                            <label className="br-label">Bracelet Serial Number {!isConfirm && <span className="br-required">*</span>}</label>
+                            <div className="br-input-group">
+                                <CreditCard size={18} className="br-icon" />
                                 <input
+                                    className="br-input"
                                     type="text"
-                                    value={serialNumber}
-                                    onChange={(e) => setSerialNumber(e.target.value)}
+                                    name="serialNumber"
+                                    placeholder="Enter serial number"
+                                    value={formData.serialNumber}
+                                    onChange={handleChange}
                                 />
                             </div>
-                            <span className="br-help-text">You can find the serial number on the back of the bracelet</span>
+                            <p className="br-hint">You can find the serial number on the back of the bracelet</p>
                         </div>
                     </div>
 
                     {/* Emergency Contact Section */}
                     <div className="br-section">
                         <div className="br-section-header">
-                            <h2><span className="br-vertical-line"></span> EMERGENCY CONTACT</h2>
-                            <button className="br-edit-text-btn">Edit</button>
+                            <h2 className="br-section-title">
+                                <span className="br-indicator"></span>
+                                EMERGENCY CONTACT
+                            </h2>
+                            {isConfirm && <button className="br-edit-link" onClick={() => setStep('add')}>Edit</button>}
                         </div>
 
-                        <div className="br-input-group">
-                            <label>Name</label>
-                            <div className="br-input-wrapper">
-                                <span className="br-input-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                                </span>
+                        <div className="br-field">
+                            <label className="br-label">Name {!isConfirm && <span className="br-required">*</span>}</label>
+                            <div className="br-input-group">
+                                <User size={18} className="br-icon" />
                                 <input
+                                    className="br-input"
                                     type="text"
-                                    value={contactName}
-                                    onChange={(e) => setContactName(e.target.value)}
+                                    name="emergencyName"
+                                    placeholder="Enter contact name"
+                                    value={formData.emergencyName}
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
 
-                        <div className="br-input-group">
-                            <label>Contact Number</label>
-                            <div className="br-input-wrapper">
-                                <span className="br-input-icon">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
-                                </span>
+                        <div className="br-field">
+                            <label className="br-label">Contact Number {!isConfirm && <span className="br-required">*</span>}</label>
+                            <div className="br-input-group">
+                                <CreditCard size={18} className="br-icon" />
                                 <input
+                                    className="br-input"
                                     type="text"
-                                    value={contactNumber}
-                                    onChange={(e) => setContactNumber(e.target.value)}
+                                    name="emergencyNumber"
+                                    placeholder="Enter contact number"
+                                    value={formData.emergencyNumber}
+                                    onChange={handleChange}
                                 />
                             </div>
-                            <span className="br-help-text br-help-text-center">Please make sure the information is correct before proceeding</span>
+                            {isConfirm && <p className="br-hint br-hint-center">Please make sure the information is correct before proceeding</p>}
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
 
-            {/* Bottom Actions */}
-            <div className="br-bottom-actions">
-                <button className="br-btn-cancel" onClick={() => navigate('/app')}>Cancel</button>
-                <button className="br-btn-confirm">Confirm & Save</button>
-            </div>
+            <footer className="br-footer">
+                <button className="br-btn-secondary" onClick={() => navigate('/app', { state: { openProfile: true } })}>Cancel</button>
+                {isConfirm ? (
+                    <button className="br-btn-primary" onClick={() => navigate('/app', { state: { openProfile: true } })}>Confirm & Save</button>
+                ) : (
+                    <button className="br-btn-primary" onClick={handleNext}>Next</button>
+                )}
+            </footer>
         </div>
     );
 };
