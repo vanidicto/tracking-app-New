@@ -48,6 +48,8 @@ export const checkGeofenceTransitions = (braceletUsers, geofences, alertedUsersS
         } else {
             if (user.currentGeofenceId && user.deviceStatusId) {
                 usersToUpdateOffline.push({ id: user.deviceStatusId });
+                // Reset alert key so user can be notified again if they re-enter
+                alertedUsersSet.delete(`${user.id}-${user.currentGeofenceId}`);
             }
         }
     });

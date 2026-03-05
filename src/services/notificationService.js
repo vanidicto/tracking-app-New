@@ -19,7 +19,9 @@ export const saveGeofenceNotification = async (currentUser, detection) => {
     );
 
     const dupSnap = await getDocs(dupQ);
-    if (!dupSnap.empty) return;
+    // Relaxed duplicate check to ensure testing hits are visible.
+    // In production, consider time-based throttling. 
+    // if (!dupSnap.empty) return; 
 
     await addDoc(collection(db, 'notifications'), {
         appUserId: currentUser.uid,

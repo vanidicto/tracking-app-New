@@ -59,6 +59,7 @@ const TopBar = ({ onProfileClick }) => {
           const tb = b.time?.seconds ?? b.time ?? 0;
           return tb - ta;
         });
+
         setNotifications(items);
         setLoading(false);
       },
@@ -100,6 +101,8 @@ const TopBar = ({ onProfileClick }) => {
           <button className="topbar-mobile-menu-btn" onClick={onProfileClick}>
             <Menu size={24} />
           </button>
+          {/* Spacer to maintain balance on desktop after logo removal */}
+          <div className="topbar-spacer-desktop"></div>
         </div>
 
         {/* Center: Dynamic Title */}
