@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./TopBar.css";
-import { Bell, Menu } from "lucide-react";
+import { Bell } from "lucide-react";
 import avatar from "../assets/red.webp";
 import NotificationModal from "./NotificationModal";
 import { useAuth } from "../context/AuthContext";
@@ -98,7 +98,7 @@ const TopBar = ({ onProfileClick }) => {
       <header className="app-topbar">
         <div className="topbar-left">
           <button className="topbar-mobile-menu-btn" onClick={onProfileClick}>
-            <Menu size={24} />
+            <img src={avatar} alt="Profile" />
           </button>
           {/* Spacer to maintain balance on desktop after logo removal */}
           <div className="topbar-spacer-desktop"></div>
