@@ -52,6 +52,22 @@
   font-weight: 500;
   transition: all 0.2s ease;
   text-decoration: none;
+
+  /* PWA Native Feel fixes for interactive elements */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.nav-item img,
+.nav-item svg {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+  /* Prevents long-press image save on icons */
 }
 
 .nav-item:hover,

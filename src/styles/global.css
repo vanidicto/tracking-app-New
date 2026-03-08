@@ -54,6 +54,23 @@ a {
   text-decoration: none;
 }
 
+/* 
+ * AGGRESSIVE PWA NATIVE FEEL FIXES
+ * Explicitly target all common interactive tags to prevent 
+ * iOS/Android from showing "Save Image", "Copy Link", or context menus.
+ */
+a,
+button,
+img,
+svg,
+label,
+.prevent-context-menu {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-user-drag: none !important;
+}
+
 /* Global helpers */
 .pm-container {
   width: min(1100px, calc(100% - 32px));
