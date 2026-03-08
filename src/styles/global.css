@@ -5,12 +5,16 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  /* Removes the tap flash */
 }
 
 html,
 body {
   height: 100%;
   scrollbar-gutter: stable;
+  overscroll-behavior: none;
+  /* Stops ALL bouncing, pull-to-refresh, and swipe-navigation */
   /* Prevents layout shift between pages with/without scrollbars */
 }
 
@@ -19,11 +23,25 @@ body {
   font-family: var(--pm-font);
   background: var(--pm-bg);
   color: var(--pm-text);
+
+  /* Stop long-press context menus and text selection */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection inside inputs */
+input,
+textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
 }
 
 img {
   max-width: 100%;
   display: block;
+  -webkit-user-drag: none;
+  /* Prevents ghost dragging of images */
 }
 
 /* Fix Leaflet tiles disappearing due to global max-width */
