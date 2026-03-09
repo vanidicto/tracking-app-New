@@ -1,0 +1,350 @@
+@import "../../styles/MenuLayout.css";
+
+.tips-page {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Header Adjustments */
+.tips-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: var(--maroon);
+    align-items: center;
+    justify-content: center;
+}
+
+/* Layout */
+.tips-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    height: calc(100vh - 60px);
+}
+
+/* Sidebar (Right-side on Desktop) */
+.tips-sidebar {
+    width: 280px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+}
+
+.tips-sidebar-header {
+    padding: 24px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tips-sidebar-nav {
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tips-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    opacity: 0.7;
+    transition: all 0.2s;
+    font-family: var(--pm-font);
+}
+
+.tips-sidebar-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+    opacity: 1;
+}
+
+.tips-sidebar-item.active {
+    background: var(--maroon);
+    color: #fff;
+    opacity: 1;
+}
+
+.tips-sidebar-icon {
+    flex-shrink: 0;
+}
+
+/* Main Content */
+.br-main.tips-main-content {
+    flex: 1;
+    max-width: 100%;
+    padding: 32px;
+    overflow-y: auto;
+    margin: 0;
+}
+
+.tips-content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.tips-section-heading {
+    font-size: 24px;
+    font-weight: 650;
+    color: #A4262C;
+    margin-bottom: 20px;
+    margin-top: 3px;
+    text-align: center;
+    text-underline-offset: var(--pm-font-size-base);
+}
+
+.tips-dynamic-content { 
+    line-height: 1.6;
+}
+
+.tips-content-section section {
+    margin-bottom: 40px;
+    background: var(--surface);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.tips-content-section h3 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--maroon);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.tips-content-section p {
+    color: var(--text);
+    opacity: 0.8;
+    margin-bottom: 16px;
+}
+
+.tips-content-section ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.tips-content-section li {
+    margin-bottom: 8px;
+    color: var(--text);
+    opacity: 0.8;
+}
+
+.tips-info-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-left: 4px solid var(--maroon);
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 24px;
+}
+
+.tips-info-card h4 {
+    margin: 0 0 8px 0;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.tips-info-card p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* Boomerang Visualization */
+.geofence-visualization {
+    height: 150px;
+    background: #f8fafc;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boomerang-circle {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--maroon);
+    border-radius: 50%;
+    position: absolute;
+    animation: boomerang-grow 2s infinite ease-in-out;
+    background: rgba(164, 38, 44, 0.1);
+}
+
+.boomerang-marker {
+    width: 12px;
+    height: 12px;
+    background: var(--maroon);
+    border-radius: 50%;
+    position: absolute;
+    animation: boomerang-move 2s infinite ease-in-out;
+}
+
+@keyframes boomerang-grow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.2;
+    }
+}
+
+@keyframes boomerang-move {
+
+    0%,
+    100% {
+        transform: translateX(-40px);
+    }
+
+    50% {
+        transform: translateX(40px);
+    }
+}
+
+/* Geofence Guide Specifics */
+.geofence-guide {
+    margin-top: 24px;
+    border-top: 1px dashed var(--border);
+    padding-top: 24px;
+}
+
+.geofence-guide h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: var(--maroon);
+    font-weight: 700;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.tool-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 12px;
+}
+
+.tool-icon {
+    background: var(--surface);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--maroon);
+}
+
+.tool-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .tips-sidebar {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        left: auto;
+        z-index: 1000;
+        transform: translateX(100%);
+        width: 280px;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+        border-left: 1px solid var(--border);
+        border-right: none;
+    }
+
+    .tips-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .tips-menu-toggle {
+        display: flex;
+    }
+
+    .tips-sidebar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .tips-sidebar-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .br-main.tips-main-content {
+        padding: 24px 16px;
+    }
+}
+
+/* iPhone SE Optimization (375px) */
+@media (max-width: 375px) {
+    .tips-section-heading {
+        font-size: 20px;
+    }
+
+    .tool-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Dark Mode Alignment */
+html.pm-dark .tips-sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+html.pm-dark .tips-info-card,
+html.pm-dark .tool-item,
+html.pm-dark .geofence-visualization {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+html.pm-dark .tips-sidebar-item.active {
+    background: var(--maroon);
+    color: #fff;
+}
