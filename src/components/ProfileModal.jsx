@@ -4,12 +4,12 @@ import { useAuth } from "../context/AuthContext";
 import "./ProfileModal.css";
 import logo from "../assets/logo.png";
 import avatar from "../assets/red.webp";
-import { X, User, Shield, Phone, Lock, HelpCircle, Info, Moon, LogOut, Watch } from "lucide-react";
+import { X, User, Shield, Phone, Lock, Lightbulb, Info, Moon, LogOut, Watch } from "lucide-react";
 
 const menuItems = [
   { icon: User, label: "Account", to: "/app/account" },
   { icon: Watch, label: "My Bracelet", to: "/app/my-bracelet" },
-  { icon: HelpCircle, label: "Help Articles", to: "/app/help" },
+  { icon: Lightbulb, label: "Tips", to: "/app/tips" },
   { icon: Info, label: "About", to: "/app/about" },
   { icon: Moon, label: "Dark mode", toggle: true },
 ];
