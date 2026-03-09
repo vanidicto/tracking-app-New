@@ -1,7 +1,7 @@
 /* src/pages/user-profile/UserProfile.css */
 
 .up-page-container {
-  padding: 50px 20px 20px 20px;
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
   min-height: 100vh;
@@ -209,10 +209,6 @@
 /* --- Responsive Adjustments --- */
 
 @media (max-width: 900px) {
-  .up-page-container {
-    padding-top: 50px;
-  }
-
   .up-right-section {
     height: 350px;
   }
@@ -242,9 +238,9 @@
   }
 }
 
-/* Desktop Fix for fixed TopBar */
+/* Desktop Fix */
 @media (min-width: 768px) {
   .up-page-container {
-    padding-top: 50px;
+    padding-top: 30px;
   }
 }
