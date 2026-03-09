@@ -17,7 +17,7 @@ import "./App.css";
 
 import Account from "./pages/account/Account";
 import MyBracelet from "./pages/my-bracelet/MyBracelet";
-import HelpArticles from "./pages/help-articles/HelpArticles";
+import Tips from "./pages/tips/Tips";
 import About from "./pages/about/About";
 
 // Mock Admin (NO Firebase)
@@ -65,7 +65,7 @@ function App() {
               {/* Profile modal routes */}
               <Route path="account" element={<Account />} />
               <Route path="my-bracelet" element={<MyBracelet />} />
-              <Route path="help" element={<HelpArticles />} />
+              <Route path="tips" element={<Tips />} />
               <Route path="about" element={<About />} />
             </Route>
           </Route>
