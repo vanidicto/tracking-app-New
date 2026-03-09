@@ -13,7 +13,7 @@ const AppLayout = () => {
 
   // Normalize path and check if navigation should be hidden
   const currentPath = location.pathname.toLowerCase();
-  const hideNavigation = ['/app/my-bracelet', '/app/account', '/app/help', '/app/about'].some(path => currentPath.startsWith(path));
+  const hideNavigation = ['/app/my-bracelet', '/app/account', '/app/tips', '/app/about'].some(path => currentPath.startsWith(path));
 
   // Handle opening profile modal from navigation state
   React.useEffect(() => {
