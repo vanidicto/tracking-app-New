@@ -102,14 +102,14 @@ export default function About() {
         </div>
       </main>
 
-      {/* <footer className="br-footer">
-        <button className="br-btn-secondary" onClick={handleBack}>
+      <footer className="br-footer">
+        {/* <button className="br-btn-secondary" onClick={handleBack}>
           Go Back
         </button>
         <button className="br-btn-primary" onClick={() => navigate('/app')}>
           Return Home
-        </button>
-      </footer> */}
+        </button> */}
+      </footer>
     </div>
   );
 }
