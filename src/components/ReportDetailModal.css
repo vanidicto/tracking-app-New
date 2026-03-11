@@ -48,7 +48,8 @@
     position: relative;
     padding: 18px;
     border-bottom: 1px solid var(--pm-border);
-    background: var(--pm-surface);
+    background: var(--pm-shadow-lg);
+    
 }
 
 .report-detail-header h2 {
@@ -57,13 +58,15 @@
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: var(--pm-text-muted);
+    /* color: var(--pm-text-muted); */
+    color: var(--pm-primary);
 }
 
 .report-detail-close {
     position: absolute;
     right: 18px;
-    background: var(--pm-bg);
+    /* background: var(--pm-bg); */
+    background: transparent;
     border: 1px solid var(--pm-border);
     cursor: pointer;
     color: var(--pm-text);
