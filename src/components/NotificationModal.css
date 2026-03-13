@@ -14,39 +14,51 @@
 
 .notification-modal {
   background-color: var(--pm-bg);
-  border-radius: 8px;
+  border-radius: 20px;
   width: 90%;
   max-width: 500px;
   max-height: 65vh;
   /* Decreased height */
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .notification-modal-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  padding: 1rem;
+  padding: 18px;
   border-bottom: 1px solid var(--pm-border);
   position: relative;
+
 }
 
 .notification-modal-title {
-  font-size: 1.25rem;
-  font-weight: 650;
-  /* color: var(--pm-text); */
-  color: #6D0C0C;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--pm-primary);
 }
 
 .notification-modal-close-btn {
-  background: none;
-  border: none;
+  position: absolute;
+  right: 18px;
+  background: transparent;
+  border: 1px solid var(--pm-border);
   cursor: pointer;
   color: var(--pm-text);
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  transition: all 0.2s;
+}
+
+.notification-modal-close-btn:hover {
+  background-color: var(--pm-surface-2);
+  transform: rotate(90deg);
 }
 
 .notification-modal-content {
@@ -63,7 +75,7 @@
 .notification-item {
   display: flex;
   padding: 0.75rem;
-  border-bottom: 1px solid var(--pm-border);
+  /* border-bottom: 1px solid var(--pm-border); */
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -111,6 +123,13 @@
   align-items: flex-end;
   font-size: 0.8rem;
   color: var(--pm-text-muted);
+  min-width: 75px; /* Provides minimum space so right alignment looks distinct */
+  margin-left: 8px; /* Adds breathing room from the message block */
+}
+
+.notification-time {
+  text-align: right;
+  line-height: 1.2;
 }
 
 .notification-actions {
