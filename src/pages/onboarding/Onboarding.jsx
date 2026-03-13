@@ -122,7 +122,7 @@ export default function Onboarding() {
           </button>
 
           <button className="onboarding-btn-skip" onClick={handleSkip}>
-            Skip Introduction
+            Skip
           </button>
         </div>
       </div>
