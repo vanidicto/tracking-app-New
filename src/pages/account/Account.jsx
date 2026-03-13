@@ -173,7 +173,7 @@ export default function Account() {
           onClick={handleSave}
           disabled={saving || (displayName === currentUser?.displayName && photoURL === currentUser?.photoURL)}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Save"}
         </button>
       </footer>
     </div>

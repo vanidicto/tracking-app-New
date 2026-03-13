@@ -225,10 +225,10 @@
     font-weight: 600;
 }
 
-Footer Actions
 .br-footer {
     padding: 16px 24px 32px;
     display: flex;
+    justify-content: center;
     gap: 16px;
     max-width: 600px;
     width: 100%;
@@ -236,26 +236,38 @@ Footer Actions
 }
 
 .br-btn-secondary {
-    flex: 1;
-    height: 44px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 52px;
+    padding: 0 50px;
+    /* background: var(--surface); */
+    background-color: transparent;
+    border: var(--maroon) 1px solid;
+    border-radius: 40px;
+    color: var(--maroon);
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Slight shadow to pop off background */
 }
 
 .br-btn-primary {
-    flex: 1;
-    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 52px;
+    padding: 0 65px;
     background: var(--maroon);
     border: none;
-    border-radius: 8px;
+    border-radius: 40px;
     color: #fff;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: filter 0.2s;
 }
 
 .br-btn-primary:hover {
@@ -324,6 +336,6 @@ html.pm-dark .br-input::placeholder {
 
     .br-btn-secondary,
     .br-btn-primary {
-        max-width: 200px;
+        max-width: 400px;
     }
 }
