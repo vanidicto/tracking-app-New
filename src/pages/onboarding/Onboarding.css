@@ -1,16 +1,13 @@
 .onboarding-page {
-    /* Variables aligned with auth.css */
     --pm-bg: #FAF9F6;
     --pm-surface: #FFFFFF;
     --pm-text: #222222;
     --pm-text-muted: #777777;
     --pm-primary: #800E0E;
-    --pm-border: rgba(34, 34, 34, 0.1);
-
+    
     width: 100%;
     height: 100vh;
     height: 100svh;
-    /* Identical gradient to Login/Signup */
     background: linear-gradient(180deg, #FAF9F6 0%, #FCF9EE 46%, #D85C4F 100%);
     display: flex;
     flex-direction: column;
@@ -32,7 +29,6 @@
 .onboarding-slider {
     display: flex;
     height: calc(100% - 240px);
-    /* Space for pagination and double buttons */
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -42,37 +38,61 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 8vh;
+    padding-top: 9vh; /* Lowered from 6vh to push visuals down */
     box-sizing: border-box;
 }
 
-/* --- Visual Area (Top Half) --- */
+/* --- Visual Area (Tech Innovation Lighting) --- */
 .onboarding-visual {
-    height: 42vh;
+    height: 46vh; /* Increased from 44vh to accommodate larger graphic */
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    perspective: 1000px;
 }
 
-/* --- Tech Innovation Lighting --- */
+.ui-screenshot {
+    width: auto;
+    height: auto;
+    max-width: 290px; /* Enlarged from 250px for better visibility */
+    max-height: 95%;
+    object-fit: contain;
+    /* COMPLETELY REMOVED card containers, borders, and rounded corners */
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    z-index: 2;
+    /* Dynamic movement */
+    animation: smoothFloating 6s ease-in-out infinite;
+    filter: drop-shadow(0 15px 35px rgba(0,0,0,0.15));
+}
+
+@keyframes smoothFloating {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-8px) rotate(1deg); }
+    66% { transform: translateY(-4px) rotate(-1deg); }
+}
+
+/* --- Tech Decor Elements --- */
 .tech-decor-container {
     position: absolute;
-    width: 320px;
-    height: 320px;
+    width: 420px; /* Enlarged from 380px to match larger phone */
+    height: 420px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
-    z-index: -1;
+    z-index: 1;
     perspective: 1000px;
+    animation: smoothFloating 6s ease-in-out infinite;
 }
 
 .tech-ring {
     position: absolute;
     border-radius: 50%;
-    border: 1px dashed rgba(128, 14, 14, 0.2);
+    border: 1.5px dashed rgba(128, 14, 14, 0.15);
     transform-style: preserve-3d;
 }
 
@@ -83,139 +103,73 @@
 }
 
 .ring-inner {
-    width: 70%;
-    height: 70%;
+    width: 75%;
+    height: 75%;
     border-style: solid;
     border-width: 0.5px;
-    border-color: rgba(128, 14, 14, 0.15);
+    border-color: rgba(128, 14, 14, 0.1);
     animation: techRotateReverse3D 10s linear infinite;
 }
 
 .tech-glow {
     position: absolute;
-    width: 70%;
-    height: 70%;
+    width: 80%;
+    height: 80%;
     background: radial-gradient(circle, rgba(128, 14, 14, 0.2) 0%, transparent 70%);
-    filter: blur(40px);
+    filter: blur(45px);
     animation: glowPulseIntensity 3s ease-in-out infinite;
 }
 
 .tech-particle {
     position: absolute;
-    width: 4px;
-    height: 4px;
+    width: 5px;
+    height: 5px;
     background: var(--pm-primary);
     border-radius: 50%;
-    box-shadow: 0 0 10px var(--pm-primary);
+    box-shadow: 0 0 12px var(--pm-primary);
+    opacity: 0.8;
 }
 
-.p-1 {
-    animation: orbit1 8s linear infinite;
-}
+.p-1 { animation: orbit1 9s linear infinite; }
+.p-2 { animation: orbit2 13s linear infinite; }
+.p-3 { animation: orbit3 11s linear infinite; }
 
-.p-2 {
-    animation: orbit2 12s linear infinite;
-}
-
-.p-3 {
-    animation: orbit3 10s linear infinite;
-}
-
+/* --- Animations --- */
 @keyframes techRotate3D {
-    from {
-        transform: rotateX(45deg) rotateZ(0deg);
-    }
-
-    to {
-        transform: rotateX(45deg) rotateZ(360deg);
-    }
+    from { transform: rotateX(60deg) rotateZ(0deg); }
+    to { transform: rotateX(60deg) rotateZ(360deg); }
 }
 
 @keyframes techRotateReverse3D {
-    from {
-        transform: rotateX(-30deg) rotateZ(360deg);
-    }
-
-    to {
-        transform: rotateX(-30deg) rotateZ(0deg);
-    }
+    from { transform: rotateX(-45deg) rotateZ(360deg); }
+    to { transform: rotateX(-45deg) rotateZ(0deg); }
 }
 
 @keyframes glowPulseIntensity {
-
-    0%,
-    100% {
-        transform: scale(0.9);
-        opacity: 0.4;
-    }
-
-    50% {
-        transform: scale(1.3);
-        opacity: 0.9;
-    }
+    0%, 100% { transform: scale(0.85); opacity: 0.4; }
+    50% { transform: scale(1.4); opacity: 1; }
 }
 
 @keyframes orbit1 {
-    from {
-        transform: rotateZ(0deg) translateX(140px) rotateZ(0deg);
-    }
-
-    to {
-        transform: rotateZ(360deg) translateX(140px) rotateZ(-360deg);
-    }
+    from { transform: rotateZ(0deg) translateX(160px) rotateZ(0deg); }
+    to { transform: rotateZ(360deg) translateX(160px) rotateZ(-360deg); }
 }
 
 @keyframes orbit2 {
-    from {
-        transform: rotateZ(360deg) translateX(110px) rotateZ(-360deg);
-    }
-
-    to {
-        transform: rotateZ(0deg) translateX(110px) rotateZ(0deg);
-    }
+    from { transform: rotateZ(360deg) translateX(130px) rotateZ(-360deg); }
+    to { transform: rotateZ(0deg) translateX(130px) rotateZ(0deg); }
 }
 
 @keyframes orbit3 {
-    0% {
-        transform: rotateZ(0deg) translateX(160px) scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: rotateZ(180deg) translateX(160px) scale(0.5);
-        opacity: 0.3;
-    }
-
-    100% {
-        transform: rotateZ(360deg) translateX(160px) scale(1);
-        opacity: 1;
-    }
-}
-
-.floating-illustration {
-    max-width: 85%;
-    max-height: 100%;
-    object-fit: contain;
-    filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.12));
-    animation: gentleFloat 5s ease-in-out infinite;
-}
-
-@keyframes gentleFloat {
-
-    0%,
-    100% {
-        transform: translateY(0) scale(1.05);
-    }
-
-    50% {
-        transform: translateY(-12px) scale(1.05);
-    }
+    0% { transform: rotateZ(0deg) translateX(190px) scale(1); opacity: 1; }
+    50% { transform: rotateZ(180deg) translateX(190px) scale(0.6); opacity: 0.3; }
+    100% { transform: rotateZ(360deg) translateX(190px) scale(1); opacity: 1; }
 }
 
 /* --- Typography Area --- */
 .onboarding-content {
     flex: 1;
-    padding: 20px 32px;
+    padding: 10px 32px;
     text-align: center;
     max-width: 500px;
     display: flex;
@@ -224,55 +178,53 @@
 }
 
 .onboarding-title {
-    font-size: clamp(26px, 6vw, 32px);
+    font-size: clamp(24px, 6vw, 28px);
     font-weight: 800;
     color: var(--pm-text);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     letter-spacing: -0.5px;
 }
 
 .onboarding-description {
-    font-size: clamp(14px, 4vw, 16px);
+    font-size: clamp(14px, 4vw, 15px);
     color: var(--pm-text-muted);
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 0;
 }
 
 /* --- Footer Area --- */
 .onboarding-footer {
-    height: 240px;
-    padding: 0 24px 40px;
+    height: 180px;
+    padding: 0 24px 25px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 10px;
 }
 
 .onboarding-pagination {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-bottom: 12px;
 }
 
 .pagination-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 3px;
     background-color: rgba(34, 34, 34, 0.1);
     transition: all 0.3s ease;
 }
 
 .pagination-dot.active {
-    width: 24px;
+    width: 20px;
     background-color: var(--pm-primary);
 }
 
-/* --- Auth Aligned Buttons --- */
 .onboarding-btn-next {
     width: 100%;
-    max-width: 440px;
-    /* Aligned with authCard max-width */
+    max-width: 340px;
     padding: 18px;
     background-color: var(--pm-primary);
     color: white;
@@ -282,17 +234,10 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
-    box-shadow: 0 10px 20px rgba(128, 14, 14, 0.15);
+    box-shadow: 0 10px 25px rgba(128, 14, 14, 0.15);
 }
 
-.onboarding-btn-next:hover {
-    background-color: #6D0C0C;
-    transform: translateY(-1px);
-}
-
-.onboarding-btn-next:active {
-    transform: translateY(0);
-}
+.onboarding-btn-next:hover { background-color: #6D0C0C; transform: translateY(-1px); }
 
 .onboarding-btn-skip {
     background: none;
@@ -302,44 +247,18 @@
     font-weight: 600;
     cursor: pointer;
     padding: 10px;
-    transition: color 0.2s;
-}
-
-.onboarding-btn-skip:hover {
-    color: var(--pm-text);
 }
 
 /* --- Responsiveness for Smaller Devices (iPhone SE) --- */
-@media (max-height: 670px) {
-    .onboarding-slide {
-        padding-top: 5vh;
-    }
-
-    .onboarding-visual {
-        height: 35vh;
-    }
-
-    .onboarding-title {
-        font-size: 24px;
-        margin-bottom: 8px;
-    }
-
-    .onboarding-description {
-        font-size: 14px;
-    }
-
-    .onboarding-footer {
-        height: 200px;
-        padding-bottom: 24px;
-        gap: 8px;
-    }
-
-    .onboarding-btn-next {
-        padding: 16px;
-        font-size: 16px;
-    }
-
-    .onboarding-btn-skip {
-        font-size: 14px;
-    }
+@media (max-height: 700px) {
+    .onboarding-slide { padding-top: 4vh; }
+    .onboarding-slider { height: calc(100% - 160px); }
+    .onboarding-visual { height: 35vh; }
+    .tech-decor-container { transform: scale(0.75); }
+    .ui-screenshot { max-width: 180px; }
+    .onboarding-footer { height: 160px; padding-bottom: 15px; gap: 5px; }
+    .onboarding-title { font-size: 20px; margin-bottom: 4px; }
+    .onboarding-description { font-size: 12.5px; line-height: 1.4; }
+    .onboarding-pagination { margin-bottom: 8px; }
+    .onboarding-btn-next { padding: 14px; font-size: 16px; }
 }
