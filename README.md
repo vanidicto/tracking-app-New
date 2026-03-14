@@ -1,6 +1,6 @@
-# 🛡️ IoT-Integrated Safety Application with Smart Bracelet
+# 🛡️ IoT-Integrated Mobile Safety Application (PWA) with Smart Bracelet
 
-An **IoT-based personal safety system** that combines a **smart bracelet** and a **React web application** to provide fast emergency reporting, real-time location tracking, geofencing, and family monitoring.
+An **IoT-based personal safety system** that combines a **smart bracelet** and a **mobile application (via PWA)** to provide fast emergency reporting, real-time location tracking, geofencing, and family monitoring.
 
 This project is developed as part of a **Bachelor of Science in Information Technology** thesis at the **Technological University of the Philippines (TUP)**.
 
@@ -9,7 +9,7 @@ This project is developed as part of a **Bachelor of Science in Information Tech
 
 ## 📌 Project Overview
 
-Many safety applications fail during emergencies because users cannot unlock their phones or rely on constant internet access. This project solves that problem by using a **smart bracelet with a physical SOS button** paired with a **cloud-based safety application**.
+Many safety applications fail during emergencies because users cannot or are unable to unlock their phones in time. This project solves that problem by using a **smart bracelet with a physical SOS button** that triggers immediate alerts via **internet connectivity** to a **responsive mobile application (PWA)**.
 
 The system supports:
 
@@ -40,7 +40,8 @@ Emergency alerts continue to send until the user confirms they are safe.
 - Automatic alert resend every **5 minutes**
 
 
-### 📱 Safety Web Application
+### 📱 Mobile Safety Application (PWA)
+- Developed as a **Progressive Web App (PWA)** for instant mobile accessibility
 - Built using **React.js**
 - Live location tracking using **Leaflet**
 - Safe-zone creation using **Leaflet Draw**
@@ -53,9 +54,7 @@ Emergency alerts continue to send until the user confirms they are safe.
 
 ### 1. Smart Bracelet
 - Collects GPS and SOS input
-- Sends alerts via:
-  - **SMS**
-  - **Internet** 
+- Sends real-time alerts via **Internet connectivity**
 
 ### 2. Cloud Firestore
 - Stores user profiles
@@ -63,7 +62,7 @@ Emergency alerts continue to send until the user confirms they are safe.
 - Records emergency incidents
 
 
-### 3. React Web Application
+### 3. Mobile Application (via PWA)
 - Displays live tracking using Leaflet
 - Allows drawing and managing geofences
 - Shows emergency alerts and logs
@@ -129,9 +128,9 @@ The system is evaluated using **ISO/IEC 25010** standards:
 ## ⚠️ Limitations
 
 - Prototype-level implementation only
-- SMS delivery depends on internet connection strength
+- **Connectivity:** System requires an active internet connection for real-time tracking and alerts.
 - No integration with police or emergency hotlines
-- Mobile-based application only (via PWA)
+- **Mobile-first experience:** Optimized exclusively for mobile use via PWA installation
 - Testing conducted within Manila
 
 ---
