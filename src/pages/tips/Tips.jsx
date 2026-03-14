@@ -11,7 +11,10 @@ import {
     Zap,
     Circle,
     Pencil,
-    Trash2
+    Trash2,
+    Smartphone,
+    Check,
+    Wifi
 } from "lucide-react";
 import "./Tips.css";
 
@@ -29,6 +32,24 @@ const sections = [
                         <li><strong>Profile Updates:</strong> Go to the Account page to update your name, email, and profile picture.</li>
                         <li><strong>Security:</strong> Change your password regularly and ensure your recovery email is up to date.</li>
                     </ul>
+
+                    <div className="account-tutorial-animation">
+                        <div className="acc-bg-dots"></div>
+                        <div className="acc-device acc-phone">
+                            <Smartphone size={32} color="#1e293b" strokeWidth={1.5} />
+                            <div className="acc-phone-screen"></div>
+                        </div>
+                        <div className="acc-signal-waves">
+                            <Wifi size={24} color="#A4262C" />
+                        </div>
+                        <div className="acc-device acc-bracelet">
+                            <Watch size={28} color="#1e293b" strokeWidth={1.5} />
+                            <div className="acc-bracelet-pulse"></div>
+                        </div>
+                        <div className="acc-sync-badge">
+                            <Check size={14} color="white" strokeWidth={3} />
+                        </div>
+                    </div>
                 </section>
                 <section>
                     <h3><Watch size={20} /> My Bracelet</h3>
@@ -58,6 +79,36 @@ const sections = [
                         <li><strong>Live Map:</strong> View the real-time GPS location of your bracelet and any shared contacts.</li>
                         <li><strong>SOS Trigger:</strong> The SOS alert is triggered directly from your bracelet. Once pressed, it automatically sends a signal distress to your primary emergency contacts via SMS and app notifications.</li>
                     </ul>
+
+                    <div className="home-tutorial-animation">
+                        <div className="net-hub">
+                            <div className="net-node net-center">
+                                <Watch size={20} color="white" />
+                                <div className="net-center-pulse"></div>
+                            </div>
+
+                            {/* Caregiver 1 - Top Right */}
+                            <div className="net-connection conn-1">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-1"><Smartphone size={16} color="#475569" /></div>
+
+                            {/* Caregiver 2 - Bottom Left */}
+                            <div className="net-connection conn-2">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-2"><Smartphone size={16} color="#475569" /></div>
+
+                            {/* Caregiver 3 - Bottom Right */}
+                            <div className="net-connection conn-3">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-3"><Smartphone size={16} color="#475569" /></div>
+                        </div>
+                    </div>
                 </section>
                 <section>
                     <h3><Users size={20} /> People & Contacts</h3>
