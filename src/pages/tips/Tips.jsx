@@ -80,9 +80,25 @@ const sections = [
                     <h3><MapPin size={20} /> Places & Geofencing</h3>
                     <p>Geofencing allows you to set up 'Safe Zones'. You'll be notified whenever the bracelet enters or leaves these areas.</p>
 
-                    <div className="geofence-visualization">
-                        <div className="boomerang-circle"></div>
-                        <div className="boomerang-marker"></div>
+                    <div className="geofence-tutorial-animation">
+                        <div className="gf-map-bg"></div>
+                        <div className="gf-ui-toolbar">
+                            <div className="gf-draw-btn">
+                                <Circle size={14} color="#A4262C" />
+                            </div>
+                        </div>
+                        <div className="gf-cursor">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4L11.381 21.9056C11.6669 22.5992 12.6394 22.6105 12.9392 21.9238L15.4222 16.2427C15.5398 15.9734 15.7483 15.7533 16.01 15.6267L21.7513 12.8483C22.4468 12.5117 22.4277 11.5161 21.7196 11.2057L4 4Z" fill="#333333" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                        <div className="gf-drawn-zone"></div>
+                        <div className="gf-center-pin">
+                            <MapPin size={18} color="#A4262C" fill="white" />
+                        </div>
+                        <div className="gf-notification">
+                            Safey Zone Created
+                        </div>
                     </div>
 
                     <div className="geofence-guide">
