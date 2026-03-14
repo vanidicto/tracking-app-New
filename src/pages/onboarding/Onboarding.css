@@ -4,7 +4,7 @@
     --pm-text: #222222;
     --pm-text-muted: #777777;
     --pm-primary: #800E0E;
-    
+
     width: 100%;
     height: 100vh;
     height: 100svh;
@@ -38,13 +38,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 9vh; /* Lowered from 6vh to push visuals down */
+    padding-top: 9vh;
+    /* Lowered from 6vh to push visuals down */
     box-sizing: border-box;
 }
 
 /* --- Visual Area (Tech Innovation Lighting) --- */
 .onboarding-visual {
-    height: 46vh; /* Increased from 44vh to accommodate larger graphic */
+    height: 46vh;
+    /* Increased from 44vh to accommodate larger graphic */
     width: 100%;
     display: flex;
     align-items: center;
@@ -56,7 +58,8 @@
 .ui-screenshot {
     width: auto;
     height: auto;
-    max-width: 290px; /* Enlarged from 250px for better visibility */
+    max-width: 290px;
+    /* Enlarged from 250px for better visibility */
     max-height: 95%;
     object-fit: contain;
     /* COMPLETELY REMOVED card containers, borders, and rounded corners */
@@ -66,19 +69,30 @@
     z-index: 2;
     /* Dynamic movement */
     animation: smoothFloating 6s ease-in-out infinite;
-    filter: drop-shadow(0 15px 35px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.15));
 }
 
 @keyframes smoothFloating {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    33% { transform: translateY(-8px) rotate(1deg); }
-    66% { transform: translateY(-4px) rotate(-1deg); }
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    33% {
+        transform: translateY(-8px) rotate(1deg);
+    }
+
+    66% {
+        transform: translateY(-4px) rotate(-1deg);
+    }
 }
 
 /* --- Tech Decor Elements --- */
 .tech-decor-container {
     position: absolute;
-    width: 420px; /* Enlarged from 380px to match larger phone */
+    width: 420px;
+    /* Enlarged from 380px to match larger phone */
     height: 420px;
     display: flex;
     align-items: center;
@@ -130,40 +144,88 @@
     opacity: 0.8;
 }
 
-.p-1 { animation: orbit1 9s linear infinite; }
-.p-2 { animation: orbit2 13s linear infinite; }
-.p-3 { animation: orbit3 11s linear infinite; }
+.p-1 {
+    animation: orbit1 9s linear infinite;
+}
+
+.p-2 {
+    animation: orbit2 13s linear infinite;
+}
+
+.p-3 {
+    animation: orbit3 11s linear infinite;
+}
 
 /* --- Animations --- */
 @keyframes techRotate3D {
-    from { transform: rotateX(60deg) rotateZ(0deg); }
-    to { transform: rotateX(60deg) rotateZ(360deg); }
+    from {
+        transform: rotateX(60deg) rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateX(60deg) rotateZ(360deg);
+    }
 }
 
 @keyframes techRotateReverse3D {
-    from { transform: rotateX(-45deg) rotateZ(360deg); }
-    to { transform: rotateX(-45deg) rotateZ(0deg); }
+    from {
+        transform: rotateX(-45deg) rotateZ(360deg);
+    }
+
+    to {
+        transform: rotateX(-45deg) rotateZ(0deg);
+    }
 }
 
 @keyframes glowPulseIntensity {
-    0%, 100% { transform: scale(0.85); opacity: 0.4; }
-    50% { transform: scale(1.4); opacity: 1; }
+
+    0%,
+    100% {
+        transform: scale(0.85);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.4);
+        opacity: 1;
+    }
 }
 
 @keyframes orbit1 {
-    from { transform: rotateZ(0deg) translateX(160px) rotateZ(0deg); }
-    to { transform: rotateZ(360deg) translateX(160px) rotateZ(-360deg); }
+    from {
+        transform: rotateZ(0deg) translateX(160px) rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg) translateX(160px) rotateZ(-360deg);
+    }
 }
 
 @keyframes orbit2 {
-    from { transform: rotateZ(360deg) translateX(130px) rotateZ(-360deg); }
-    to { transform: rotateZ(0deg) translateX(130px) rotateZ(0deg); }
+    from {
+        transform: rotateZ(360deg) translateX(130px) rotateZ(-360deg);
+    }
+
+    to {
+        transform: rotateZ(0deg) translateX(130px) rotateZ(0deg);
+    }
 }
 
 @keyframes orbit3 {
-    0% { transform: rotateZ(0deg) translateX(190px) scale(1); opacity: 1; }
-    50% { transform: rotateZ(180deg) translateX(190px) scale(0.6); opacity: 0.3; }
-    100% { transform: rotateZ(360deg) translateX(190px) scale(1); opacity: 1; }
+    0% {
+        transform: rotateZ(0deg) translateX(190px) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: rotateZ(180deg) translateX(190px) scale(0.6);
+        opacity: 0.3;
+    }
+
+    100% {
+        transform: rotateZ(360deg) translateX(190px) scale(1);
+        opacity: 1;
+    }
 }
 
 /* --- Typography Area --- */
@@ -237,7 +299,10 @@
     box-shadow: 0 10px 25px rgba(128, 14, 14, 0.15);
 }
 
-.onboarding-btn-next:hover { background-color: #6D0C0C; transform: translateY(-1px); }
+.onboarding-btn-next:hover {
+    background-color: #6D0C0C;
+    transform: translateY(-1px);
+}
 
 .onboarding-btn-skip {
     background: none;
@@ -251,14 +316,48 @@
 
 /* --- Responsiveness for Smaller Devices (iPhone SE) --- */
 @media (max-height: 700px) {
-    .onboarding-slide { padding-top: 4vh; }
-    .onboarding-slider { height: calc(100% - 160px); }
-    .onboarding-visual { height: 35vh; }
-    .tech-decor-container { transform: scale(0.75); }
-    .ui-screenshot { max-width: 180px; }
-    .onboarding-footer { height: 160px; padding-bottom: 15px; gap: 5px; }
-    .onboarding-title { font-size: 20px; margin-bottom: 4px; }
-    .onboarding-description { font-size: 12.5px; line-height: 1.4; }
-    .onboarding-pagination { margin-bottom: 8px; }
-    .onboarding-btn-next { padding: 14px; font-size: 16px; }
+    .onboarding-slide {
+        padding-top: 11vh;
+    }
+
+    .onboarding-slider {
+        height: calc(100% - 160px);
+    }
+
+    .onboarding-visual {
+        height: 32vh;
+    }
+
+    .tech-decor-container {
+        transform: scale(0.70);
+    }
+
+    .ui-screenshot {
+        max-width: 170px;
+    }
+
+    .onboarding-footer {
+        height: 160px;
+        padding-bottom: 15px;
+        gap: 5px;
+    }
+
+    .onboarding-title {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    .onboarding-description {
+        font-size: 12.5px;
+        line-height: 1.4;
+    }
+
+    .onboarding-pagination {
+        margin-bottom: 8px;
+    }
+
+    .onboarding-btn-next {
+        padding: 14px;
+        font-size: 16px;
+    }
 }
