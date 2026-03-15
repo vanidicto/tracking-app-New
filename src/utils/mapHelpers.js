@@ -78,7 +78,6 @@ export function buildUserWithDevice(userDoc, deviceMap) {
       'https://i.pinimg.com/originals/98/1d/6b/981d6b2e0ccb5e968a0618c8d47671da.jpg',
     battery: Number(deviceData.battery ?? 0),
     braceletOn: braceletOn,
-    pulseRate: deviceData.pulseRate ?? null,
     lastSeen: lastSeenDate,
     sos: (deviceData.sos && (deviceData.sos.active ?? deviceData.sos)) || false,
     position: location,

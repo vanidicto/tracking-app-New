@@ -64,7 +64,6 @@ const Report = () => {
         icon: ShieldAlert
       },
       // Map fields for the modal
-      pulse: `${report.pulseRate} bpm`,
       braceletStatus: report.braceletStatus ? 'On' : 'Off',
     };
   };

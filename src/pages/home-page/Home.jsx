@@ -163,7 +163,7 @@ function Home() {
                       <h3>{person.name}</h3>
                       <p>Battery: {person.battery}%</p>
                       <p>Status: {person.online ? "🟢 Online" : "🔴 Offline"}</p>
-                      <p>Pulse: {person.pulseRate ?? "—"}</p>
+
                       <p>
                         Last Seen:{" "}
                         {person.lastSeen

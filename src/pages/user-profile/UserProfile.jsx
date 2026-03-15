@@ -1,6 +1,6 @@
 // src/pages/app/UserProfile.jsx
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Phone, Wifi, Battery, ChevronLeft } from 'lucide-react';
+import { MessageSquare, Phone, Wifi, Battery, ChevronLeft } from 'lucide-react';
 import './UserProfile.css';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -85,13 +85,7 @@ const UserProfile = () => {
           </div>
 
           <div className="up-vitals-list">
-            <div className="up-vital-row">
-              <div className="up-vital-icon"><Heart size={20} /></div>
-              <div className="up-vital-content">
-                <span className="up-vital-label">Heart Rate</span>
-                <span className="up-vital-value danger">89 BPM</span>
-              </div>
-            </div>
+
 
             <div className="up-vital-row">
               <div className="up-vital-icon"><Battery size={20} /></div>

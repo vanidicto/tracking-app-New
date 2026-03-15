@@ -74,7 +74,7 @@ const MyBracelet = () => {
                 isBraceletOn: true,
                 lastSeen: serverTimestamp(),
                 location: [0, 0],
-                pulseRate: null,
+
                 sos: { active: false, timestamp: null },
             });
 

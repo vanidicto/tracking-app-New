@@ -123,7 +123,6 @@ export function useBraceletUsers() {
                       avatar: null,
                       date: reportDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
                       time: reportDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-                      pulseRate: dd.pulseRate ?? 0,
                       location: locationAddress,
                       appUserId: currentUser.uid,
                       appUserName: appUserName,
@@ -155,7 +154,6 @@ export function useBraceletUsers() {
                   ...u,
                   battery: 0,
                   braceletOn: false,
-                  pulseRate: null,
                   lastSeen: null,
                   sos: false,
                   position: u.position, // Keep last known position
@@ -171,7 +169,6 @@ export function useBraceletUsers() {
                 battery: Number(dd.battery ?? u.battery),
                 // LOGIC FIX: If offline, force braceletOn to false
                 braceletOn: online ? Boolean(dd.isBraceletOn ?? u.braceletOn) : false,
-                pulseRate: dd.pulseRate ?? u.pulseRate,
                 lastSeen,
                 sos: (dd.sos && (dd.sos.active ?? dd.sos)) || false,
                 position: loc || u.position, // Keep old position if new one is null

@@ -30,7 +30,7 @@ export default function Account() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoURL(reader.result);
-        addToast("Photo preview updated (local only).", "success");
+        addToast("Photo preview updated.", "success");
       };
       reader.readAsDataURL(file);
     }

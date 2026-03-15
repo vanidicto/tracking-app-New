@@ -559,7 +559,7 @@ const Places = () => {
                       <h3>{user.name}</h3>
                       <p>Battery: {user.battery}%</p>
                       <p>Status: {user.online ? "🟢 Online" : "🔴 Offline"}</p>
-                      <p>Pulse: {user.pulseRate ?? "—"}</p>
+
                       <p>
                         Last Seen:{" "}
                         {user.lastSeen
