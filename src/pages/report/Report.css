@@ -30,7 +30,6 @@
 /* The <li> is now the row container, remove its padding */
 .incident-item {
   padding: 0;
-  border-bottom: 1px solid var(--pm-border);
 }
 
 .incident-item:last-child {
@@ -79,6 +78,18 @@
 /* UPDATED */
 .incident-type.red {
   color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* NEW BLACK STATUS CLASSES */
+.incident-icon-wrapper.black {
+  /* background-color: #000; */
+  background-color: var(--pm-text);
+}
+
+.incident-type.black {
+  /* color: #000; */
+  color: var(--pm-text);
   font-weight: 700;
 }
 
@@ -138,7 +149,7 @@
 }
 
 .incident-date-right {
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   color: var(--pm-text-muted);
   /* UPDATED */
   margin-right: 8px;
