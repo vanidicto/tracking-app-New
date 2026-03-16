@@ -2,7 +2,8 @@
 
 .up-page-container {
   padding: 0;
-  max-width: 100%; /* Full screen on mobile */
+  max-width: 100%;
+  /* Full screen on mobile */
   margin: 0 auto;
   min-height: 100vh;
   background-color: #ffffff;
@@ -41,7 +42,8 @@
   margin: 0;
   text-align: center;
   flex: 1;
-  padding-right: 24px; /* balances out the back button width to keep title perfectly centered */
+  padding-right: 24px;
+  /* balances out the back button width to keep title perfectly centered */
 }
 
 /* --- MAIN CONTENT GRID --- */
@@ -83,7 +85,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: #B55050; /* Matches the "Weak" pill in the design */
+  background-color: #B55050;
+  /* Matches the "Weak" pill in the design */
   color: white;
   padding: 4px 16px;
   border-radius: 20px;
@@ -106,7 +109,7 @@
   padding: 4px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .up-card-label {
@@ -150,7 +153,7 @@
   border-radius: 16px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .up-map-header {
@@ -179,7 +182,8 @@
 .up-map-container {
   height: 350px;
   width: 100%;
-  background: #d9d9d9; /* fallback background color like screenshot */
+  background: #d9d9d9;
+  /* fallback background color like screenshot */
 }
 
 /* Desktop sizing constraints */
@@ -189,7 +193,7 @@
     border: 1px solid #eee;
     margin: 40px auto;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     background-color: #fff;
     overflow: hidden;
   }
