@@ -56,7 +56,7 @@ const sections = [
                     <p>The PingMe Smart Bracelet is your physical lifeline. Follow these tips for the best experience:</p>
                     <div className="tips-info-card">
                         <h4>Pairing your Device</h4>
-                        <p>Ensure Bluetooth is enabled on your phone. In the "My Bracelet" section, click "Add New Bracelet" and follow the on-screen prompts.</p>
+                        <p>In the "My Bracelet" section, click "Add New Bracelet" and follow the on-screen prompts.</p>
                     </div>
                     <ul>
                         <li><strong>Battery Status:</strong> Check the "My Bracelet" page to see real-time battery levels. Charge it when it drops below 20%.</li>
@@ -77,7 +77,7 @@ const sections = [
                     <p>The Home page provides a real-time overview of your safety status and the locations of your loved ones.</p>
                     <ul>
                         <li><strong>Live Map:</strong> View the real-time GPS location of your bracelet and any shared contacts.</li>
-                        <li><strong>SOS Trigger:</strong> The SOS alert is triggered directly from your bracelet. Once pressed, it automatically sends a signal distress to your primary emergency contacts via SMS and app notifications.</li>
+                        <li><strong>SOS Trigger:</strong> The SOS alert is triggered directly from your bracelet. Once pressed, it automatically sends a signal distress to your primary emergency contacts via app notifications.</li>
                     </ul>
 
                     <div className="home-tutorial-animation">
