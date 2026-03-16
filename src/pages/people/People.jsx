@@ -134,6 +134,14 @@ function People() {
         return;
       }
 
+      // 1c. Validation: Prevent linking a bracelet that is already linked
+      const isAlreadyLinked = braceletUsers.some(u => u.id === serial);
+      if (isAlreadyLinked) {
+        alert("This bracelet is already linked to your account.");
+        setIsSubmitting(false);
+        return;
+      }
+
       // 2. Link the Serial Number to the guardian's account and optionally set a local nickname
       const appUserRef = doc(db, 'appUsers', user.uid);
       const updates = {
@@ -220,7 +228,7 @@ function People() {
                   </div>
 
                   <div className="form-group-custom">
-                    <label className="form-label-custom">Nickname (Optional) <span className="req-asterisk">*</span></label>
+                    <label className="form-label-custom">Nickname (Optional) </label>
                     <div className="input-with-icon">
                       <div className="input-icon-wrapper">
                         <User size={18} strokeWidth={1.5} color="#9ca3af" />

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronLeft, User, CreditCard, Phone } from 'lucide-react';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { ChevronLeft, User, CreditCard, Phone, CheckCircle2 } from 'lucide-react';
+import { doc, setDoc, getDoc, serverTimestamp, collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import './MyBracelet.css';
 
 const MyBracelet = () => {
@@ -12,7 +13,8 @@ const MyBracelet = () => {
 
     const [step, setStep] = useState('add'); // 'add' or 'confirm'
     const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAlreadyConfigured, setIsAlreadyConfigured] = useState(false);
 
     const [formData, setFormData] = useState({
         braceletName: '',
@@ -20,6 +22,38 @@ const MyBracelet = () => {
         emergencyName: '',
         emergencyNumber: ''
     });
+
+    React.useEffect(() => {
+        const fetchOwnedBracelet = async () => {
+            if (!currentUser) return;
+            try {
+                const q = query(
+                    collection(db, 'braceletUsers'), 
+                    where('ownerAppUserId', '==', currentUser.uid)
+                );
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const data = querySnapshot.docs[0].data();
+                    const emergency = data.emergencyContacts?.[0] || {};
+                    
+                    setFormData({
+                        braceletName: data.name || '',
+                        serialNumber: data.serialNumber || '',
+                        emergencyName: emergency.name || '',
+                        emergencyNumber: emergency.contactNo || ''
+                    });
+                    setIsAlreadyConfigured(true);
+                }
+            } catch (err) {
+                console.error("Error fetching owned bracelet:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchOwnedBracelet();
+    }, [currentUser]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,8 +86,8 @@ const MyBracelet = () => {
                 return;
             }
 
-            // 2. Avatar uses the wearer's Account profile photo
-            const avatarURL = currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.braceletName}`;
+            // 2. Avatar uses the wearer's Account profile photo (fallback handled by UI)
+            const avatarURL = currentUser?.photoURL || null;
 
             // 3. Create braceletUsers document — Serial Number IS the Document ID
             await setDoc(braceletRef, {
@@ -98,22 +132,32 @@ const MyBracelet = () => {
                     <ChevronLeft size={24} color="#444" />
                 </button>
                 <h1 className="br-nav-title">
-                    {isConfirm ? "Confirm Details" : "Register My Bracelet"}
+                    {isConfirm ? "Confirm Details" : (isAlreadyConfigured ? "Edit Bracelet" : "Register My Bracelet")}
                 </h1>
                 <div className="br-nav-spacer"></div>
             </header>
 
-            <main className="br-main">
-                <div className="br-form-container">
-                    {/* Bracelet Information Section */}
-                    <div className="br-section">
-                        <div className="br-section-header">
-                            <h2 className="br-section-title">
-                                <span className="br-indicator"></span>
-                                BRACELET CONFIGURATION
-                            </h2>
-                            {isConfirm && <button className="br-edit-link" onClick={() => setStep('add')}>Edit</button>}
-                        </div>
+            {isLoading ? (
+                <div className="br-main" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <LoadingSpinner />
+                </div>
+            ) : (
+                <main className="br-main">
+                    <div className="br-form-container">
+                        {/* Bracelet Information Section */}
+                        <div className="br-section">
+                            <div className="br-section-header">
+                                <h2 className="br-section-title">
+                                    <span className="br-indicator"></span>
+                                    {isAlreadyConfigured ? "CURRENT CONFIGURATION" : "BRACELET CONFIGURATION"}
+                                </h2>
+                                {isAlreadyConfigured && !isConfirm && (
+                                    <div className="br-configured-badge">
+                                        <CheckCircle2 size={14} /> Already Configured
+                                    </div>
+                                )}
+                                {isConfirm && <button className="br-edit-link" onClick={() => setStep('add')}>Edit</button>}
+                            </div>
 
                         <div className="br-field">
                             <label className="br-label">Name of Bracelet User {!isConfirm && <span className="br-required">*</span>}</label>
@@ -127,6 +171,7 @@ const MyBracelet = () => {
                                     value={formData.braceletName}
                                     onChange={handleChange}
                                     disabled={isConfirm}
+                                    required
                                 />
                             </div>
                         </div>
@@ -143,6 +188,7 @@ const MyBracelet = () => {
                                     value={formData.serialNumber}
                                     onChange={handleChange}
                                     disabled={isConfirm}
+                                    required
                                 />
                             </div>
                             <p className="br-hint">You can find the serial number on the back of the bracelet</p>
@@ -171,6 +217,7 @@ const MyBracelet = () => {
                                     value={formData.emergencyName}
                                     onChange={handleChange}
                                     disabled={isConfirm}
+                                    required
                                 />
                             </div>
                         </div>
@@ -187,22 +234,24 @@ const MyBracelet = () => {
                                     value={formData.emergencyNumber}
                                     onChange={handleChange}
                                     disabled={isConfirm}
+                                    required
                                 />
                             </div>
                             {isConfirm && <p className="br-hint br-hint-center">Please make sure the information is correct before proceeding</p>}
                         </div>
                     </div>
                 </div>
-            </main>
+                </main>
+            )}
 
             <footer className="br-footer">
                 <button className="br-btn-secondary" onClick={() => navigate('/app')}>Cancel</button>
                 {isConfirm ? (
                     <button className="br-btn-primary" onClick={handleRegister} disabled={isSubmitting}>
-                        {isSubmitting ? 'Registering...' : 'Confirm & Save'}
+                        {isSubmitting ? 'Saving Changes...' : (isAlreadyConfigured ? 'Save Changes' : 'Confirm & Save')}
                     </button>
                 ) : (
-                    <button className="br-btn-primary" onClick={handleNext}>Next</button>
+                    <button className="br-btn-primary" onClick={handleNext} disabled={isLoading}>Next</button>
                 )}
             </footer>
         </div>

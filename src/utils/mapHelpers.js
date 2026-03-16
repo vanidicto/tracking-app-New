@@ -1,5 +1,4 @@
-// src/utils/mapHelpers.js
-import L from 'leaflet';
+import defaultAvatar from '../assets/red.webp';
 
 /**
  * Ensures Leaflet's default icons are correctly mapped to CDN URLs.
@@ -73,9 +72,7 @@ export function buildUserWithDevice(userDoc, deviceMap) {
   return {
     id: userDoc.id,
     name: userData.name || 'Unnamed User',
-    avatar:
-      userData.avatar ||
-      'https://i.pinimg.com/originals/98/1d/6b/981d6b2e0ccb5e968a0618c8d47671da.jpg',
+    avatar: userData.avatar || defaultAvatar,
     battery: Number(deviceData.battery ?? 0),
     braceletOn: braceletOn,
     lastSeen: lastSeenDate,

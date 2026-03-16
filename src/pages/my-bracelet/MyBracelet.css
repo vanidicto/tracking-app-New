@@ -1,3 +1,25 @@
 @import "../../styles/MenuLayout.css";
 
 /* No specific overrides needed for My Bracelet yet as it uses the base layout */
+
+.br-edit-link {
+    background: none;
+    border: none;
+    color: var(--pm-primary);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+.br-configured-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #2e7d32;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
