@@ -240,7 +240,7 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--pm-text);
+  color: var(--pm-primary);
 }
 
 .add-bracelet-body {
@@ -268,7 +268,7 @@
 }
 
 .section-slash {
-  color: var(--pm-danger);
+  color: var(--pm-primary);
   font-size: 1.2rem;
 }
 
@@ -344,7 +344,7 @@
 
 .btn-next {
   padding: 12px 30px;
-  background-color: #000;
+  background-color: var(--pm-primary);
   color: white;
   border: none;
   border-radius: 12px;
