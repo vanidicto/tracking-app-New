@@ -1,0 +1,212 @@
+/* src/pages/report/ReportDetail.css */
+
+/* --- NEW LAYOUT: MOBILE APP STYLE --- */
+
+.rd-page-container {
+  padding: 0;
+  max-width: 100%; /* Full screen on mobile */
+  margin: 0 auto;
+  min-height: 100vh;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- HEADER / TOP BAR --- */
+.rd-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.rd-back-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rd-page-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #8b0000;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+  padding-right: 24px; /* balances out the back button width to keep title perfectly centered */
+}
+
+/* --- MAIN CONTENT GRID --- */
+.rd-content-grid {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+}
+
+/* --- HERO SECTION: Identity & Status --- */
+.rd-hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--pm-border);
+}
+
+.rd-avatar-wrapper {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 16px;
+}
+
+.rd-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--pm-surface);
+  box-shadow: var(--pm-shadow-sm);
+}
+
+.rd-name {
+  font-size: 24px;
+  font-weight: 800;
+  color: #000;
+  margin: 0 0 12px 0;
+}
+
+.rd-status-badge {
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status Colors (matching Sidebar/Dashboard) */
+.rd-status-badge.status-black {
+  background: rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+
+.rd-status-badge.status-green {
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--pm-success);
+}
+
+.rd-status-badge.status-red {
+  background: rgba(255, 59, 48, 0.15);
+  color: var(--pm-danger);
+}
+
+.rd-status-badge.status-orange {
+  background: rgba(255, 149, 0, 0.15);
+  color: var(--pm-warning);
+}
+
+.rd-status-badge.status-blue {
+  background: rgba(0, 122, 255, 0.15);
+  color: var(--pm-primary);
+}
+
+
+/* --- DETAILS GRID --- */
+.rd-details-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.rd-section-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pm-text-muted);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--pm-border);
+}
+
+.rd-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* Detail Cards */
+.rd-detail-card {
+  background: var(--pm-surface);
+  border: 1px solid var(--pm-border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rd-detail-card-full {
+  grid-column: span 2;
+}
+
+.rd-detail-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--pm-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rd-detail-card-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pm-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.rd-detail-card-value {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--pm-text);
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+/* Responsive constraints */
+@media (max-width: 600px) {
+  .rd-grid-container {
+      grid-template-columns: 1fr;
+      gap: 10px;
+  }
+  .rd-detail-card-full {
+      grid-column: auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .rd-page-container {
+    max-width: 500px;
+    border: 1px solid #eee;
+    margin: 40px auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    background-color: #fff;
+    overflow: hidden;
+  }
+}

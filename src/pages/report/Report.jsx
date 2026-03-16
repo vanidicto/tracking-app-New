@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { ChevronRight, ShieldAlert } from 'lucide-react';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { useBraceletUsers } from '../../hooks/useUsers';
 import { useAuth } from '../../context/AuthContext';
-import ReportDetailModal from '../../components/ReportDetailModal';
 import LoadingSpinner from '../../components/LoadingSpinner'
 import './Report.css';
 
 const Report = () => {
   const [reports, setReports] = useState([]);
-  const [selectedIncident, setSelectedIncident] = useState(null);
   const { braceletUsers } = useBraceletUsers();
   const { currentUser } = useAuth();
 
@@ -68,13 +67,7 @@ const Report = () => {
     };
   };
 
-  const handleRowClick = (incident) => {
-    setSelectedIncident(getEnrichedReport(incident));
-  };
-
-  const handleCloseModal = () => {
-    setSelectedIncident(null);
-  };
+  // Removed handleRowClick as we'll use <Link> directly in JSX
 
   if (!reports.length) return (
     <LoadingSpinner />
@@ -92,17 +85,20 @@ const Report = () => {
               <li
                 key={incident.id}
                 className="incident-item"
-                role="button"
-                tabIndex={0}
-                onClick={() => handleRowClick(rawReport)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleRowClick(rawReport);
-                  }
-                }}
               >
-                <div className="incident-link-wrapper">
+                <Link 
+                  to={`/app/report/${incident.id}`}
+                  state={{ 
+                    incident: { 
+                      ...incident,
+                      displayStatus: { 
+                        text: incident.displayStatus.text,
+                        color: incident.displayStatus.color
+                      } 
+                    } 
+                  }}
+                  className="incident-link-wrapper"
+                >
                   <div className={`incident-icon-wrapper ${incident.displayStatus.color}`}>
                     <IconComponent size={20} />
                   </div>
@@ -120,19 +116,12 @@ const Report = () => {
                     </span>
                     <ChevronRight size={20} className="chevron-icon" />
                   </div>
-                </div>
+                </Link>
               </li>
             );
           })}
         </ul>
       </main>
-
-      {selectedIncident && (
-        <ReportDetailModal
-          incident={selectedIncident}
-          onClose={handleCloseModal}
-        />
-      )}
     </div>
   );
 };

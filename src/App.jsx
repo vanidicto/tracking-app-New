@@ -10,6 +10,7 @@ import People from "./pages/people/People";
 import UserProfile from "./pages/user-profile/UserProfile";
 import Places from "./pages/places/Places";
 import Report from "./pages/report/Report";
+import ReportDetail from "./pages/report/ReportDetail";
 import Home from "./pages/home-page/Home";
 import Landing from "./pages/landing-page/Landing";
 import Onboarding from "./pages/onboarding/Onboarding";
@@ -61,6 +62,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="people" element={<People />} />
               <Route path="report" element={<Report />} />
+              <Route path="report/:reportId" element={<ReportDetail />} />
               <Route path="places" element={<Places />} />
               <Route path="userProfile/:userId" element={<UserProfile />} />
 
