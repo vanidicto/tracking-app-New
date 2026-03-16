@@ -147,6 +147,7 @@ html.pm-dark .modal-header-logo {
 .profile-menu-label {
   font-size: 1rem;
   font-weight: 500;
+  color: var(--pm-primary);
 }
 
 /* --- Toggle Switch for Dark Mode --- */
