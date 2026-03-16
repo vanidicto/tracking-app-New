@@ -678,14 +678,13 @@
 /* --- Home Tutorial Animation --- */
 .home-tutorial-animation {
     height: 200px;
-    background: #f0fdfa;
-    /* Soft teal/care tint */
+    background: #f8fafc;
     border-radius: 12px;
     margin-bottom: 24px;
     margin-top: 16px;
     position: relative;
     overflow: hidden;
-    border: 1px solid #ccfbf1;
+    border: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -734,20 +733,26 @@
 
 /* Positions of the 3 caregivers */
 .cg-1 {
-    top: 25%;
-    left: 75%;
+    top: 50%;
+    left: 50%;
+    margin-top: -49px;
+    margin-left: 70px;
     transform: translate(-50%, -50%) scale(0);
 }
 
 .cg-2 {
-    top: 70%;
-    left: 20%;
+    top: 50%;
+    left: 50%;
+    margin-top: 57px;
+    margin-left: -82px;
     transform: translate(-50%, -50%) scale(0);
 }
 
 .cg-3 {
-    top: 80%;
-    left: 70%;
+    top: 50%;
+    left: 50%;
+    margin-top: 57px;
+    margin-left: 57px;
     transform: translate(-50%, -50%) scale(0);
 }
 
