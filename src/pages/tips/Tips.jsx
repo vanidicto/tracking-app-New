@@ -8,12 +8,13 @@ import {
     Users,
     MapPin,
     FileText,
-    Menu,
-    X,
     Zap,
     Circle,
     Pencil,
-    Trash2
+    Trash2,
+    Smartphone,
+    Check,
+    Wifi
 } from "lucide-react";
 import "./Tips.css";
 
@@ -31,13 +32,31 @@ const sections = [
                         <li><strong>Profile Updates:</strong> Go to the Account page to update your name, email, and profile picture.</li>
                         <li><strong>Security:</strong> Change your password regularly and ensure your recovery email is up to date.</li>
                     </ul>
+
+                    <div className="account-tutorial-animation">
+                        <div className="acc-bg-dots"></div>
+                        <div className="acc-device acc-phone">
+                            <Smartphone size={32} color="#1e293b" strokeWidth={1.5} />
+                            <div className="acc-phone-screen"></div>
+                        </div>
+                        <div className="acc-signal-waves">
+                            <Wifi size={24} color="#A4262C" />
+                        </div>
+                        <div className="acc-device acc-bracelet">
+                            <Watch size={28} color="#1e293b" strokeWidth={1.5} />
+                            <div className="acc-bracelet-pulse"></div>
+                        </div>
+                        <div className="acc-sync-badge">
+                            <Check size={14} color="white" strokeWidth={3} />
+                        </div>
+                    </div>
                 </section>
                 <section>
                     <h3><Watch size={20} /> My Bracelet</h3>
                     <p>The PingMe Smart Bracelet is your physical lifeline. Follow these tips for the best experience:</p>
                     <div className="tips-info-card">
                         <h4>Pairing your Device</h4>
-                        <p>Ensure Bluetooth is enabled on your phone. In the "My Bracelet" section, click "Add New Bracelet" and follow the on-screen prompts.</p>
+                        <p>In the "My Bracelet" section, click "Add New Bracelet" and follow the on-screen prompts.</p>
                     </div>
                     <ul>
                         <li><strong>Battery Status:</strong> Check the "My Bracelet" page to see real-time battery levels. Charge it when it drops below 20%.</li>
@@ -58,8 +77,38 @@ const sections = [
                     <p>The Home page provides a real-time overview of your safety status and the locations of your loved ones.</p>
                     <ul>
                         <li><strong>Live Map:</strong> View the real-time GPS location of your bracelet and any shared contacts.</li>
-                        <li><strong>SOS Trigger:</strong> The SOS alert is triggered directly from your bracelet. Once pressed, it automatically sends a signal distress to your primary emergency contacts via SMS and app notifications.</li>
+                        <li><strong>SOS Trigger:</strong> The SOS alert is triggered directly from your bracelet. Once pressed, it automatically sends a signal distress to your primary emergency contacts via app notifications.</li>
                     </ul>
+
+                    <div className="home-tutorial-animation">
+                        <div className="net-hub">
+                            <div className="net-node net-center">
+                                <Watch size={20} color="white" />
+                                <div className="net-center-pulse"></div>
+                            </div>
+
+                            {/* Caregiver 1 - Top Right */}
+                            <div className="net-connection conn-1">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-1"><Smartphone size={16} color="#475569" /></div>
+
+                            {/* Caregiver 2 - Bottom Left */}
+                            <div className="net-connection conn-2">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-2"><Smartphone size={16} color="#475569" /></div>
+
+                            {/* Caregiver 3 - Bottom Right */}
+                            <div className="net-connection conn-3">
+                                <div className="net-line"></div>
+                                <div className="net-ping"></div>
+                            </div>
+                            <div className="net-node net-cg cg-3"><Smartphone size={16} color="#475569" /></div>
+                        </div>
+                    </div>
                 </section>
                 <section>
                     <h3><Users size={20} /> People & Contacts</h3>
@@ -82,9 +131,25 @@ const sections = [
                     <h3><MapPin size={20} /> Places & Geofencing</h3>
                     <p>Geofencing allows you to set up 'Safe Zones'. You'll be notified whenever the bracelet enters or leaves these areas.</p>
 
-                    <div className="geofence-visualization">
-                        <div className="boomerang-circle"></div>
-                        <div className="boomerang-marker"></div>
+                    <div className="geofence-tutorial-animation">
+                        <div className="gf-map-bg"></div>
+                        <div className="gf-ui-toolbar">
+                            <div className="gf-draw-btn">
+                                <Circle size={14} color="#A4262C" />
+                            </div>
+                        </div>
+                        <div className="gf-cursor">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4L11.381 21.9056C11.6669 22.5992 12.6394 22.6105 12.9392 21.9238L15.4222 16.2427C15.5398 15.9734 15.7483 15.7533 16.01 15.6267L21.7513 12.8483C22.4468 12.5117 22.4277 11.5161 21.7196 11.2057L4 4Z" fill="#333333" stroke="white" strokeWidth="1.5" strokeLinejoin="round" />
+                            </svg>
+                        </div>
+                        <div className="gf-drawn-zone"></div>
+                        <div className="gf-center-pin">
+                            <MapPin size={18} color="#A4262C" fill="white" />
+                        </div>
+                        <div className="gf-notification">
+                            Safey Zone Created
+                        </div>
                     </div>
 
                     <div className="geofence-guide">
@@ -127,13 +192,10 @@ const sections = [
 export default function Tips() {
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState(sections[0].id);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const handleBack = () => {
         navigate('/app', { state: { openProfile: true } });
     };
-
-    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
     return (
         <div className="br-page tips-page">
@@ -142,49 +204,31 @@ export default function Tips() {
                     <ChevronLeft size={24} color="#444" />
                 </button>
                 <h1 className="br-nav-title">Tips & Guide</h1>
-                <div className="br-nav-spacer">
-                    <button className="tips-menu-toggle" onClick={toggleSidebar}>
-                        {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
-                    </button>
-                </div>
+                <div className="br-nav-spacer"></div>
             </header>
+
+            <div className="tips-horizontal-nav-container">
+                <div className="tips-horizontal-nav">
+                    {sections.map((sec) => (
+                        <button
+                            key={sec.id}
+                            className={`tips-tab-btn ${activeSection === sec.id ? "active" : ""}`}
+                            onClick={() => setActiveSection(sec.id)}
+                        >
+                            {sec.title}
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             <div className="tips-layout">
                 <main className="br-main tips-main-content">
                     <div className="tips-content-wrapper">
-                        <h2 className="tips-section-heading">{sections.find(s => s.id === activeSection).title}</h2>
                         <div className="tips-dynamic-content">
                             {sections.find(s => s.id === activeSection).content}
                         </div>
                     </div>
                 </main>
-
-                {/* Sidebar Overlay for Mobile */}
-                <div className={`tips-sidebar-overlay ${isSidebarOpen ? "show" : ""}`} onClick={toggleSidebar}></div>
-
-                <aside className={`tips-sidebar ${isSidebarOpen ? "open" : ""}`}>
-                    <div className="tips-sidebar-header">
-                        <h2 className="br-section-title">
-                            <span className="br-indicator"></span>
-                            USER GUIDE
-                        </h2>
-                    </div>
-                    <nav className="tips-sidebar-nav">
-                        {sections.map((sec) => (
-                            <button
-                                key={sec.id}
-                                className={`tips-sidebar-item ${activeSection === sec.id ? "active" : ""}`}
-                                onClick={() => {
-                                    setActiveSection(sec.id);
-                                    setIsSidebarOpen(false);
-                                }}
-                            >
-                                <sec.icon size={20} className="tips-sidebar-icon" />
-                                <span>{sec.title}</span>
-                            </button>
-                        ))}
-                    </nav>
-                </aside>
             </div>
         </div>
     );

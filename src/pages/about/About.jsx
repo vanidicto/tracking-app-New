@@ -36,7 +36,7 @@ export default function About() {
                 Many safety applications fail during emergencies because users cannot unlock their phones or rely on constant internet access. PingMe solves that problem by using a <strong>smart bracelet with a physical SOS button</strong> paired with a cloud-based safety application.
               </p>
               <p>
-                The system supports offline emergency alerts via SMS, online real-time tracking using maps, and family-based monitoring with geofencing. Emergency alerts continue to send until the user confirms they are safe.
+                The system supports online real-time tracking using maps, and family-based monitoring with geofencing. Emergency alerts continue to send via internet connectivity until the user confirms they are safe.
               </p>
             </div>
           </div>
@@ -74,8 +74,9 @@ export default function About() {
               <span className="tech-pill">Python</span>
               <span className="tech-pill">Raspberry Pi Zero W</span>
               <span className="tech-pill">Neo-6M GPS Module</span>
-              <span className="tech-pill">SIM800L GSM</span>
-              <span className="tech-pill">MAX30100 Pulse Sensor</span>
+              <span className="tech-pill">3.5 inch RPi LCD Display</span>
+              <span className="tech-pill">Tactile Buttons</span>
+              <span className="tech-pill">Li-Po Battery (3.7V)</span>
             </div>
           </div>
 

@@ -88,6 +88,8 @@ export default function Onboarding() {
             <div key={slide.id} className="onboarding-slide">
               <div className="onboarding-visual">
                 <div className="tech-decor-container">
+                  <div className="tech-grid"></div>
+                  <div className="tech-scanline"></div>
                   <div className="tech-ring ring-main"></div>
                   <div className="tech-ring ring-inner"></div>
                   <div className="tech-glow"></div>
@@ -129,3 +131,5 @@ export default function Onboarding() {
     </div>
   );
 }
+
+// Test 
