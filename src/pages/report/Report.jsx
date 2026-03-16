@@ -5,7 +5,7 @@ import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { useBraceletUsers } from '../../hooks/useUsers';
 import { useAuth } from '../../context/AuthContext';
-import LoadingSpinner from '../../components/LoadingSpinner'
+import Skeleton from '../../components/skeleton/Skeleton';
 import './Report.css';
 
 const Report = () => {
@@ -70,8 +70,30 @@ const Report = () => {
   // Removed handleRowClick as we'll use <Link> directly in JSX
 
   if (!reports.length) return (
-    <LoadingSpinner />
-  )
+    <div className="report-page-frame skeleton-wrapper">
+      <main className="app-main">
+        <ul className="incident-list" style={{ boxShadow: 'none' }} aria-label="Loading reports">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <li key={`skeleton-${i}`} className="incident-item skeleton-report-item">
+              <div className="incident-link-wrapper" style={{ cursor: 'default' }}>
+                <div className="skeleton-icon-wrapper">
+                  <Skeleton type="avatar" width="36px" height="36px" />
+                </div>
+                <div className="incident-details skeleton-details-flex">
+                  <Skeleton type="text" width="60%" height="18px" className="skeleton-report-title" />
+                  <Skeleton type="text" width="40%" height="14px" />
+                </div>
+                <div className="incident-time-wrapper">
+                  <Skeleton type="text" width="40px" height="12px" className="skeleton-report-time" />
+                  <Skeleton type="avatar" width="20px" height="20px" />
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </div>
+  );
 
   return (
     <div className="report-page-frame">

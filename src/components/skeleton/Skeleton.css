@@ -95,8 +95,43 @@ html.pm-dark .skeleton {
 .skeleton-light::after {
     background: linear-gradient(90deg,
             transparent 0%,
-            rgba(164, 38, 44, 0.05) 30%,
-            rgba(164, 38, 44, 0.25) 50%,
-            rgba(164, 38, 44, 0.05) 70%,
-            transparent 100%);
+             #e8edf2 25%,
+            #f2f5f8 50%,
+            #e8edf2 75%);
+            /* transparent 100%); */
+             animation: shimmerLaser 2.2s infinite linear;
+    z-index: 1;
+}
+
+/* ─── Specific Skeletons ─── */
+/* Report Skeleton */
+.skeleton-report-item {
+    border-bottom: 1px solid var(--pm-border);
+    margin: 0;
+    padding: 0;
+}
+.skeleton-report-item .incident-link-wrapper {
+    padding: 8px 20px; /* Match People skeleton interval */
+}
+.skeleton-report-item .incident-link-wrapper:hover {
+    background-color: transparent;
+}
+.skeleton-icon-wrapper {
+    margin-right: 15px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+.skeleton-details-flex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.skeleton-report-title {
+    margin-bottom: 6px !important;
+}
+.skeleton-report-time {
+    margin-right: 8px !important;
 }
