@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import "./TopBar.css";
-import { Bell } from "lucide-react";
+import { Bell, ChevronLeft } from "lucide-react";
 import avatar from "../assets/red.webp";
 import { useAuth } from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
@@ -16,6 +16,7 @@ const TopBar = ({ onProfileClick }) => {
     if (path === "/app" || path === "/app/home") return "Home";
     if (path.includes("/app/people")) return "People";
     if (path.includes("/app/places")) return "Places";
+    if (path.includes("/app/report/")) return "Incident Report";
     if (path.includes("/app/report")) return "Report";
     if (path.includes("/app/myBracelet")) return "My Bracelet";
     if (path.includes("/app/account")) return "Account Settings";
@@ -28,11 +29,19 @@ const TopBar = ({ onProfileClick }) => {
   return (
     <header className="app-topbar">
       <div className="topbar-left">
-        <button className="topbar-mobile-menu-btn" onClick={onProfileClick}>
-          <img src={currentUser?.photoURL || avatar} alt="Profile" />
-        </button>
-        {/* Spacer to maintain balance on desktop after logo removal */}
-        <div className="topbar-spacer-desktop"></div>
+        {location.pathname.includes('/app/userProfile') || location.pathname.includes('/app/report/') ? (
+          <button className="topbar-back-btn" onClick={() => navigate(-1)}>
+            <ChevronLeft size={28} className="topbar-back-icon" />
+          </button>
+        ) : (
+          <>
+            <button className="topbar-mobile-menu-btn" onClick={onProfileClick}>
+              <img src={currentUser?.photoURL || avatar} alt="Profile" />
+            </button>
+            {/* Spacer to maintain balance on desktop after logo removal */}
+            <div className="topbar-spacer-desktop"></div>
+          </>
+        )}
       </div>
 
       {/* Center: Dynamic Title */}

@@ -80,6 +80,27 @@
   display: none;
 }
 
+.topbar-back-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--pm-text, #000);
+  border-radius: 50%;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.topbar-back-btn:hover {
+  background-color: var(--pm-hover, rgba(0, 0, 0, 0.05));
+}
+
+.topbar-back-btn:active {
+  transform: scale(0.95);
+}
+
 .topbar-mobile-menu-btn {
   background: none;
   border: none;
