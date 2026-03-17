@@ -1,4 +1,6 @@
+import L from 'leaflet';
 import defaultAvatar from '../assets/red.webp';
+
 
 /**
  * Ensures Leaflet's default icons are correctly mapped to CDN URLs.
@@ -84,26 +86,75 @@ export function buildUserWithDevice(userDoc, deviceMap) {
   };
 }
 
-// Create custom marker icon for users
-export const createCustomIcon = (person) =>
-  L.divIcon({
-    className: 'custom-marker-icon',
+
+// Group users by location to handle overlapping markers (Proximity-based bundling)
+export function groupUsersByLocation(users, proximity = 0.00015) {
+  const groups = [];
+
+  users.forEach((user) => {
+    if (!user.position) return;
+
+    // Find an existing group within the proximity threshold
+    const nearbyGroup = groups.find(group => {
+      const dLat = Math.abs(group.position[0] - user.position[0]);
+      const dLng = Math.abs(group.position[1] - user.position[1]);
+      return dLat < proximity && dLng < proximity;
+    });
+
+    if (nearbyGroup) {
+      nearbyGroup.users.push(user);
+    } else {
+      groups.push({
+        position: [...user.position], // Use the first user as the "anchor"
+        users: [user],
+      });
+    }
+  });
+
+  return groups;
+}
+
+// Create custom marker icon for users or groups of users
+export const createCustomIcon = (data) => {
+  const isGroup = Array.isArray(data.users) && data.users.length > 1;
+  const person = isGroup ? data.users[0] : (data.users ? data.users[0] : data);
+  const count = isGroup ? data.users.length : 1;
+
+  // Generic neutral icon for groups (SVG representing multiple people)
+  const groupIconSvg = `
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: #8b0000; margin-top: 2px;">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+      <circle cx="9" cy="7" r="4"></circle>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </svg>
+  `;
+
+  // Determine if anyone in the group is online or has SOS active
+  const anyOnline = isGroup ? data.users.some(u => u.online && u.braceletOn) : (person.online && person.braceletOn);
+  const anySos = isGroup ? data.users.some(u => u.sos) : person.sos;
+
+  return L.divIcon({
+    className: `custom-marker-icon ${anySos ? 'sos-active' : ''}`,
     html: `
       <div class="marker-pin">
         <img src="/mark-container.svg" class="marker-bg" />
-        <div class="marker-content">
-          <img src="${person.avatar}" alt="${person.name}" class="marker-image" />
-          <div class="marker-status ${person.online && person.braceletOn ? 'online' : 'offline'}"></div>
+        <div class="marker-content ${isGroup ? 'group-content' : ''}">
+          ${isGroup ? groupIconSvg : `<img src="${person.avatar}" alt="${person.name}" class="marker-image" />`}
+          ${!isGroup ? `<div class="marker-status ${anyOnline ? 'online' : 'offline'}"></div>` : ''}
         </div>
+        ${isGroup ? `<div class="marker-count-badge">${count}</div>` : ''}
       </div>
     `,
     iconSize: [52, 60],
-    iconAnchor: [26.5, 60],
+    iconAnchor: [26, 60],
     popupAnchor: [0, -60],
   });
+};
 
 // Helper to determine if user is online based on lastSeen
 export function isUserOnline(lastSeen, thresholdMinutes = 1) {
   if (!lastSeen) return false;
   return new Date().getTime() - lastSeen.getTime() < thresholdMinutes * 60 * 1000;
 }
+

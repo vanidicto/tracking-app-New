@@ -141,64 +141,98 @@ function Home() {
             keepBuffer={8}
           />
 
-          {braceletUsers.map((person) => (
-            person.position ? (
+          {mapHelpers.groupUsersByLocation(braceletUsers).map((group, idx) => {
+            const isGroup = group.users.length > 1;
+            const singleUser = group.users[0];
+            
+            return (
               <Marker
-                key={person.id}
-                position={person.position}
-                icon={mapHelpers.createCustomIcon(person)}
+                key={isGroup ? `group-${idx}` : singleUser.id}
+                position={group.position}
+                icon={mapHelpers.createCustomIcon(group)}
               >
                 <Popup className="custom-popup">
                   <div className="popup-layout">
-                    <div className="popup-header">
-                      <h3>{person.name}</h3>
-                    </div>
-                    
-                    <div className="popup-details">
-                      <div className="detail-row">
-                        <span>Bracelet Status</span>
-                        <span className={`status-val ${person.online ? "active" : "inactive"}`}>
-                          {person.online ? "Active" : "Offline"}
-                        </span>
-                      </div>
-                      <div className="detail-row">
-                        <span>Battery</span>
-                        <span>{person.battery}%</span>
-                      </div>
-                      <div className="detail-row">
-                        <span>Last Seen</span>
-                        <span>
-                          {person.lastSeen
-                            ? person.lastSeen.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-                            : "—"}
-                        </span>
-                      </div>
-                      {person.sos && (
-                        <div className="detail-row">
-                          <span style={{color: 'red', fontWeight: 'bold'}}>SOS Status</span>
-                          <span style={{color: 'red', fontWeight: 'bold'}}>🚨 Active!</span>
+                    {isGroup ? (
+                      <>
+                        <div className="popup-group-header">
+                          <p>{group.users.length} Users at this location</p>
                         </div>
-                      )}
-                    </div>
+                        <div className="popup-user-list">
+                          {group.users.map((user) => (
+                            <Link
+                              key={user.id}
+                              to={`/app/userProfile/${user.id}`}
+                              state={{ personData: user }}
+                              className="popup-user-item"
+                            >
+                              <img src={user.avatar} alt={user.name} className="popup-user-avatar" />
+                              <div className="popup-user-info">
+                                <span className="popup-user-name">{user.name}</span>
+                                <div className="popup-user-meta">
+                                  <span>{user.battery}% Battery</span> • 
+                                  <span style={{ color: user.online ? '#34A853' : '#666', marginLeft: '4px' }}>
+                                    {user.online ? 'Active' : 'Offline'}
+                                  </span>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="popup-header">
+                          <h3>{singleUser.name}</h3>
+                        </div>
+                        
+                        <div className="popup-details">
+                          <div className="detail-row">
+                            <span>Bracelet Status</span>
+                            <span className={`status-val ${singleUser.online ? "active" : "inactive"}`}>
+                              {singleUser.online ? "Active" : "Offline"}
+                            </span>
+                          </div>
+                          <div className="detail-row">
+                            <span>Battery</span>
+                            <span>{singleUser.battery}%</span>
+                          </div>
+                          <div className="detail-row">
+                            <span>Last Seen</span>
+                            <span>
+                              {singleUser.lastSeen
+                                ? singleUser.lastSeen.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                                : "—"}
+                            </span>
+                          </div>
+                          {singleUser.sos && (
+                            <div className="detail-row">
+                              <span style={{color: 'red', fontWeight: 'bold'}}>SOS Status</span>
+                              <span style={{color: 'red', fontWeight: 'bold'}}>🚨 Active!</span>
+                            </div>
+                          )}
+                        </div>
 
-                    <div className="popup-location-box">
-                      <p>{addressCache[person.id] || "Fetching location…"}</p>
-                    </div>
+                        <div className="popup-location-box">
+                          <p>{addressCache[singleUser.id] || "Fetching location…"}</p>
+                        </div>
 
-                    <div className="popup-footer">
-                      <Link
-                        to={`/app/userProfile/${person.id}`}
-                        state={{ personData: person }}
-                        className="profile-link"
-                      >
-                        View User Profile
-                      </Link>
-                    </div>
+                        <div className="popup-footer">
+                          <Link
+                            to={`/app/userProfile/${singleUser.id}`}
+                            state={{ personData: singleUser }}
+                            className="profile-link"
+                          >
+                            View User Profile
+                          </Link>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </Popup>
               </Marker>
-            ) : null
-          ))}
+            );
+          })}
         </MapContainer>
       </div>
 

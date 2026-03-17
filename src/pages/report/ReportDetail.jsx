@@ -7,7 +7,7 @@ const ReportDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { reportId } = useParams();
-  
+
   // Retrieve the pre-enriched incident data passed from the Report list click
   const incident = location.state?.incident;
 
@@ -35,17 +35,7 @@ const ReportDetail = () => {
 
   return (
     <div className="rd-page-container">
-      {/* HEADER SECTION */}
-      <div className="rd-top-bar">
-        <button
-          className="rd-back-btn"
-          onClick={() => navigate(-1)}
-          title="Back"
-        >
-          <ChevronLeft size={24} color="#000" />
-        </button>
-        <h1 className="rd-page-title">Incident Report</h1>
-      </div>
+
 
       <div className="rd-content-grid">
         {/* CENTER SECTION: Identity & Status */}

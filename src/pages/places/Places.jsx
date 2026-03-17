@@ -537,43 +537,98 @@ const Places = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
           {/* Render real user markers dynamically from braceletUsers state */}
-          {braceletUsers.map((user) =>
-            user.position && (
+          {mapHelpers.groupUsersByLocation(braceletUsers).map((group, idx) => {
+            const isGroup = group.users.length > 1;
+            const singleUser = group.users[0];
+
+            return (
               <Marker
-                key={user.id}
-                position={user.position}
-                icon={mapHelpers.createCustomIcon(user)}
+                key={isGroup ? `group-${idx}` : singleUser.id}
+                position={group.position}
+                icon={mapHelpers.createCustomIcon(group)}
               >
                 <Popup className="custom-popup">
-                  <Link
-                    to={`/app/userProfile/${user.id}`}
-                    state={{ personData: user }}
-                    className="popup-content"
-                  >
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="popup-image"
-                    />
-                    <div className="popup-info">
-                      <h3>{user.name}</h3>
-                      <p>Battery: {user.battery}%</p>
-                      <p>Status: {user.online ? "🟢 Online" : "🔴 Offline"}</p>
+                  <div className="popup-layout">
+                    {isGroup ? (
+                      <>
+                        <div className="popup-group-header">
+                          <p>{group.users.length} Users at this location</p>
+                        </div>
+                        <div className="popup-user-list">
+                          {group.users.map((user) => (
+                            <Link
+                              key={user.id}
+                              to={`/app/userProfile/${user.id}`}
+                              state={{ personData: user }}
+                              className="popup-user-item"
+                            >
+                              <img src={user.avatar} alt={user.name} className="popup-user-avatar" />
+                              <div className="popup-user-info">
+                                <span className="popup-user-name">{user.name}</span>
+                                <div className="popup-user-meta">
+                                  <span>{user.battery}% Battery</span> • 
+                                  <span style={{ color: user.online ? '#34A853' : '#666', marginLeft: '4px' }}>
+                                    {user.online ? 'Active' : 'Offline'}
+                                  </span>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="popup-header">
+                          <h3>{singleUser.name}</h3>
+                        </div>
 
-                      <p>
-                        Last Seen:{" "}
-                        {user.lastSeen
-                          ? user.lastSeen.toLocaleTimeString()
-                          : "—"}
-                      </p>
-                      <p>Location: {addressCache[user.id] || "—"}</p>
-                      {user.sos && <p className="sos">🚨 SOS Active!</p>}
-                    </div>
-                  </Link>
+                        <div className="popup-details">
+                          <div className="detail-row">
+                            <span>Bracelet Status</span>
+                            <span className={`status-val ${singleUser.online ? "active" : "inactive"}`}>
+                              {singleUser.online ? "Active" : "Offline"}
+                            </span>
+                          </div>
+                          <div className="detail-row">
+                            <span>Battery</span>
+                            <span>{singleUser.battery}%</span>
+                          </div>
+                          <div className="detail-row">
+                            <span>Last Seen</span>
+                            <span>
+                              {singleUser.lastSeen
+                                ? (singleUser.lastSeen.toLocaleTimeString ? singleUser.lastSeen.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : "—")
+                                : "—"}
+                            </span>
+                          </div>
+                          {singleUser.sos?.active && (
+                            <div className="detail-row">
+                              <span style={{ color: 'red', fontWeight: 'bold' }}>SOS Status</span>
+                              <span style={{ color: 'red', fontWeight: 'bold' }}>🚨 Active!</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="popup-location-box">
+                          <p>{addressCache[singleUser.id] || "Fetching location…"}</p>
+                        </div>
+
+                        <div className="popup-footer">
+                          <Link
+                            to={`/app/userProfile/${singleUser.id}`}
+                            state={{ personData: singleUser }}
+                            className="profile-link"
+                          >
+                            View User Profile
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </Popup>
               </Marker>
-            )
-          )}
+            );
+          })}
 
           {/* Leaflet Draw functionality group */}
           <FeatureGroup ref={featureGroupRef}>

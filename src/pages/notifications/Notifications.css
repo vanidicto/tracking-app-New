@@ -1,0 +1,147 @@
+@import "../../styles/MenuLayout.css";
+
+/* Notifications page — extends the shared br-page layout */
+
+.notif-main {
+  padding: 0px 16px;
+}
+
+.notif-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+/* Empty state */
+.notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 300px;
+  color: var(--pm-text-muted);
+  opacity: 0.7;
+}
+
+.notif-empty p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* List */
+.notif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Individual item */
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border-radius: var(--pm-radius-md);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  position: relative;
+}
+
+.notif-item:hover {
+  background-color: var(--pm-surface);
+}
+
+.notif-item.unread {
+  background-color: rgba(164, 38, 44, 0.06);
+}
+
+.notif-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  background-color: var(--pm-primary);
+  border-radius: 0 4px 4px 0;
+}
+
+/* Icon / avatar */
+.notif-icon {
+  flex-shrink: 0;
+  margin-right: 14px;
+}
+
+.notif-icon img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Text block */
+.notif-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notif-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0 0 4px;
+  color: var(--pm-text);
+}
+
+.notif-message {
+  margin: 0;
+  font-size: 13px;
+  color: var(--pm-text-muted);
+  line-height: 1.4;
+}
+
+/* Meta / right column */
+.notif-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+.notif-time {
+  font-size: 11px;
+  color: var(--pm-text-muted);
+  white-space: nowrap;
+}
+
+.notif-delete-btn {
+  background: none;
+  border: none;
+  color: var(--pm-text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.notif-item:hover .notif-delete-btn {
+  opacity: 1;
+}
+
+.notif-delete-btn:hover {
+  color: var(--pm-danger);
+}
+
+/* Mobile touch — always show delete on small screens */
+@media (max-width: 767px) {
+  .notif-delete-btn {
+    opacity: 0.5;
+  }
+}

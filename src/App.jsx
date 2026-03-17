@@ -4,6 +4,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Login from "./context/Login";
 import Signup from "./context/Signup";
 import { ToastProvider } from "./context/ToastContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import AppLayout from "./layouts/AppLayout";
 
 import People from "./pages/people/People";
@@ -21,6 +22,7 @@ import Account from "./pages/account/Account";
 import MyBracelet from "./pages/my-bracelet/MyBracelet";
 import Tips from "./pages/tips/Tips";
 import About from "./pages/about/About";
+import Notifications from "./pages/notifications/Notifications";
 
 // Mock Admin (NO Firebase)
 import AdminLocalRoute from "./components/AdminLocalRoute";
@@ -36,6 +38,7 @@ function App() {
   return (
     <AuthProvider>
       <ToastProvider>
+        <NotificationProvider>
         <Routes>
           {/* Public */}
           <Route path="/" element={<Landing />} />
@@ -71,12 +74,14 @@ function App() {
               <Route path="my-bracelet" element={<MyBracelet />} />
               <Route path="tips" element={<Tips />} />
               <Route path="about" element={<About />} />
+              <Route path="notifications" element={<Notifications />} />
             </Route>
           </Route>
 
           {/* Fallback so you never get blank screen */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </NotificationProvider>
       </ToastProvider>
     </AuthProvider>
   );

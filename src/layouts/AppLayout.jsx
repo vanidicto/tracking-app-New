@@ -14,12 +14,13 @@ const AppLayout = () => {
   // Normalize path and check if navigation should be hidden
   const currentPath = location.pathname.toLowerCase();
   const isUserProfile = currentPath.startsWith('/app/userprofile');
-  const hideNavigation = ['/app/my-bracelet', '/app/account', '/app/tips', '/app/about'].some(path => currentPath.startsWith(path));
+  const hideNavigation = ['/app/my-bracelet', '/app/account', '/app/tips', '/app/about', '/app/notifications'].some(path => currentPath.startsWith(path));
 
   // Define visibility for each component
+  const isReportDetail = currentPath.startsWith('/app/report') && currentPath !== '/app/report' && currentPath !== '/app/report/';
   const shouldHideAll = hideNavigation;
   const shouldHideSidebar = shouldHideAll;
-  const shouldHideNavbar = shouldHideAll || isUserProfile;
+  const shouldHideNavbar = shouldHideAll || isUserProfile || isReportDetail;
   const shouldHideTopBar = shouldHideAll;
 
   // Handle opening profile modal from navigation state

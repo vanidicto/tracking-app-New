@@ -4,7 +4,8 @@
 
 .rd-page-container {
   padding: 0;
-  max-width: 100%; /* Full screen on mobile */
+  max-width: 100%;
+  /* Full screen on mobile */
   margin: 0 auto;
   min-height: 100vh;
   background-color: #ffffff;
@@ -13,38 +14,7 @@
   flex-direction: column;
 }
 
-/* --- HEADER / TOP BAR --- */
-.rd-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
 
-.rd-back-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.rd-page-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #8b0000;
-  margin: 0;
-  text-align: center;
-  flex: 1;
-  padding-right: 24px; /* balances out the back button width to keep title perfectly centered */
-}
 
 /* --- MAIN CONTENT GRID --- */
 .rd-content-grid {
@@ -191,22 +161,62 @@
 /* Responsive constraints */
 @media (max-width: 600px) {
   .rd-grid-container {
-      grid-template-columns: 1fr;
-      gap: 10px;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
+
   .rd-detail-card-full {
-      grid-column: auto;
+    grid-column: auto;
   }
 }
 
 @media (min-width: 768px) {
   .rd-page-container {
     max-width: 500px;
-    border: 1px solid #eee;
+    border: 1px solid var(--pm-border, #eee);
     margin: 40px auto;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    background-color: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background-color: var(--pm-bg, #fff);
     overflow: hidden;
   }
+}
+
+/* --- DARK MODE --- */
+html.pm-dark .rd-page-container {
+  background-color: var(--pm-bg);
+  color: var(--pm-text);
+}
+
+html.pm-dark .rd-name {
+  color: var(--pm-text);
+}
+
+html.pm-dark .rd-section-title {
+  color: var(--pm-text-muted);
+  border-bottom-color: var(--pm-border);
+}
+
+html.pm-dark .rd-hero-section {
+  border-bottom-color: var(--pm-border);
+}
+
+html.pm-dark .rd-detail-card {
+  background-color: var(--pm-surface);
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .rd-detail-card-label {
+  color: var(--pm-text-muted);
+}
+
+html.pm-dark .rd-detail-card-value {
+  color: var(--pm-text);
+}
+
+/* Status colors override for better visibility if needed */
+html.pm-dark .rd-status-badge.status-black {
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  border: 1px solid var(--pm-border);
 }
