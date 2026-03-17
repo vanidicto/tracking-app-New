@@ -62,17 +62,6 @@ const UserProfile = () => {
 
   return (
      <div className="up-page-container">
-      {/* HEADER SECTION */}
-      <div className="up-top-bar">
-        {/* <button
-          className="up-back-btn"
-          onClick={() => navigate(-1)}
-          title="Back"
-        >
-          <ChevronLeft size={24} color="#000" />
-        </button> */}
-        {/* <h1 className="up-page-title">User Profile</h1> */}
-     </div>
 
       <div className="up-content-grid">
         {/* CENTER SECTION: Avatar & Name */}
