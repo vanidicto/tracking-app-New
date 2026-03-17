@@ -176,6 +176,10 @@ html.pm-dark .modal-header-logo {
   color: var(--pm-danger);
 }
 
+.profile-logout-btn .profile-menu-label {
+  color: var(--pm-danger);
+}
+
 /* --- Toggle Switch --- */
 .toggle-switch {
   width: 36px;

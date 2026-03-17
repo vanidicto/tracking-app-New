@@ -173,11 +173,50 @@
 @media (min-width: 768px) {
   .rd-page-container {
     max-width: 500px;
-    border: 1px solid #eee;
+    border: 1px solid var(--pm-border, #eee);
     margin: 40px auto;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: var(--pm-bg, #fff);
     overflow: hidden;
   }
+}
+
+/* --- DARK MODE --- */
+html.pm-dark .rd-page-container {
+  background-color: var(--pm-bg);
+  color: var(--pm-text);
+}
+
+html.pm-dark .rd-name {
+  color: var(--pm-text);
+}
+
+html.pm-dark .rd-section-title {
+  color: var(--pm-text-muted);
+  border-bottom-color: var(--pm-border);
+}
+
+html.pm-dark .rd-hero-section {
+  border-bottom-color: var(--pm-border);
+}
+
+html.pm-dark .rd-detail-card {
+  background-color: var(--pm-surface);
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .rd-detail-card-label {
+  color: var(--pm-text-muted);
+}
+
+html.pm-dark .rd-detail-card-value {
+  color: var(--pm-text);
+}
+
+/* Status colors override for better visibility if needed */
+html.pm-dark .rd-status-badge.status-black {
+  background: var(--pm-surface);
+  color: var(--pm-text);
+  border: 1px solid var(--pm-border);
 }

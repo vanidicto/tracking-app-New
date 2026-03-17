@@ -190,11 +190,63 @@
 @media (min-width: 768px) {
   .up-page-container {
     max-width: 500px;
-    border: 1px solid #eee;
+    border: 1px solid var(--pm-border, #eee);
     margin: 40px auto;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+    background-color: var(--pm-bg, #fff);
     overflow: hidden;
   }
+}
+
+/* --- DARK MODE --- */
+html.pm-dark .up-page-container {
+  background-color: var(--pm-bg);
+  color: var(--pm-text);
+}
+
+html.pm-dark .up-name,
+html.pm-dark .up-card-value {
+  color: var(--pm-text);
+}
+
+html.pm-dark .up-back-btn {
+  color: var(--pm-text);
+}
+
+html.pm-dark .up-status-card {
+  background-color: var(--pm-surface);
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .up-map-section {
+  background-color: var(--pm-surface);
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .up-map-header {
+  background-color: var(--pm-surface);
+}
+
+html.pm-dark .up-map-title {
+  color: var(--pm-text);
+}
+
+html.pm-dark .up-map-coords {
+  background: var(--pm-border);
+  color: var(--pm-text);
+}
+
+html.pm-dark .up-card-value.green,
+html.pm-dark .up-card-value.success {
+  color: var(--pm-success);
+}
+
+html.pm-dark .up-card-value.red,
+html.pm-dark .up-card-value.danger {
+  color: var(--pm-danger);
+}
+
+html.pm-dark .up-card-value.orange {
+  color: var(--pm-warning);
 }
