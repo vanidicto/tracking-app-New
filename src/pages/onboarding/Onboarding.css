@@ -28,7 +28,7 @@
 
 .onboarding-slider {
     display: flex;
-    height: calc(100% - 240px);
+    height: calc(100% - 210px);
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -38,15 +38,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 9vh;
-    /* Lowered from 6vh to push visuals down */
+    padding-top: 6vh;
+    /* Lowered from 9vh to save vertical space */
     box-sizing: border-box;
 }
 
 /* --- Visual Area (Tech Innovation Lighting) --- */
 .onboarding-visual {
-    height: 46vh;
-    /* Increased from 44vh to accommodate larger graphic */
+    height: 40vh;
+    /* Reduced from 46vh to provide more room for text below */
     width: 100%;
     display: flex;
     align-items: center;
