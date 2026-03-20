@@ -116,11 +116,16 @@ const UserProfile = () => {
       <div className="up-content-grid">
         
         {/* ROW 1: Avatar (Left) & Details (Right) */}
-        <div className="up-top-row">
-          <div className="up-avatar-wrapper">
-            <img src={person?.avatar} alt={person?.name} className="up-avatar-img" />
+        <div className="up-top-row">   
+          <div className='left-section'>       
+            <div className="up-avatar-wrapper">
+              <img src={person?.avatar} alt={person?.name} className="up-avatar-img" />           
+            </div>
+              {/* ROW 2: Name & Signal */}
+              <div className="up-identity-row">
+                <h2 className="up-name">{person?.name.split(" ")[0]}</h2>
+              </div> 
           </div>
-          
           <div className="up-details-box">
             <div className="up-detail-line">
               <span className="up-detail-label">Serial Number</span>
@@ -141,14 +146,7 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* ROW 2: Name & Signal */}
-        <div className="up-identity-row">
-          <h2 className="up-name">{person?.name}</h2>
-          <div className={`up-signal-badge ${person?.online ? 'strong' : 'weak'}`}>
-            <Wifi size={14} />
-            <span>{person?.online ? 'Strong' : 'Weak'}</span>
-          </div>
-        </div>
+
 
         {/* ROW 3: Battery & Bracelet Status Component */}
         <div className="up-status-bar">

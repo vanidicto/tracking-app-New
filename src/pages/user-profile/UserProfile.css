@@ -69,7 +69,14 @@
   align-items: stretch;
   gap: 16px;
   width: 100%;
-  height: 120px;
+  height: 130px;
+}
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 100%;;
 }
 
 .up-avatar-wrapper {
@@ -102,23 +109,24 @@
 
 .up-detail-line {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
   gap: 2px;
 }
 
 .up-detail-label {
-  font-size: 12px;
+  font-size: 10px;
   color: #8b0000;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: end;
 }
 
 .up-detail-value {
-  font-size: 13px;
+  font-size: 10px;
   color: #1a1a1a;
   font-weight: 600;
+  text-align: right;
 }
 
 
