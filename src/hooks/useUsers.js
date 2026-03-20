@@ -18,6 +18,7 @@ export function useBraceletUsers() {
 
   useEffect(() => {
     let unsubDevice = null;
+    let unsubUsers = null;
 
     async function initialLoad() {
       previousSosStates.current.clear();
@@ -78,7 +79,7 @@ export function useBraceletUsers() {
           }
           return userObj;
         });
-        
+
         // Map for report generation
         const braceletNameMap = new Map();
         usersSnap.docs.forEach(doc => {
@@ -114,8 +115,8 @@ export function useBraceletUsers() {
 
                     let reportDate = new Date();
                     if (dd.sos && dd.sos.timestamp) {
-                       const parsed = mapHelpers.parseFirestoreDate(dd.sos.timestamp);
-                       if (parsed) reportDate = parsed;
+                      const parsed = mapHelpers.parseFirestoreDate(dd.sos.timestamp);
+                      if (parsed) reportDate = parsed;
                     }
 
                     await addDoc(collection(db, 'reports'), {
@@ -182,6 +183,34 @@ export function useBraceletUsers() {
           console.error("Error in device status listener:", err);
           setError("Lost connection to device status updates.");
         });
+
+        // 4. Real-time listener for braceletUsers (for names, avatars, emergency contacts)
+        unsubUsers = onSnapshot(usersQuery, (snapshot) => {
+          const userUpdates = new Map();
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === 'added' || change.type === 'modified') {
+              userUpdates.set(change.doc.id, change.doc.data());
+            }
+          });
+
+          if (userUpdates.size === 0) return;
+
+          setBraceletUsers((current) =>
+            current.map((u) => {
+              if (!userUpdates.has(u.id)) return u;
+              const newData = userUpdates.get(u.id);
+              return {
+                ...u,
+                name: appUserData?.braceletNicknames?.[u.id] || newData.name || u.name,
+                avatar: newData.avatar || u.avatar,
+                emergencyContacts: newData.emergencyContacts || u.emergencyContacts || [],
+                serialNumber: newData.serialNumber || u.serialNumber,
+              };
+            })
+          );
+        }, (err) => {
+          console.error("Error in bracelet users listener:", err);
+        });
       } catch (err) {
         console.error("Error loading linked bracelet users:", err);
         setError("Failed to load bracelet data.");
@@ -193,6 +222,7 @@ export function useBraceletUsers() {
 
     return () => {
       if (unsubDevice) unsubDevice();
+      if (unsubUsers) unsubUsers();
     };
   }, [currentUser]);
 

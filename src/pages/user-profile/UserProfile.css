@@ -5,7 +5,10 @@
   max-width: 100%;
   /* Full screen on mobile */
   margin: 0 auto;
-  min-height: 100dvh;
+  height: 100%;
+  /* Changed from 100dvh to fit Parent Layout */
+  overflow: hidden;
+  /* No scrollbars */
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   display: flex;
@@ -48,101 +51,182 @@
 
 /* --- MAIN CONTENT GRID --- */
 .up-content-grid {
+  flex: 1;
+  /* Fill container */
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  gap: 20px;
+  padding: 16px;
+  /* Slightly reduced */
+  gap: 12px;
+  /* Reduced gap */
+  min-height: 0;
+  /* Important for flex child scaling */
 }
 
-/* --- CENTER SECTION: Identity --- */
-.up-identity-section {
+/* --- NEW ROW 1: Avatar Left, Details Right --- */
+.up-top-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 10px;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  height: 120px;
 }
 
 .up-avatar-wrapper {
-  width: 120px;
-  height: 120px;
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 3px solid #8b0000;
+  box-shadow: 0 4px 12px rgba(139, 0, 0, 0.08);
+  overflow: hidden;
+  align-self: center;
 }
 
 .up-avatar-img {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
+}
+
+.up-details-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  border: 1px solid #eee;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.up-detail-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+.up-detail-label {
+  font-size: 12px;
+  color: #8b0000;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.up-detail-value {
+  font-size: 13px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+
+/* --- NEW ROW 2: Identity --- */
+.up-identity-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
 }
 
 .up-name {
   font-size: 24px;
   font-weight: 700;
-  color: #000;
-  margin: 12px 0 8px 0;
+  color: #333;
+  margin: 0;
+  
 }
 
 .up-signal-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  background-color: #B55050;
-  /* Matches the "Weak" pill in the design */
-  color: white;
-  padding: 4px 16px;
+  padding: 4px 14px;
   border-radius: 20px;
+  background: #B55050;
+  color: white;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
-/* --- CARDS SECTION (Battery & Status) --- */
-.up-cards-row {
+.up-signal-badge.strong {
+  background: #34A853;
+}
+
+
+/* --- NEW ROW 3: Status Bar --- */
+.up-status-bar {
   display: flex;
-  gap: 12px;
-  width: 100%;
-}
-
-.up-status-card {
-  flex: 1;
+  align-items: center;
+  justify-content: space-between;
   background: #fff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #eee;
   border-radius: 12px;
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
+  padding: 12px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  margin-bottom: 4px;
+  flex-shrink: 0;
 }
 
-.up-card-label {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
+.up-status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.up-card-value {
-  font-size: 28px;
-  font-weight: 700;
-  text-align: center;
-}
-
-.up-card-value.green {
+.up-icon.green {
   color: #34A853;
 }
 
-.up-card-value.red {
-  color: #d93025;
-}
-
-.up-card-value.orange {
+.up-icon.orange {
   color: #f29900;
 }
 
-.up-card-value.success {
+.up-icon.red {
+  color: #d93025;
+}
+
+.up-status-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.up-status-value {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.up-status-value.green {
   color: #34A853;
 }
 
-.up-card-value.danger {
+.up-status-value.orange {
+  color: #f29900;
+}
+
+.up-status-value.red {
   color: #d93025;
 }
+
+.up-status-value.success {
+  color: #34A853;
+}
+
+.up-status-value.danger {
+  color: #d93025;
+}
+
+.up-status-divider {
+  width: 1px;
+  height: 24px;
+  background: #eee;
+}
+
 
 
 /* --- MAP SECTION --- */
@@ -154,6 +238,10 @@
   overflow: hidden;
   background: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  flex: 1;
+  /* Stretch to fill remaining space */
+  min-height: 0;
+  /* Allow shrinking if needed */
 }
 
 .up-map-header {
@@ -180,10 +268,10 @@
 }
 
 .up-map-container {
-  height: 350px;
+  flex: 1;
+  /* Stretch map within section */
   width: 100%;
   background: #d9d9d9;
-  /* fallback background color like screenshot */
 }
 
 /* Desktop sizing constraints */
@@ -249,4 +337,186 @@ html.pm-dark .up-card-value.danger {
 
 html.pm-dark .up-card-value.orange {
   color: var(--pm-warning);
+}
+
+/* --- CUSTOM MARKER STYLES (SYNCED WITH HOME.CSS) --- */
+.custom-marker-icon {
+  background: none;
+  border: none;
+}
+
+.marker-pin {
+  position: relative;
+  width: 52px;
+  /* Increased from 51px for perfect symmetry */
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.marker-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.marker-content {
+  position: relative;
+  top: 3px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+  z-index: 2;
+  background-color: #8b0000;
+  /* Defensive background: matches pin color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.marker-image {
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.marker-status {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid white;
+  z-index: 3;
+}
+
+.marker-status.online {
+  background-color: #4CAF50;
+}
+
+.marker-status.offline {
+  background-color: red;
+}
+
+/* --- MAP POPUP STYLES (MATCHING HOME.CSS) --- */
+.up-map-container .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.up-map-container .leaflet-popup-content {
+  margin: 0;
+  width: 260px !important;
+}
+
+.up-map-container .leaflet-container a.leaflet-popup-close-button {
+  top: 10px;
+  right: 12px;
+  color: #666;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 20px;
+}
+
+.popup-layout {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.popup-header {
+  text-align: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #8b0000;
+  font-weight: 700;
+}
+
+.popup-details {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #111;
+}
+
+.detail-row span:first-child {
+  color: #333;
+}
+
+.detail-row .status-val.active {
+  color: #34A853;
+}
+
+.detail-row .status-val.inactive {
+  color: #666;
+}
+
+.popup-location-box {
+  background: #ecdcdc;
+  border-left: 4px solid #8b0000;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #111;
+  line-height: 1.4;
+}
+
+.popup-location-box p {
+  margin: 0;
+}
+
+.up-map-container .leaflet-popup-tip-container {
+  display: none;
+}
+
+/* --- DARK MODE FOR POPUP --- */
+html.pm-dark .popup-layout {
+  background: var(--pm-surface);
+}
+
+html.pm-dark .popup-header {
+  border-bottom-color: var(--pm-border);
+}
+
+html.pm-dark .popup-header h3 {
+  color: var(--pm-text);
+}
+
+html.pm-dark .detail-row {
+  color: var(--pm-text);
+}
+
+html.pm-dark .detail-row span:first-child {
+  color: var(--pm-text-muted);
+}
+
+html.pm-dark .popup-location-box {
+  background: var(--pm-border);
+  color: var(--pm-text);
+  border-left-color: var(--pm-danger);
 }

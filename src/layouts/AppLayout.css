@@ -49,6 +49,12 @@
   padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
+/* --- NO SCROLL OVERRIDE (For User Profile) --- */
+.scrollable-content.no-scroll {
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+}
+
 /* --- NO SIDEBAR OVERRIDE --- */
 @media (min-width: 768px) {
   .app-content-main.no-sidebar {

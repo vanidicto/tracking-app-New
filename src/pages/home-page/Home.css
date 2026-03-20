@@ -57,7 +57,7 @@ body {
 
 .marker-pin {
   position: relative;
-  width: 51px;
+  width: 52px; /* Increased from 51px to match iconSize [52,60] and ensure symmetry */
   height: 60px;
   display: flex;
   justify-content: center;
@@ -75,18 +75,25 @@ body {
 
 .marker-content {
   position: relative;
-  top: 2px;
+  top: 3px; /* Adjusted to 3px (half of 52-46) for perfect centering */
   width: 46px;
   height: 46px;
   border-radius: 50%;
   overflow: hidden;
   z-index: 2;
+  background-color: #8b0000; /* Defensive background: matches pin color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .marker-image {
   width: 100%;
   height: 100%;
+  min-width: 100%;
+  min-height: 100%;
   object-fit: cover;
+  display: block;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;

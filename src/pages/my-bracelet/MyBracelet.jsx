@@ -107,7 +107,11 @@ const MyBracelet = () => {
                 battery: 100,
                 isBraceletOn: true,
                 lastSeen: serverTimestamp(),
-                location: [0, 0],
+                location: {
+                    latitude: 0,
+                    longitude: 0,
+                    updatedAt: serverTimestamp()
+                },
 
                 sos: { active: false, timestamp: null },
             });

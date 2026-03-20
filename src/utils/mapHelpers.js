@@ -83,6 +83,9 @@ export function buildUserWithDevice(userDoc, deviceMap) {
     online: online,
     currentGeofenceId: deviceData.currentGeofenceId || null,
     deviceStatusId: deviceData.id || null,
+    // Add safety details
+    serialNumber: userData.serialNumber || deviceData.id || null,
+    emergencyContacts: userData.emergencyContacts || [],
   };
 }
 

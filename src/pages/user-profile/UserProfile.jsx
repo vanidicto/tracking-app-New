@@ -2,11 +2,14 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { MessageSquare, Phone, Wifi, Battery, ChevronLeft } from 'lucide-react';
 import './UserProfile.css';
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useEffect } from 'react';
-import { createCustomIcon } from '../../utils/mapHelpers';
+import { useEffect, useState } from 'react';
+import { createCustomIcon, buildUserWithDevice, isUserOnline, parseFirestoreDate, parseLocation } from '../../utils/mapHelpers';
+import { reverseGeocode } from '../../utils/geocode';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../config/firebaseConfig';
 
 // Fix for Leaflet icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -29,67 +32,140 @@ const ResizeMap = () => {
   }, [map]);
   return null;
 };
-
 const UserProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const person = location.state?.personData;
 
-  if (!person) {
-    return <div>No user data provided! Please go back to the people list.</div>;
-  }
+  const [person, setPerson] = useState(location.state?.personData);
+  const [address, setAddress] = useState("Fetching location...");
 
+  // Real-time synchronization for the specific user
+  useEffect(() => {
+    if (!person?.id) return;
 
-  // LOGIC FIX: Use person.online for connection status. 
-  // person.braceletOn is now synced with online status via useUsers hook.
-  const isOnline = person.online;
-  const isBraceletOn = person.braceletOn;
-  const batteryLevel = person.battery;
-  const 
-  
-  userPosition =
-    person.position && Array.isArray(person.position)
+    // Listen to braceletUsers for static info (emergency contacts, etc.)
+    const unsubUser = onSnapshot(doc(db, 'braceletUsers', person.id), (userSnap) => {
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        setPerson(prev => ({
+          ...prev,
+          name: userData.name || prev.name,
+          avatar: userData.avatar || prev.avatar,
+          emergencyContacts: userData.emergencyContacts || prev.emergencyContacts || [],
+          serialNumber: userData.serialNumber || prev.serialNumber
+        }));
+      }
+    });
+
+    // Listen to deviceStatus for real-time info (battery, location, SOS)
+    const unsubDevice = onSnapshot(doc(db, 'deviceStatus', person.id), (deviceSnap) => {
+      if (deviceSnap.exists()) {
+        const dd = deviceSnap.data();
+        const loc = parseLocation(dd.location) || parseLocation(dd);
+        const lastSeen = parseFirestoreDate(dd.lastSeen);
+        const online = isUserOnline(lastSeen);
+
+        setPerson(prev => ({
+          ...prev,
+          battery: Number(dd.battery ?? prev.battery),
+          braceletOn: online ? Boolean(dd.isBraceletOn ?? prev.braceletOn) : false,
+          lastSeen,
+          sos: (dd.sos && (dd.sos.active ?? dd.sos)) || false,
+          position: loc || prev.position,
+          online: online,
+          currentGeofenceId: dd.currentGeofenceId ?? prev.currentGeofenceId,
+          deviceStatusId: deviceSnap.id ?? prev.deviceStatusId
+        }));
+      }
+    });
+
+    return () => {
+      unsubUser();
+      unsubDevice();
+    };
+  }, [person?.id]);
+
+  useEffect(() => {
+    if (person?.position) {
+      reverseGeocode(person.position[0], person.position[1]).then((addr) => {
+        setAddress(addr || "Address not found");
+      });
+    }
+  }, [person?.position]);
+
+  const userPosition =
+    person?.position && Array.isArray(person.position)
       ? person.position
-      : [14.5995, 120.9842]; // ✅ fallback to Manila if null
+      : [14.5995, 120.9842]; // fall back
 
   const getBatteryColor = (level) => {
     if (level < 30) return 'red-text';
     if (level < 60) return 'orange-text';
     return 'green-text';
   };
-  const batteryColorClass = getBatteryColor(batteryLevel);
+  const batteryColorClass = getBatteryColor(person?.battery || 0);
+
+  const formatLastSeen = (date) => {
+    if (!date) return "N/A";
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+  };
 
 
   return (
-     <div className="up-page-container">
-
+    <div className="up-page-container">
       <div className="up-content-grid">
-        {/* CENTER SECTION: Avatar & Name */}
-        <div className="up-identity-section">
+        
+        {/* ROW 1: Avatar (Left) & Details (Right) */}
+        <div className="up-top-row">
           <div className="up-avatar-wrapper">
-            <img src={person.avatar} alt={person.name} className="up-avatar-img" />
+            <img src={person?.avatar} alt={person?.name} className="up-avatar-img" />
           </div>
-          <h2 className="up-name">{person.name}</h2>
           
-          <div className="up-signal-badge">
-            <Wifi size={14} />
-            <span>{isOnline ? 'Strong' : 'Weak'}</span>
+          <div className="up-details-box">
+            <div className="up-detail-line">
+              <span className="up-detail-label">Serial Number</span>
+              <span className="up-detail-value">{person?.serialNumber || "N/A"}</span>
+            </div>
+            <div className="up-detail-line">
+              <span className="up-detail-label">Emergency Name.</span>
+              <span className="up-detail-value">{person?.emergencyContacts?.[0]?.name || "N/A"}</span>
+            </div>
+            <div className="up-detail-line">
+              <span className="up-detail-label">Emergency No.</span>
+              <span className="up-detail-value">{person?.emergencyContacts?.[0]?.contactNo || "N/A"}</span>
+            </div>
+            <div className="up-detail-line">
+              <span className="up-detail-label">Last Seen</span>
+              <span className="up-detail-value">{formatLastSeen(person?.lastSeen)}</span>
+            </div>
           </div>
         </div>
 
-        {/* CARDS SECTION: Battery & Bracelet Status */}
-        <div className="up-cards-row">
-          <div className="up-status-card">
-            <span className="up-card-label">Battery:</span>
-            <span className={`up-card-value ${batteryColorClass.split('-')[0]}`}>
-              {batteryLevel}%
+        {/* ROW 2: Name & Signal */}
+        <div className="up-identity-row">
+          <h2 className="up-name">{person?.name}</h2>
+          <div className={`up-signal-badge ${person?.online ? 'strong' : 'weak'}`}>
+            <Wifi size={14} />
+            <span>{person?.online ? 'Strong' : 'Weak'}</span>
+          </div>
+        </div>
+
+        {/* ROW 3: Battery & Bracelet Status Component */}
+        <div className="up-status-bar">
+          <div className="up-status-item">
+            <Battery size={16} className={`up-icon ${batteryColorClass.split('-')[0]}`} />
+            <span className="up-status-label">Battery:</span>
+            <span className={`up-status-value ${batteryColorClass.split('-')[0]}`}>
+              {person?.battery || 0}%
             </span>
           </div>
           
-          <div className="up-status-card">
-            <span className="up-card-label">Bracelet Status:</span>
-            <span className={`up-card-value ${isBraceletOn ? 'success' : 'danger'}`}>
-              {isBraceletOn ? 'ON' : 'OFF'}
+          <div className="up-status-divider"></div>
+          
+          <div className="up-status-item">
+            <span className="up-status-label">Bracelet:</span>
+            <span className={`up-status-value ${person?.braceletOn ? 'success' : 'danger'}`}>
+              {person?.braceletOn ? 'ON' : 'OFF'}
             </span>
           </div>
         </div>
@@ -117,7 +193,18 @@ const UserProfile = () => {
               <Marker
                 position={userPosition}
                 icon={createCustomIcon(person)}
-              />
+              >
+                <Popup className="custom-popup">
+                  <div className="popup-layout">
+                    <div className="popup-header">
+                      <h3>{person?.name}</h3>
+                    </div>
+                    <div className="popup-location-box">
+                      <p>{address}</p>
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
             </MapContainer>
           </div>
         </div>
