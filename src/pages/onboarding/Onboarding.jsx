@@ -4,11 +4,11 @@ import './Onboarding.css';
 
 // Import the new UI screenshots
 import introImg from '../../assets/onboarding/Intro.png';
-import homeImg from '../../assets/onboarding/Home Page.png';
-import peopleImg from '../../assets/onboarding/UserProfilePeople Page.png';
+import homeImg from '../../assets/onboarding/HomePg2.png';
+import peopleImg from '../../assets/onboarding/Peoplepg2.png';
 import profileImg from '../../assets/onboarding/ProfileMenus.png';
-import reportImg from '../../assets/onboarding/Report Page.png';
-import geofenceImg from '../../assets/onboarding/Geofence Feature Page.png';
+import reportImg from '../../assets/onboarding/ReportPage2.png';
+import geofenceImg from '../../assets/onboarding/GeofPlcs2.png';
 import authImg from '../../assets/onboarding/LoginSignup Page.png';
 
 const SLIDES = [
