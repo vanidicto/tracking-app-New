@@ -16,6 +16,15 @@ export default defineConfig({
   ],
   server:{
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      // Proxy Nominatim requests through Vite's dev server to completely bypass CORS.
+      // Browser calls /api/nominatim/reverse?... → Vite forwards it server-to-server to Nominatim.
+      '/api/nominatim': {
+        target: 'https://nominatim.openstreetmap.org',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/nominatim/, ''),
+      }
+    }
   }
 })

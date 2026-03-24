@@ -5,7 +5,6 @@ import Login from "./context/Login";
 import Signup from "./context/Signup";
 import ForgotPassword from "./context/ForgotPassword";
 import { ToastProvider } from "./context/ToastContext";
-import { NotificationProvider } from "./context/NotificationContext";
 import AppLayout from "./layouts/AppLayout";
 
 import People from "./pages/people/People";
@@ -39,7 +38,6 @@ function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <NotificationProvider>
         <Routes>
           {/* Public */}
           <Route path="/" element={<Landing />} />
@@ -83,7 +81,6 @@ function App() {
           {/* Fallback so you never get blank screen */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </NotificationProvider>
       </ToastProvider>
     </AuthProvider>
   );

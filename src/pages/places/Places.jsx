@@ -43,11 +43,11 @@ if (L.Edit && L.Edit.Circle) {
   };
 }
 import "./Places.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { reverseGeocode } from "../../utils/geocode";
+
 import * as mapHelpers from "../../utils/mapHelpers";
-import { useBraceletUsers } from "../../hooks/useUsers";
+import { useBraceletUsers } from "../../context/BraceletDataProvider";
 import { useAuth } from "../../context/AuthContext";
 import { db } from "../../config/firebaseConfig";
 import { collection, query, where, onSnapshot, doc, updateDoc } from "firebase/firestore";
@@ -85,13 +85,10 @@ const Places = () => {
   const [map, setMap] = useState(null);
 
   // Custom hook to fetch bracelet users and their positions
-  const { braceletUsers, loading } = useBraceletUsers();
+  const { braceletUsers, loading, addressCache } = useBraceletUsers();
 
   // List of active geofence alert messages for local display
   const [activeAlerts, setActiveAlerts] = useState([]);
-
-  // Address cache for popup location display
-  const [addressCache, setAddressCache] = useState({});
 
   // List of geofences fetched from Firestore
   const [geofences, setGeofences] = useState([]);
@@ -201,30 +198,26 @@ const Places = () => {
     return () => unsubscribe();
   }, [currentUser]);
 
-  /**
-   * Effect: Reverse geocode user positions for popup display.
-   */
-  useEffect(() => {
-    braceletUsers.forEach((user) => {
-      if (user.position && !addressCache[user.id]) {
-        reverseGeocode(user.position[0], user.position[1]).then((addr) => {
-          if (addr) {
-            setAddressCache((prev) => ({ ...prev, [user.id]: addr }));
-          }
-        });
-      }
-    });
-  }, [braceletUsers]);
+
 
   /**
-   * Effect: Geofence Monitoring Logic.
+   * Memoized geofence transition calculations.
+   * Only recalculates when braceletUsers or geofences actually change.
    */
-  useEffect(() => {
-    const { currentAlerts, newlyDetected, usersToUpdateOffline } = geofenceUtils.checkGeofenceTransitions(
+  const geofenceResult = useMemo(
+    () => geofenceUtils.checkGeofenceTransitions(
       braceletUsers,
       geofences,
       alertedUsersRef.current
-    );
+    ),
+    [braceletUsers, geofences]
+  );
+
+  /**
+   * Effect: Process geofence side-effects from memoized result.
+   */
+  useEffect(() => {
+    const { currentAlerts, newlyDetected, usersToUpdateOffline } = geofenceResult;
 
     setActiveAlerts(currentAlerts);
 
@@ -238,7 +231,7 @@ const Places = () => {
     if (newlyDetected.length > 0) {
       newlyDetected.forEach(det => notificationService.saveGeofenceNotification(currentUser, det));
     }
-  }, [braceletUsers, geofences, currentUser]);
+  }, [geofenceResult, currentUser]);
 
   /**
    * Centers and flies the map to a specific geofence when clicked in the list.

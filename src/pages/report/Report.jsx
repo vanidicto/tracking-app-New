@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ChevronRight, ShieldAlert } from 'lucide-react';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
-import { useBraceletUsers } from '../../hooks/useUsers';
+import { useBraceletUsers } from '../../context/BraceletDataProvider';
 import { useAuth } from '../../context/AuthContext';
 import Skeleton from '../../components/skeleton/Skeleton';
 import './Report.css';

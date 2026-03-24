@@ -8,6 +8,7 @@ import L from 'leaflet';
 import { useEffect, useState } from 'react';
 import { createCustomIcon, buildUserWithDevice, isUserOnline, parseFirestoreDate, parseLocation } from '../../utils/mapHelpers';
 import { reverseGeocode } from '../../utils/geocode';
+import { useBraceletUsers } from '../../context/BraceletDataProvider';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 
@@ -36,8 +37,8 @@ const UserProfile = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const { addressCache, fetchAddress } = useBraceletUsers();
   const [person, setPerson] = useState(location.state?.personData);
-  const [address, setAddress] = useState("Fetching location...");
 
   // Real-time synchronization for the specific user
   useEffect(() => {
@@ -85,13 +86,14 @@ const UserProfile = () => {
     };
   }, [person?.id]);
 
+  // Request geocode if not already in the shared cache (e.g. direct navigation)
   useEffect(() => {
-    if (person?.position) {
-      reverseGeocode(person.position[0], person.position[1]).then((addr) => {
-        setAddress(addr || "Address not found");
-      });
+    if (person?.position && person?.id && !addressCache[person.id]) {
+      fetchAddress(person.id, person.position[0], person.position[1]);
     }
-  }, [person?.position]);
+  }, [person?.position, person?.id, addressCache, fetchAddress]);
+
+  const address = addressCache[person?.id] || 'Fetching location…';
 
   const userPosition =
     person?.position && Array.isArray(person.position)

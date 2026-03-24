@@ -1,8 +1,8 @@
 
 import './People.css';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { useBraceletUsers } from '../../hooks/useUsers';
+import { useState, useMemo } from 'react';
+import { useBraceletUsers } from '../../context/BraceletDataProvider';
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
@@ -29,7 +29,7 @@ const SearchIcon = () => (
  * 2. Search/Filter the list of people.
  * 3. Add new bracelets to their account via a modal form.
  * 
- * Uses the `useBraceletUsers` hook to fetch real-time data from Firestore.
+ * Uses the `useBraceletUsers` context for shared real-time data.
  */
 function People() {
   const { braceletUsers, loading, error } = useBraceletUsers();
@@ -43,20 +43,12 @@ function People() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   /**
-   * Filters and sorts the list of users based on the search query and status.
-   * 
-   * Sorting priority:
-   * 1. SOS Active (High priority)
-   * 2. Online status
-   * 3. Alphabetical by name
-   * 
-   * @param {Array} users - The list of bracelet users.
-   * @param {string} query - The search string.
-   * @returns {Array} - The sorted and filtered list.
+   * Memoized filtered and sorted user list.
+   * Only recalculates when braceletUsers or searchQuery actually change.
    */
-  const sortAndFilterUsers = (users, query) => {
-    const filtered = users.filter((user) =>
-      user.name.toLowerCase().includes(query.toLowerCase())
+  const filteredUsers = useMemo(() => {
+    const filtered = braceletUsers.filter((user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return filtered.sort((a, b) => {
@@ -66,9 +58,7 @@ function People() {
       if (!a.online && b.online) return 1;
       return a.name.localeCompare(b.name);
     });
-  };
-
-  const filteredUsers = sortAndFilterUsers(braceletUsers, searchQuery);
+  }, [braceletUsers, searchQuery]);
 
   const handleDeleteBracelet = async (e, braceletId) => {
     e.preventDefault();

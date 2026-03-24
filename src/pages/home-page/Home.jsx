@@ -4,16 +4,14 @@ import "leaflet/dist/leaflet.css";
 import "./Home.css";
 import { Link } from "react-router-dom";
 import * as mapHelpers from "../../utils/mapHelpers";
-import { reverseGeocode } from "../../utils/geocode";
-import { useBraceletUsers } from "../../hooks/useUsers";
+import { useBraceletUsers } from "../../context/BraceletDataProvider";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import MapLoader from "../../components/loading/MapLoader";
 import HomeSidePanel from "../../components/HomeSidePanel";
 
 function Home() {
-  const { braceletUsers, loading } = useBraceletUsers();
+  const { braceletUsers, loading, addressCache } = useBraceletUsers();
 
-  const [addressCache, setAddressCache] = useState({});
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all"); // all | online | sos
   const [selectedId, setSelectedId] = useState(null);
@@ -40,51 +38,6 @@ function Home() {
 
     return list;
   }, [braceletUsers, query, filter]);
-
-  const fetchedIds = useRef(new Set());
-
-  // Fetch addresses safely (not inside render)
-  useEffect(() => {
-    let active = true;
-
-    async function run() {
-      // Iterate over braceletUsers since the Map renders all users (not just filteredUsers)
-      for (const u of braceletUsers) {
-        if (!active) break;
-        if (!u?.position) continue;
-
-        // Use a ref to track if we've initiated a fetch, avoiding stale state reads
-        if (fetchedIds.current.has(u.id)) continue;
-
-        const [lat, lng] = u.position || [];
-        if (isNaN(lat) || isNaN(lng)) continue;
-        // Skip default/null island coordinates
-        if (lat === 0 && lng === 0) continue;
-
-        // Mark as being fetched
-        fetchedIds.current.add(u.id);
-
-        setAddressCache((prev) => ({ ...prev, [u.id]: "Fetching location…" }));
-
-        const addr = await reverseGeocode(lat, lng);
-
-        // Intentionally NOT returning early if `active` becomes false.
-        // We want the pending reverseGeocode to resolve and overwrite "Fetching location..."
-        setAddressCache((prev) => ({
-          ...prev,
-          [u.id]: addr || "Address not found",
-        }));
-
-        // small spacing to avoid hammering API
-        await new Promise((r) => setTimeout(r, 250));
-      }
-    }
-
-    run();
-    return () => {
-      active = false;
-    };
-  }, [braceletUsers]);
 
   const getInitialCenter = () => {
     const sosUser = braceletUsers.find((u) => u.sos && u.online && u.position);

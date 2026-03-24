@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import TopBar from '../components/TopBar';
 import ProfileModal from '../components/ProfileModal';
+import { NotificationProvider } from '../context/NotificationContext';
+import { BraceletDataProvider } from '../context/BraceletDataProvider';
 import './AppLayout.css';
 
 const AppLayout = () => {
@@ -31,33 +33,37 @@ const AppLayout = () => {
   }, [location]);
 
   return (
-    <div className="app-layout-container">
-      {/* --- RENDER ALL LAYOUT COMPONENTS --- */}
+    <NotificationProvider>
+      <BraceletDataProvider>
+        <div className="app-layout-container">
+          {/* --- RENDER ALL LAYOUT COMPONENTS --- */}
 
-      {/* Desktop-only Sidebar */}
-      {!shouldHideSidebar && <Sidebar />}
+          {/* Desktop-only Sidebar */}
+          {!shouldHideSidebar && <Sidebar />}
 
-      {/* Top bar (is responsive inside) */}
-      {!shouldHideTopBar && (
-        <TopBar onProfileClick={() => setIsProfileModalOpen(true)} />
-      )}
+          {/* Top bar (is responsive inside) */}
+          {!shouldHideTopBar && (
+            <TopBar onProfileClick={() => setIsProfileModalOpen(true)} />
+          )}
 
-      {/* Main page content */}
-      <main className={`app-content-main ${shouldHideTopBar ? 'no-navigation' : ''} ${shouldHideSidebar && !shouldHideTopBar ? 'no-sidebar' : ''}`}>
-        <div className={`scrollable-content ${isUserProfile ? 'no-scroll' : ''}`}>
-          <Outlet />
+          {/* Main page content */}
+          <main className={`app-content-main ${shouldHideTopBar ? 'no-navigation' : ''} ${shouldHideSidebar && !shouldHideTopBar ? 'no-sidebar' : ''}`}>
+            <div className={`scrollable-content ${isUserProfile ? 'no-scroll' : ''}`}>
+              <Outlet />
+            </div>
+          </main>
+
+          {/* Mobile-only Bottom Navbar */}
+          {!shouldHideNavbar && <Navbar />}
+
+          {/* Profile Modal - Always available for trigger */}
+          <ProfileModal
+            isOpen={isProfileModalOpen}
+            onClose={() => setIsProfileModalOpen(false)}
+          />
         </div>
-      </main>
-
-      {/* Mobile-only Bottom Navbar */}
-      {!shouldHideNavbar && <Navbar />}
-
-      {/* Profile Modal - Always available for trigger */}
-      <ProfileModal
-        isOpen={isProfileModalOpen}
-        onClose={() => setIsProfileModalOpen(false)}
-      />
-    </div>
+      </BraceletDataProvider>
+    </NotificationProvider>
   );
 };
 
