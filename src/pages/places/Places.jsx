@@ -1,6 +1,6 @@
 // src/pages/app/Places.jsx
 
-import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Circle, } from "react-leaflet";
+import { MapContainer, TileLayer, FeatureGroup, Marker, Popup, Circle, useMapEvents } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -85,10 +85,14 @@ const Places = () => {
   const [map, setMap] = useState(null);
 
   // Custom hook to fetch bracelet users and their positions
-  const { braceletUsers, loading, addressCache } = useBraceletUsers();
+  const { braceletUsers, loading, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
 
-  // List of active geofence alert messages for local display
+  // Address cache for popup location display
   const [activeAlerts, setActiveAlerts] = useState([]);
+
+  const groupedMarkers = useMemo(() => {
+    return mapHelpers.groupUsersByLocation(braceletUsers);
+  }, [braceletUsers]);
 
   // List of geofences fetched from Firestore
   const [geofences, setGeofences] = useState([]);
@@ -520,17 +524,18 @@ const Places = () => {
       {/* Main Map View Module */}
       <div className="places-map-container">
         <MapContainer
-          center={initialCenter}
-          zoom={18}
+          center={mapViewState?.center || initialCenter}
+          zoom={mapViewState?.zoom || 18}
           zoomControl={false}
           attributionControl={false}
           style={{ height: "100%", minHeight: "500px", width: "100%" }}
           whenReady={(m) => setMap(m.target)}
         >
+          <MapStateTracker setMapViewState={setMapViewState} />
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
           {/* Render real user markers dynamically from braceletUsers state */}
-          {mapHelpers.groupUsersByLocation(braceletUsers).map((group, idx) => {
+          {groupedMarkers.map((group, idx) => {
             const isGroup = group.users.length > 1;
             const singleUser = group.users[0];
 
@@ -540,7 +545,7 @@ const Places = () => {
                 position={group.position}
                 icon={mapHelpers.createCustomIcon(group)}
               >
-                <Popup className="custom-popup">
+                <Popup className="custom-popup" autoPan={false}>
                   <div className="popup-layout">
                     {isGroup ? (
                       <>
@@ -765,5 +770,32 @@ const Places = () => {
     </div>
   );
 };
+
+// Helper component to explicitly track map moves and sync to Context
+function MapStateTracker({ setMapViewState }) {
+  const map = useMapEvents({
+    moveend: () => {
+      if (setMapViewState) {
+        setMapViewState(prev => {
+          const newLat = map.getCenter().lat;
+          const newLng = map.getCenter().lng;
+          const newZoom = map.getZoom();
+          
+          if (
+            prev &&
+            prev.zoom === newZoom &&
+            Math.abs(prev.center[0] - newLat) < 0.00001 &&
+            Math.abs(prev.center[1] - newLng) < 0.00001
+          ) {
+            return prev;
+          }
+          
+          return { center: [newLat, newLng], zoom: newZoom };
+        });
+      }
+    }
+  });
+  return null;
+}
 
 export default Places;

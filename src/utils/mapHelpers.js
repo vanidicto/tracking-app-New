@@ -117,11 +117,24 @@ export function groupUsersByLocation(users, proximity = 0.00015) {
   return groups;
 }
 
+const iconCache = new Map();
+
 // Create custom marker icon for users or groups of users
 export const createCustomIcon = (data) => {
   const isGroup = Array.isArray(data.users) && data.users.length > 1;
   const person = isGroup ? data.users[0] : (data.users ? data.users[0] : data);
   const count = isGroup ? data.users.length : 1;
+
+  // Determine if anyone in the group is online or has SOS active
+  const anyOnline = isGroup ? data.users.some(u => u.online && u.braceletOn) : (person.online && person.braceletOn);
+  const anySos = isGroup ? data.users.some(u => u.sos) : person.sos;
+
+  // Generate a unique cache key for this specific visual state
+  const cacheKey = `${isGroup}-${person.id}-${count}-${anyOnline}-${anySos}-${person.avatar}`;
+
+  if (iconCache.has(cacheKey)) {
+    return iconCache.get(cacheKey);
+  }
 
   // Generic neutral icon for groups (SVG representing multiple people)
   const groupIconSvg = `
@@ -133,11 +146,7 @@ export const createCustomIcon = (data) => {
     </svg>
   `;
 
-  // Determine if anyone in the group is online or has SOS active
-  const anyOnline = isGroup ? data.users.some(u => u.online && u.braceletOn) : (person.online && person.braceletOn);
-  const anySos = isGroup ? data.users.some(u => u.sos) : person.sos;
-
-  return L.divIcon({
+  const icon = L.divIcon({
     className: `custom-marker-icon ${anySos ? 'sos-active' : ''}`,
     html: `
       <div class="marker-pin">
@@ -153,6 +162,9 @@ export const createCustomIcon = (data) => {
     iconAnchor: [26, 60],
     popupAnchor: [0, -60],
   });
+
+  iconCache.set(cacheKey, icon);
+  return icon;
 };
 
 // Helper to determine if user is online based on lastSeen

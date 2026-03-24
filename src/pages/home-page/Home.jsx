@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "./Home.css";
@@ -10,7 +10,7 @@ import MapLoader from "../../components/loading/MapLoader";
 import HomeSidePanel from "../../components/HomeSidePanel";
 
 function Home() {
-  const { braceletUsers, loading, addressCache } = useBraceletUsers();
+  const { braceletUsers, loading, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
 
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all"); // all | online | sos
@@ -38,6 +38,10 @@ function Home() {
 
     return list;
   }, [braceletUsers, query, filter]);
+
+  const groupedMarkers = useMemo(() => {
+    return mapHelpers.groupUsersByLocation(braceletUsers);
+  }, [braceletUsers]);
 
   const getInitialCenter = () => {
     const sosUser = braceletUsers.find((u) => u.sos && u.online && u.position);
@@ -81,20 +85,20 @@ function Home() {
     <div className="home-layout">
       <div className="home-map">
         <MapContainer
-          center={getInitialCenter()}
-          zoom={18}
+          center={mapViewState?.center || getInitialCenter()}
+          zoom={mapViewState?.zoom || 18}
           zoomControl={false}
           attributionControl={false}
           style={{ height: "100%", width: "100%" }}
         >
-          <MapController mapRef={mapRef} />
+          <MapController mapRef={mapRef} setMapViewState={setMapViewState} />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             keepBuffer={8}
           />
 
-          {mapHelpers.groupUsersByLocation(braceletUsers).map((group, idx) => {
+          {groupedMarkers.map((group, idx) => {
             const isGroup = group.users.length > 1;
             const singleUser = group.users[0];
             
@@ -104,7 +108,7 @@ function Home() {
                 position={group.position}
                 icon={mapHelpers.createCustomIcon(group)}
               >
-                <Popup className="custom-popup">
+                <Popup className="custom-popup" autoPan={false}>
                   <div className="popup-layout">
                     {isGroup ? (
                       <>
@@ -206,9 +210,32 @@ function Home() {
 
 export default Home;
 
-// Helper to access map instance
-function MapController({ mapRef }) {
-  const map = useMap();
+// Helper to access map instance and track pan/zoom state globally
+function MapController({ mapRef, setMapViewState }) {
+  const map = useMapEvents({
+    moveend: () => {
+      if (setMapViewState) {
+        setMapViewState(prev => {
+          const newLat = map.getCenter().lat;
+          const newLng = map.getCenter().lng;
+          const newZoom = map.getZoom();
+          
+          // Bail out if map hasn't actually moved (prevents infinite loop)
+          if (
+            prev &&
+            prev.zoom === newZoom &&
+            Math.abs(prev.center[0] - newLat) < 0.00001 &&
+            Math.abs(prev.center[1] - newLng) < 0.00001
+          ) {
+            return prev;
+          }
+          
+          return { center: [newLat, newLng], zoom: newZoom };
+        });
+      }
+    }
+  });
+
   useEffect(() => {
     mapRef.current = map;
     // Force resize to fix "blank map" issues

@@ -57,8 +57,10 @@ export function BraceletDataProvider({ children }) {
     setAddressCache((prev) => ({ ...prev, [userId]: addr || 'Address not found' }));
   }, []);
 
+  const [mapViewState, setMapViewState] = useState(null);
+
   return (
-    <BraceletDataContext.Provider value={{ ...data, addressCache, fetchAddress }}>
+    <BraceletDataContext.Provider value={{ ...data, addressCache, fetchAddress, mapViewState, setMapViewState }}>
       {children}
     </BraceletDataContext.Provider>
   );
