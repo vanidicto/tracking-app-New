@@ -116,3 +116,29 @@
     width: 85px;
   }
 }
+
+/* --- DARK MODE STYLES --- */
+html.pm-dark .app-navbar {
+  background-color: rgba(30, 30, 30, 0.85); /* Dark translucent background */
+  border-color: var(--pm-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+html.pm-dark .nav-item {
+  color: var(--pm-text-muted); /* Subdued text for inactive items */
+}
+
+html.pm-dark .nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05); /* Subtle white hover */
+}
+
+html.pm-dark .nav-item.active {
+  background-color: var(--pm-primary); /* Keep brand color */
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(164, 38, 44, 0.35); /* Maroon glow */
+}
+
+html.pm-dark .nav-items-container {
+  /* Ensuring background doesn't interfere */
+  background: transparent;
+}
