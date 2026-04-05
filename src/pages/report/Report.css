@@ -114,6 +114,16 @@
   font-weight: 600;
 }
 
+/* UPDATED GREEN STATUS CLASSES */
+.incident-icon-wrapper.green {
+  background-color: var(--pm-success);
+}
+
+.incident-type.green {
+  color: var(--pm-success);
+  font-weight: 700;
+}
+
 /* --- END ICON STYLES --- */
 
 

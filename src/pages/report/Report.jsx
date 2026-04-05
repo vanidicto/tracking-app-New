@@ -59,7 +59,7 @@ const Report = () => {
       // Since reports are generated when SOS turns OFF, we treat them as "Resolved"
       displayStatus: {
         text: 'Marked Safe',
-        color: 'black',
+        color: 'green',
         icon: ShieldAlert
       },
       // Map fields for the modal
