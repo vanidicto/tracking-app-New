@@ -302,8 +302,26 @@ html.pm-dark .up-page-container {
 }
 
 html.pm-dark .up-name,
-html.pm-dark .up-card-value {
+html.pm-dark .up-card-value,
+html.pm-dark .up-detail-value {
   color: var(--pm-text);
+}
+
+html.pm-dark .up-details-box {
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .up-status-bar {
+  background-color: var(--pm-surface);
+  border-color: var(--pm-border);
+}
+
+html.pm-dark .up-status-label {
+  color: var(--pm-text-muted);
+}
+
+html.pm-dark .up-status-divider {
+  background-color: var(--pm-border);
 }
 
 html.pm-dark .up-back-btn {
