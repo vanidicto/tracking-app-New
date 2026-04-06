@@ -6,7 +6,7 @@ import { useBraceletUsers } from '../../context/BraceletDataProvider';
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
-import { Plus, X, Trash2, User, CreditCard } from "lucide-react";
+import { Plus, X, Trash2, User, CreditCard, Pencil } from "lucide-react";
 import Skeleton from '../../components/skeleton/Skeleton';
 
 /**
@@ -41,6 +41,11 @@ function People() {
   const [newBraceletSerial, setNewBraceletSerial] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Edit Nickname state
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingPerson, setEditingPerson] = useState(null);
+  const [editNickname, setEditNickname] = useState('');
 
   /**
    * Memoized filtered and sorted user list.
@@ -159,6 +164,49 @@ function People() {
     }
   };
 
+  /**
+   * Opens the Edit Nickname modal for a specific person.
+   */
+  const handleOpenEditModal = (e, person) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEditingPerson(person);
+    setEditNickname(person.name);
+    setIsEditModalOpen(true);
+  };
+
+  /**
+   * Handles updating the nickname in Firestore.
+   * If nickname is empty, it removes the override (resets to default).
+   */
+  const handleUpdateNickname = async (e) => {
+    e.preventDefault();
+    if (!editingPerson) return;
+
+    setIsSubmitting(true);
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const appUserRef = doc(db, 'appUsers', user.uid);
+      const nicknameValue = editNickname.trim();
+      
+      await updateDoc(appUserRef, {
+        [`braceletNicknames.${editingPerson.id}`]: nicknameValue || deleteField()
+      });
+
+      alert("Nickname updated successfully.");
+      setIsEditModalOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Error updating nickname:", err);
+      alert("Failed to update nickname.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (error) return <div className="error">{error}</div>;
 
   return (
@@ -250,6 +298,63 @@ function People() {
         </div>
       )}
 
+      {/* Edit Nickname Modal */}
+      {isEditModalOpen && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '500px' }}>
+            <div className="add-bracelet-modal-header">
+              <h2 className="modal-title">Edit Nickname</h2>
+            </div>
+
+            <form onSubmit={handleUpdateNickname} className="add-bracelet-form">
+              <div className="add-bracelet-body">
+                <div className="add-bracelet-column" style={{ width: '100%', borderRight: 'none', paddingRight: 0 }}>
+                  <div className="form-section-header">
+                    <span className="section-slash">|</span> UPDATE NICKNAME
+                  </div>
+
+                  <div className="form-group-custom">
+                    <label className="form-label-custom">New Nickname</label>
+                    <div className="input-with-icon">
+                      <div className="input-icon-wrapper">
+                        <User size={18} strokeWidth={1.5} color="#9ca3af" />
+                      </div>
+                      <input
+                        type="text"
+                        className="form-input-custom"
+                        value={editNickname}
+                        onChange={(e) => setEditNickname(e.target.value)}
+                        placeholder="e.g. Grandma's Bracelet"
+                      />
+                    </div>
+                    <p className="form-hint">Leave blank to reset to the default bracelet name.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="add-bracelet-footer">
+                <button type="button" className="btn-cancel" onClick={() => setIsEditModalOpen(false)}>
+                  Cancel
+                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    type="button" 
+                    className="btn-cancel" 
+                    style={{ background: 'var(--pm-surface)' }}
+                    onClick={() => setEditNickname('')}
+                  >
+                    Reset
+                  </button>
+                  <button type="submit" className="btn-next" disabled={isSubmitting}>
+                    {isSubmitting ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <div className="people-list">
         {loading ? (Array.from({ length: 4 }).map((_, i) => (
             <div key={`skeleton-${i}`} className="person-row-item" style={{ border: 'none', background: 'transparent'  }}>
@@ -260,11 +365,11 @@ function People() {
                   </div>
                   <div className="name-status-info" >
                     <Skeleton type="text" width="120px" height="16px" />
-                    <Skeleton type="text" width="80px" height="12px" />
+                    <div className="person-row-meta">
+                      <Skeleton type="text" width="80px" height="12px" />
+                      <Skeleton type="text" width="25px" height="12px" />
+                    </div>
                   </div>
-                </div>
-                <div className="person-battery-info" >
-                  <Skeleton type="text" width="25px" height="16px" />
                 </div>
               </div>
               <div className="delete-person-btn">
@@ -284,28 +389,38 @@ function People() {
                   </div>
                   <div className="name-status-info">
                     <p className="person-row-name">{person.name}</p>
-                    <p className="person-row-status">
-                      Bracelet: <span className={person.online && person.braceletOn ? 'status-on' : 'status-off'}>
-                        {person.online && person.braceletOn ? 'ON' : 'OFF'}
-                      </span>
-                    </p>
+                    <div className="person-row-meta">
+                      <p className="person-row-status">
+                        Bracelet: <span className={person.online && person.braceletOn ? 'status-on' : 'status-off'}>
+                          {person.online && person.braceletOn ? 'ON' : 'OFF'}
+                        </span>
+                      </p>
+                      <span className="meta-dot">•</span>
+                      <p className="battery-percentage" style={person.online ? { color: '#34A853' } : { color: "var(--pm-text-muted)" }}>
+                        {person.battery}%
+                      </p>
+                    </div>
                   </div>
-                </div>
-
-                <div className="person-battery-info">
-                  <p className="battery-percentage" style={person.online ? { color: '#34A853' } : { color: "var(--pm-text-muted)" }}>
-                    {person.battery}%
-                  </p>
                 </div>
               </Link>
 
-              <button
-                className="delete-person-btn"
-                onClick={(e) => handleDeleteBracelet(e, person.id)}
-                aria-label="Delete"
-              >
-                <Trash2 size={20} />
-              </button>
+              <div className="person-actions">
+                <button
+                  className="edit-person-btn"
+                  onClick={(e) => handleOpenEditModal(e, person)}
+                  aria-label="Edit"
+                >
+                  <Pencil size={20} />
+                </button>
+
+                <button
+                  className="delete-person-btn"
+                  onClick={(e) => handleDeleteBracelet(e, person.id)}
+                  aria-label="Delete"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
             </div>
           ))
         )}

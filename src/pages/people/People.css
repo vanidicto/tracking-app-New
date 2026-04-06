@@ -153,14 +153,21 @@
   color: var(--pm-text-muted);
 }
 
-.person-battery-info {
-  text-align: right;
-  margin-right: 20px;
+.person-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meta-dot {
+  color: var(--pm-text-muted);
+  font-size: 0.8rem;
+  opacity: 0.6;
 }
 
 .battery-percentage {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -176,7 +183,28 @@
 
 .delete-person-btn:hover {
   color: #8c2025;
-  background-color: rgba(var(--pm-danger-rgb), 0.1);
+  background-color: rgba(140, 32, 37, 0.1);
+}
+
+.person-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.edit-person-btn {
+  background: none;
+  border: none;
+  color: var(--pm-text-muted);
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.edit-person-btn:hover {
+  color: var(--pm-primary);
+  background-color: rgba(164, 38, 44, 0.1);
 }
 
 /* --- Responsive Adjustments --- */

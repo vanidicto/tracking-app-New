@@ -146,6 +146,37 @@ body {
   z-index: 4;
 }
 
+/* --- SOS Active Pulse (Radar Effect) --- */
+.sos-active .marker-pin::before,
+.sos-active .marker-pin::after {
+  content: "";
+  position: absolute;
+  top: 3px; /* Centered with marker-content */
+  left: 3px; 
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(219, 44, 44, 0.5); /* Semi-transparent bold red */
+  z-index: 0; /* Behind everything within the pin */
+  animation: pulse-sos 2s infinite ease-out;
+  pointer-events: none;
+}
+
+.sos-active .marker-pin::after {
+  animation-delay: 1s;
+}
+
+@keyframes pulse-sos {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
 /* Grouped Popup Styles */
 .popup-user-list {
   max-height: 200px;
