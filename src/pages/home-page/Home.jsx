@@ -44,7 +44,8 @@ function Home() {
   }, [braceletUsers]);
 
   const getInitialCenter = () => {
-    const sosUser = braceletUsers.find((u) => u.sos && u.online && u.position);
+    // 1. Priority: Any user in SOS mode (even if marked offline, SOS takes precedence)
+    const sosUser = braceletUsers.find((u) => u.sos && u.position);
     if (sosUser?.position) return sosUser.position;
 
     const onlineUser = braceletUsers.find((u) => u.online && u.position);
@@ -62,6 +63,9 @@ function Home() {
     // Default center (TUP Manila)
     return [14.5921, 120.9755];
   };
+
+  // No initial flyTo anymore as requested - we rely on getInitialCenter() for the first render.
+  // The map will directly mount at the SOS location if one exists.
 
   const handleSelectUser = (u) => {
     setSelectedId(u.id);

@@ -389,9 +389,23 @@ const Places = () => {
       </div>
     );
   }
-  // Determine the default center of the map based on the first active user position
-  const initialCenterUser = braceletUsers.find(u => u.position && u.position.length === 2);
-  const initialCenter = initialCenterUser ? initialCenterUser.position : [14.5921, 120.9755];
+  // Determine the default center of the map focusing on SOS priority
+  const getInitialCenter = () => {
+    // 1. Priority: Any user in SOS mode (even if supposedly offline, SOS takes precedence)
+    const sosUser = braceletUsers.find((u) => u.sos && u.position);
+    if (sosUser?.position) return sosUser.position;
+
+    const onlineUser = braceletUsers.find((u) => u.online && u.position);
+    if (onlineUser?.position) return onlineUser.position;
+
+    const anyUser = braceletUsers.find(u => u.position && u.position.length === 2);
+    return anyUser?.position || [14.5921, 120.9755];
+  };
+
+  const initialCenter = getInitialCenter();
+  
+  // No initial flyTo anymore - we rely on initialCenter for the first render.
+  // This ensures the map starts directly at the first SOS user's position.
 
 
 
@@ -599,7 +613,7 @@ const Places = () => {
                                 : "—"}
                             </span>
                           </div>
-                          {singleUser.sos?.active && (
+                          {singleUser.sos && (
                             <div className="detail-row">
                               <span style={{ color: 'red', fontWeight: 'bold' }}>SOS Status</span>
                               <span style={{ color: 'red', fontWeight: 'bold' }}>🚨 Active!</span>
