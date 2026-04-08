@@ -8,7 +8,25 @@ import './Notifications.css';
 
 const Notifications = () => {
   const navigate = useNavigate();
-  const { notifications, loading, markAsRead, deleteNotification } = useNotifications();
+  const { notifications, loading, markAsRead, deleteNotification, deleteAllNotifications } = useNotifications();
+  const [filter, setFilter] = React.useState('all');
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const filteredNotifications = notifications.filter(item => {
+    if (filter === 'read') return item.read;
+    if (filter === 'unread') return !item.read;
+    return true;
+  });
+
+  const handleClearAll = async () => {
+    try {
+      await deleteAllNotifications();
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Clear all error:", err);
+      alert("Failed to clear notifications.");
+    }
+  };
 
   return (
     <div className="br-page">
@@ -17,22 +35,42 @@ const Notifications = () => {
           <ChevronLeft size={24} color="#444" />
         </button>
         <h1 className="br-nav-title">Notifications</h1>
-        <div className="br-nav-spacer"></div>
+        <button 
+          className="br-nav-clear-all" 
+          onClick={() => setIsModalOpen(true)}
+          disabled={notifications.length === 0}
+        >
+          Clear All
+        </button>
       </header>
+
+      <div className="notif-horizontal-nav-container">
+        <div className="notif-horizontal-nav">
+          {['all', 'unread', 'read'].map((tab) => (
+            <button
+              key={tab}
+              className={`notif-tab-btn ${filter === tab ? "active" : ""}`}
+              onClick={() => setFilter(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <main className="br-main notif-main">
         {loading ? (
           <div className="notif-loading">
             <LoadingSpinner message="Loading updates..." />
           </div>
-        ) : notifications.length === 0 ? (
+        ) : filteredNotifications.length === 0 ? (
           <div className="notif-empty">
             <BellOff size={56} strokeWidth={1.2} />
-            <p>No notifications yet</p>
+            <p>{filter === 'all' ? 'No notifications yet' : `No ${filter} notifications`}</p>
           </div>
         ) : (
           <ul className="notif-list">
-            {notifications.map((item) => (
+            {filteredNotifications.map((item) => (
               <li
                 key={item.id}
                 className={`notif-item ${!item.read ? 'unread' : ''}`}
@@ -66,6 +104,23 @@ const Notifications = () => {
           </ul>
         )}
       </main>
+
+      {/* Confirmation Modal */}
+      {isModalOpen && (
+        <div className="notif-modal-backdrop">
+          <div className="notif-modal-content">
+            <div className="notif-modal-icon">
+              <Trash2 size={32} />
+            </div>
+            <h3>Clear Notifications?</h3>
+            <p>Are you sure you want to permanently delete all notifications? This action cannot be undone.</p>
+            <div className="notif-modal-actions">
+              <button className="notif-modal-btn cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
+              <button className="notif-modal-btn confirm" onClick={handleClearAll}>Clear All</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

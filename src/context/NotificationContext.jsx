@@ -9,6 +9,8 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  writeBatch,
+  getDocs
 } from 'firebase/firestore';
 
 const NotificationContext = createContext(null);
@@ -76,9 +78,35 @@ export function NotificationProvider({ children }) {
     }
   };
 
+  const deleteAllNotifications = async () => {
+    if (!currentUser) return;
+    try {
+      const q = query(
+        collection(db, 'notifications'),
+        where('appUserId', '==', currentUser.uid)
+      );
+      const snapshot = await getDocs(q);
+      const batch = writeBatch(db);
+      snapshot.docs.forEach((d) => {
+        batch.delete(d.ref);
+      });
+      await batch.commit();
+    } catch (err) {
+      console.error('Failed to clear all notifications:', err);
+      throw err;
+    }
+  };
+
   return (
     <NotificationContext.Provider
-      value={{ notifications, loading, unreadCount, markAsRead, deleteNotification }}
+      value={{ 
+        notifications, 
+        loading, 
+        unreadCount, 
+        markAsRead, 
+        deleteNotification,
+        deleteAllNotifications 
+      }}
     >
       {children}
     </NotificationContext.Provider>
