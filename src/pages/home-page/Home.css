@@ -400,3 +400,217 @@ body {
     /* account for bottom navbar padding */
   }
 }
+
+/* =============================================
+   Floating Map Search Bar Overlay
+   ============================================= */
+.map-search-overlay {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 60px; /* leave room for zoom controls */
+  z-index: 500;
+  pointer-events: none;
+}
+
+/* Pill-shaped white search bar */
+.map-search-bar {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 10px 14px 10px 18px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  border: none;
+  transition: box-shadow 180ms ease;
+  pointer-events: all;
+}
+
+.map-search-bar.focused {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
+}
+
+.map-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-family: var(--pm-font);
+  color: #222;
+  outline: none;
+  box-shadow: none;
+  min-width: 0;
+}
+
+.map-search-input:focus,
+.map-search-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+
+.map-search-input::placeholder {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* Navigation arrow on the right */
+.map-search-nav-icon {
+  color: #aaa;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+/* Suggestions Dropdown */
+.map-search-dropdown {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 4px 0;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.16);
+  overflow: hidden;
+  pointer-events: all;
+  animation: dropdown-appear 140ms ease;
+}
+
+@keyframes dropdown-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.map-search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.map-search-item:hover,
+.map-search-item:active {
+  background: rgba(164, 38, 44, 0.06);
+}
+
+.map-search-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.map-search-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+.map-search-item-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.map-search-item-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.map-search-item-status {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.map-search-item-status.online {
+  color: #34A853;
+}
+
+.map-search-item-status.offline {
+  color: #999;
+}
+
+.map-search-item-status.sos {
+  color: #e74c3c;
+}
+
+.map-search-no-results {
+  background: #ffffff;
+  border-radius: 16px;
+  margin-top: 6px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: #999;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  pointer-events: all;
+}
+
+/* =============================================
+   Floating Zoom Controls (dark maroon, matching reference)
+   ============================================= */
+.map-zoom-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  background: #8b1a1a;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.map-zoom-btn {
+  background: transparent;
+  border: none;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  transition: background 150ms ease;
+}
+
+.map-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.map-zoom-btn:active {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.map-zoom-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 0 6px;
+}
+
+/* On desktop, hide the map search bar since HomeSidePanel already has one */
+@media (min-width: 768px) {
+  .map-search-overlay {
+    display: none;
+  }
+
+  .map-zoom-controls {
+    top: 14px;
+    right: 14px;
+  }
+}
+
+

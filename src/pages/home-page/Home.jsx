@@ -9,6 +9,7 @@ import { useBraceletUsers } from "../../context/BraceletDataProvider";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import MapLoader from "../../components/loading/MapLoader";
 import HomeSidePanel from "../../components/HomeSidePanel";
+import { Navigation, X, Plus, Minus } from "lucide-react";
 
 function Home() {
   const { braceletUsers, loading, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
@@ -16,6 +17,11 @@ function Home() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all"); // all | online | sos
   const [selectedId, setSelectedId] = useState(null);
+
+  // Map search bar state (mobile overlay)
+  const [mapSearch, setMapSearch] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
+  const mapSearchRef = useRef(null);
 
   const mapRef = useRef(null);
 
@@ -88,6 +94,31 @@ function Home() {
         mapRef.current.flyTo([lat, lng], 18, { duration: 0.8 });
       }
     }
+  };
+
+  // Map search bar: real-time filtered suggestions
+  const mapSearchSuggestions = useMemo(() => {
+    const q = mapSearch.trim().toLowerCase();
+    if (!q) return [];
+    return (braceletUsers || [])
+      .filter((u) => (u.name || "").toLowerCase().includes(q))
+      .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+      .slice(0, 8);
+  }, [braceletUsers, mapSearch]);
+
+  const handleMapSearchSelect = (u) => {
+    setMapSearch("");
+    setSearchFocused(false);
+    mapSearchRef.current?.blur();
+    handleSelectUser(u);
+  };
+
+  const handleZoomIn = () => {
+    if (mapRef.current) mapRef.current.zoomIn();
+  };
+
+  const handleZoomOut = () => {
+    if (mapRef.current) mapRef.current.zoomOut();
   };
 
   if (loading) {
@@ -209,6 +240,70 @@ function Home() {
             );
           })}
         </MapContainer>
+
+        {/* Floating map search bar (mobile + desktop) */}
+        <div className="map-search-overlay">
+          <div className={`map-search-bar ${searchFocused ? "focused" : ""}`}>
+            <input
+              ref={mapSearchRef}
+              className="map-search-input"
+              type="text"
+              placeholder="Search Location"
+              value={mapSearch}
+              onChange={(e) => setMapSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+              autoComplete="off"
+            />
+            <Navigation size={16} className="map-search-nav-icon" />
+          </div>
+
+          {/* Suggestions dropdown */}
+          {searchFocused && mapSearchSuggestions.length > 0 && (
+            <ul className="map-search-dropdown">
+              {mapSearchSuggestions.map((u) => (
+                <li
+                  key={u.id}
+                  className="map-search-item"
+                  onMouseDown={() => handleMapSearchSelect(u)}
+                >
+                  <img src={u.avatar} alt={u.name} className="map-search-avatar" />
+                  <div className="map-search-item-info">
+                    <span className="map-search-item-name">{u.name}</span>
+                    <span className={`map-search-item-status ${u.sos ? "sos" : u.online ? "online" : "offline"}`}>
+                      {u.sos ? "🚨 SOS" : u.online ? "Online" : "Offline"}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {searchFocused && mapSearch.trim() && mapSearchSuggestions.length === 0 && (
+            <div className="map-search-no-results">No users found</div>
+          )}
+        </div>
+
+        {/* Floating zoom controls */}
+        <div className="map-zoom-controls">
+          <button
+            className="map-zoom-btn"
+            onClick={handleZoomIn}
+            type="button"
+            aria-label="Zoom in"
+          >
+            <Plus size={18} strokeWidth={2.5} />
+          </button>
+          <div className="map-zoom-divider" />
+          <button
+            className="map-zoom-btn"
+            onClick={handleZoomOut}
+            type="button"
+            aria-label="Zoom out"
+          >
+            <Minus size={18} strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
 
       {/* Desktop right-side monitoring panel */}
