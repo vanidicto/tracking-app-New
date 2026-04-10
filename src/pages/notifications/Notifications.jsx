@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Trash2, BellOff } from 'lucide-react';
+import { ChevronLeft, Trash2, BellOff, CheckSquare, Square, CheckCheck } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import logo from '../../assets/logo.png';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -13,28 +13,29 @@ const LONG_PRESS_MS   = 500;
 /* ─────────────────────────────────────────────
    Single swipeable row
    openId / setOpenId are shared across all rows
+   selectMode disables swipe and shows checkbox
 ───────────────────────────────────────────── */
-const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
+const SwipeableNotif = ({
+  item, onDelete, onMarkRead,
+  openId, setOpenId,
+  selectMode, isChecked, onToggleCheck,
+}) => {
   const startX         = useRef(null);
-  const rawDx          = useRef(0);          // raw delta during current drag
-  const wasOpenOnStart = useRef(false);      // was Delete visible when gesture began?
+  const rawDx          = useRef(0);
+  const wasOpenOnStart = useRef(false);
   const longPressTimer = useRef(null);
   const didLongPress   = useRef(false);
   const dragging       = useRef(false);
   const wrapperRef     = useRef(null);
 
-  const [liveDelta, setLiveDelta] = useState(null); // null = not dragging
+  const [liveDelta, setLiveDelta] = useState(null);
 
   const isSwiped = openId === item.id;
 
-  /* Compute displayed offset:
-     - During drag   → clamped live position
-     - At rest open  → -DELETE_WIDTH
-     - At rest closed → 0                                        */
   const displayOffset = liveDelta !== null
     ? wasOpenOnStart.current
-        ? Math.min(0, -DELETE_WIDTH + liveDelta)   // rightward swipe to dismiss
-        : Math.max(-DELETE_WIDTH, Math.min(0, liveDelta)) // leftward swipe to open
+        ? Math.min(0, -DELETE_WIDTH + liveDelta)
+        : Math.max(-DELETE_WIDTH, Math.min(0, liveDelta))
     : isSwiped ? -DELETE_WIDTH : 0;
 
   const openDelete = useCallback(() => {
@@ -54,8 +55,9 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
     }
   };
 
-  /* ── Touch handlers ── */
+  /* ── Touch handlers (disabled in select mode) ── */
   const handleTouchStart = (e) => {
+    if (selectMode) return;
     startX.current = e.touches[0].clientX;
     rawDx.current  = 0;
     wasOpenOnStart.current = openId === item.id;
@@ -67,6 +69,7 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
   };
 
   const handleTouchMove = (e) => {
+    if (selectMode) return;
     const dx = e.touches[0].clientX - startX.current;
     cancelLongPress();
     rawDx.current = dx;
@@ -74,23 +77,22 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
   };
 
   const handleTouchEnd = () => {
+    if (selectMode) return;
     cancelLongPress();
     setLiveDelta(null);
     if (didLongPress.current) { rawDx.current = 0; return; }
     const dx = rawDx.current;
     rawDx.current = 0;
     if (wasOpenOnStart.current) {
-      // Rightward swipe dismisses
       if (dx >= SWIPE_THRESHOLD) closeDelete();
-      // else stays open
     } else {
       if (dx <= -SWIPE_THRESHOLD) setOpenId(item.id);
-      // else stays closed
     }
   };
 
   /* ── Mouse handlers (desktop) ── */
   const handleMouseDown = (e) => {
+    if (selectMode) return;
     dragging.current = true;
     didLongPress.current = false;
     startX.current = e.clientX;
@@ -131,35 +133,40 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
   };
 
   const handleItemClick = (e) => {
+    if (selectMode) { onToggleCheck(item.id); return; }
     if (didLongPress.current) { didLongPress.current = false; return; }
     if (isSwiped) { closeDelete(); return; }
     onMarkRead(e, item.id, item.read);
   };
 
-  const offset = displayOffset;
+  const offset = selectMode ? 0 : displayOffset;
+
+  const isOpen = isSwiped || liveDelta !== null;
 
   return (
     <li
       ref={wrapperRef}
-      className="notif-swipe-wrapper"
+      className={`notif-swipe-wrapper ${isOpen ? 'is-open' : ''} ${selectMode ? 'select-mode' : ''}`}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
-      {/* Red Delete reveal layer */}
-      <div className="notif-swipe-delete-bg">
-        <button
-          className="notif-swipe-delete-btn"
-          onClick={handleDelete}
-          aria-label="Delete notification"
-        >
-          Delete
-        </button>
-      </div>
+      {/* Red Delete reveal layer — hidden in select mode */}
+      {!selectMode && (
+        <div className="notif-swipe-delete-bg">
+          <button
+            className="notif-swipe-delete-btn"
+            onClick={handleDelete}
+            aria-label="Delete notification"
+          >
+            Delete
+          </button>
+        </div>
+      )}
 
       {/* Foreground card */}
       <div
-        className={`notif-item ${!item.read ? 'unread' : ''} snap-back`}
+        className={`notif-item ${!item.read ? 'unread' : ''} ${isChecked ? 'checked' : ''}`}
         style={{ transform: `translateX(${offset}px)` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -167,6 +174,16 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
         onMouseDown={handleMouseDown}
         onClick={handleItemClick}
       >
+        {/* Checkbox — only visible in select mode */}
+        {selectMode && (
+          <div className="notif-checkbox" aria-hidden="true">
+            {isChecked
+              ? <CheckSquare size={20} strokeWidth={2} className="notif-checkbox-icon checked" />
+              : <Square      size={20} strokeWidth={1.8} className="notif-checkbox-icon" />
+            }
+          </div>
+        )}
+
         <div className="notif-icon">
           <img src={item.icon || logo} alt={item.title || 'Notification'} />
         </div>
@@ -193,15 +210,20 @@ const SwipeableNotif = ({ item, onDelete, onMarkRead, openId, setOpenId }) => {
 ───────────────────────────────────────────── */
 const Notifications = () => {
   const navigate = useNavigate();
-  const { notifications, loading, markAsRead, deleteNotification, deleteAllNotifications } = useNotifications();
-  const [filter, setFilter]       = React.useState('all');
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { notifications, loading, markAsRead, deleteNotification } = useNotifications();
+  const [filter, setFilter] = React.useState('all');
 
-  /* Shared open-row state — null means nothing is open */
+  /* Swipe state */
   const [openId, setOpenId] = useState(null);
   const listRef = useRef(null);
 
-  /* Click-away: close the open row when the user taps outside the list */
+  /* Bulk-select state */
+  const [selectMode, setSelectMode]     = useState(false);
+  const [selected, setSelected]         = useState(new Set());
+  const [isBulkDeleteModal, setIsBulkDeleteModal] = useState(false);
+  const [isBulkReadModal,   setIsBulkReadModal]   = useState(false);
+
+  /* Click-away: close any open swipe-row when tapping outside the list */
   useEffect(() => {
     const handleDocPointerDown = (e) => {
       if (openId === null) return;
@@ -213,36 +235,87 @@ const Notifications = () => {
     return () => document.removeEventListener('pointerdown', handleDocPointerDown, true);
   }, [openId]);
 
+  /* Exit select mode and clear selections */
+  const exitSelectMode = () => {
+    setSelectMode(false);
+    setSelected(new Set());
+  };
+
   const filteredNotifications = notifications.filter(item => {
     if (filter === 'read') return item.read;
     if (filter === 'unread') return !item.read;
     return true;
   });
 
-  const handleClearAll = async () => {
+  const allVisibleIds = filteredNotifications.map(n => n.id);
+  const allSelected   = allVisibleIds.length > 0 && allVisibleIds.every(id => selected.has(id));
+  const someSelected  = selected.size > 0;
+
+  const handleToggleCheck = (id) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(allVisibleIds));
+    }
+  };
+
+  /* Bulk delete */
+  const handleBulkDelete = async () => {
     try {
-      await deleteAllNotifications();
-      setIsModalOpen(false);
+      await Promise.all([...selected].map(id => deleteNotification({ stopPropagation: () => {} }, id)));
+      setIsBulkDeleteModal(false);
+      exitSelectMode();
     } catch (err) {
-      console.error("Clear all error:", err);
-      alert("Failed to clear notifications.");
+      console.error('Bulk delete error:', err);
+      alert('Failed to delete selected notifications.');
+    }
+  };
+
+  /* Bulk mark-as-read */
+  const handleBulkMarkRead = async () => {
+    try {
+      const unread = [...selected].filter(id => {
+        const n = notifications.find(n => n.id === id);
+        return n && !n.read;
+      });
+      await Promise.all(unread.map(id => markAsRead({ stopPropagation: () => {} }, id, false)));
+      setIsBulkReadModal(false);
+      exitSelectMode();
+    } catch (err) {
+      console.error('Bulk mark-read error:', err);
+      alert('Failed to mark notifications as read.');
     }
   };
 
   return (
     <div className="br-page">
       <header className="br-navbar">
-        <button className="br-nav-back" onClick={() => navigate(-1)}>
+        <button className="br-nav-back" onClick={selectMode ? exitSelectMode : () => navigate(-1)}>
           <ChevronLeft size={24} color="#444" />
         </button>
-        <h1 className="br-nav-title">Notifications</h1>
-        <button
-          className="br-nav-clear-all"
-          onClick={() => setIsModalOpen(true)}
-          disabled={notifications.length === 0}
-        >
-          Clear All
-        </button>
+        <h1 className="br-nav-title">
+          {selectMode ? (selected.size > 0 ? `${selected.size} Selected` : 'Select') : 'Notifications'}
+        </h1>
+
+        {selectMode ? (
+          <button className="br-nav-cancel" onClick={exitSelectMode}>Cancel</button>
+        ) : (
+          <button
+            className="br-nav-select"
+            onClick={() => { setSelectMode(true); setOpenId(null); }}
+            disabled={notifications.length === 0}
+          >
+            Select
+          </button>
+        )}
       </header>
 
       <div className="notif-horizontal-nav-container">
@@ -250,13 +323,31 @@ const Notifications = () => {
           {['all', 'unread', 'read'].map((tab) => (
             <button
               key={tab}
-              className={`notif-tab-btn ${filter === tab ? "active" : ""}`}
+              className={`notif-tab-btn ${filter === tab ? 'active' : ''}`}
               onClick={() => setFilter(tab)}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </button>
           ))}
         </div>
+
+        {/* Select-All bar — only shown in select mode */}
+        {selectMode && filteredNotifications.length > 0 && (
+          <div className="notif-select-all-bar">
+            <button className="notif-select-all-btn" onClick={handleSelectAll}>
+              <span className="notif-select-all-icon">
+                {allSelected
+                  ? <CheckSquare size={18} strokeWidth={2} />
+                  : <Square      size={18} strokeWidth={1.8} />
+                }
+              </span>
+              {allSelected ? 'Deselect All' : 'Select All'}
+            </button>
+            <span className="notif-select-count">
+              {selected.size} of {filteredNotifications.length}
+            </span>
+          </div>
+        )}
       </div>
 
       <main className="br-main notif-main">
@@ -279,24 +370,67 @@ const Notifications = () => {
                 onMarkRead={markAsRead}
                 openId={openId}
                 setOpenId={setOpenId}
+                selectMode={selectMode}
+                isChecked={selected.has(item.id)}
+                onToggleCheck={handleToggleCheck}
               />
             ))}
           </ul>
         )}
       </main>
 
-      {/* Confirmation Modal */}
-      {isModalOpen && (
+      {/* Bottom action bar — slides up in select mode */}
+      {selectMode && (
+        <div className={`notif-bulk-bar ${someSelected ? 'active' : ''}`}>
+          <button
+            className="notif-bulk-btn read"
+            onClick={() => someSelected && setIsBulkReadModal(true)}
+            disabled={!someSelected}
+          >
+            <CheckCheck size={18} strokeWidth={2} />
+            Mark as Read
+          </button>
+          <div className="notif-bulk-divider" />
+          <button
+            className="notif-bulk-btn delete"
+            onClick={() => someSelected && setIsBulkDeleteModal(true)}
+            disabled={!someSelected}
+          >
+            <Trash2 size={18} strokeWidth={2} />
+            Delete
+          </button>
+        </div>
+      )}
+
+      {/* Bulk Delete Confirmation Modal */}
+      {isBulkDeleteModal && (
         <div className="notif-modal-backdrop">
           <div className="notif-modal-content">
             <div className="notif-modal-icon">
               <Trash2 size={32} />
             </div>
-            <h3>Clear Notifications?</h3>
-            <p>Are you sure you want to permanently delete all notifications? This action cannot be undone.</p>
+            <h3>Delete {selected.size} Notification{selected.size > 1 ? 's' : ''}?</h3>
+            <p>This will permanently remove the selected notifications. This action cannot be undone.</p>
             <div className="notif-modal-actions">
-              <button className="notif-modal-btn cancel" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button className="notif-modal-btn confirm" onClick={handleClearAll}>Clear All</button>
+              <button className="notif-modal-btn cancel" onClick={() => setIsBulkDeleteModal(false)}>Cancel</button>
+              <button className="notif-modal-btn confirm" onClick={handleBulkDelete}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Mark-as-Read Confirmation Modal */}
+      {isBulkReadModal && (
+        <div className="notif-modal-backdrop">
+          <div className="notif-modal-content">
+            <div className="notif-modal-icon" style={{ background: 'rgba(0,0,0,0.06)', color: 'var(--pm-text)' }}>
+              <CheckCheck size={32} />
+            </div>
+            <h3>Mark as Read?</h3>
+            <p>Mark {selected.size} selected notification{selected.size > 1 ? 's' : ''} as read?</p>
+            <div className="notif-modal-actions">
+              <button className="notif-modal-btn cancel" onClick={() => setIsBulkReadModal(false)}>Cancel</button>
+              <button className="notif-modal-btn confirm" onClick={handleBulkMarkRead}>Mark as Read</button>
             </div>
           </div>
         </div>

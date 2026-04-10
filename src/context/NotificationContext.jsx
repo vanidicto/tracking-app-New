@@ -70,7 +70,6 @@ export function NotificationProvider({ children }) {
 
   const deleteNotification = async (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('Are you sure you want to delete this notification?')) return;
     try {
       await deleteDoc(doc(db, 'notifications', id));
     } catch (err) {

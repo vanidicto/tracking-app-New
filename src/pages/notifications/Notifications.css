@@ -82,6 +82,7 @@
   width: 100%;
   box-sizing: border-box;
   cursor: pointer;
+  position: relative;
   background: var(--pm-bg, #fff);
   will-change: transform;
   transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.2s;
@@ -94,7 +95,37 @@
 }
 
 .notif-item.unread {
-  /* No background tint — unread state is indicated by bold title alone */
+  /* Stack tint on top of the solid page bg — keeps the card fully opaque
+     so the red delete panel behind it can never bleed through.           */
+  background: 
+    linear-gradient(rgba(164, 38, 44, 0.055), rgba(164, 38, 44, 0.055)),
+    var(--pm-bg, #fff);
+}
+
+/* Left accent bar — primary visual cue for unread */
+.notif-item.unread::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--pm-primary);
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Delete panel visibility ───────────────────────────────────────────
+   Hidden by default — overflow:hidden clips it at rest, but we also
+   set visibility:hidden so it is completely invisible even if the card
+   background ever becomes transparent.
+   Revealed only when the wrapper has the .is-open class (set from JSX
+   when isSwiped === true or a live drag is in progress).               */
+.notif-swipe-delete-bg {
+  visibility: hidden;
+}
+
+.notif-swipe-wrapper.is-open .notif-swipe-delete-bg {
+  visibility: visible;
 }
 
 /* Icon / avatar */
@@ -146,12 +177,151 @@
   white-space: nowrap;
 }
 
+/* ── Bulk-select UI ── */
+
+/* Select-All bar beneath the tab row */
+.notif-select-all-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 4px;
+  border-top: 1px solid var(--pm-border);
+  margin-top: 8px;
+}
+
+.notif-select-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--pm-primary);
+  font-weight: 600;
+  font-size: 13px;
+  font-family: var(--pm-font);
+  cursor: pointer;
+  padding: 0;
+}
+
+.notif-select-all-icon {
+  display: flex;
+  align-items: center;
+  color: var(--pm-primary);
+}
+
+.notif-select-count {
+  font-size: 12px;
+  color: var(--pm-text-muted);
+  font-weight: 500;
+}
+
+/* Per-row checkbox */
+.notif-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 10px;
+  width: 24px;
+}
+
+.notif-checkbox-icon {
+  color: var(--pm-text-muted);
+  transition: color 0.15s;
+}
+
+.notif-checkbox-icon.checked {
+  color: var(--pm-primary);
+}
+
+/* Checked row highlight */
+.notif-item.checked {
+  background-color: rgba(164, 38, 44, 0.05);
+}
+
+/* ── Bottom bulk-action bar ── */
+.notif-bulk-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: stretch;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--pm-border);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+  z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  /* Animate up from below */
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.notif-bulk-bar.active {
+  transform: translateY(0);
+}
+
+.notif-bulk-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 14px 8px;
+  background: none;
+  border: none;
+  font-family: var(--pm-font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.notif-bulk-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.notif-bulk-btn.read {
+  color: var(--pm-text);
+}
+
+.notif-bulk-btn.read:not(:disabled):hover {
+  background: var(--pm-surface);
+}
+
+.notif-bulk-btn.delete {
+  color: #c0392b;
+}
+
+.notif-bulk-btn.delete:not(:disabled):hover {
+  background: rgba(192, 57, 43, 0.06);
+}
+
+.notif-bulk-divider {
+  width: 1px;
+  background: var(--pm-border);
+  align-self: stretch;
+  margin: 10px 0;
+}
+
 /* Center Title Strategy */
 .br-navbar {
   display: grid;
   grid-template-columns: 80px 1fr 80px;
   align-items: center;
   padding: 0 16px;
+}
+
+/* Right-side button group (Select + Clear All) */
+.br-nav-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .br-nav-back {
@@ -163,26 +333,47 @@
   text-align: center;
 }
 
-.br-nav-clear-all {
+/* Select button — plain text in primary colour, no border or background */
+.br-nav-select {
   justify-self: end;
   background: none;
   border: none;
   color: var(--pm-primary);
   font-weight: 700;
   font-size: 13px;
-  cursor: pointer;
   padding: 8px 0;
+  cursor: pointer;
+  font-family: var(--pm-font);
   transition: opacity 0.2s;
   white-space: nowrap;
 }
 
-.br-nav-clear-all:hover:not(:disabled) {
+.br-nav-select:hover:not(:disabled) {
   opacity: 0.7;
 }
 
-.br-nav-clear-all:disabled {
+.br-nav-select:disabled {
   opacity: 0.3;
   cursor: default;
+}
+
+/* Cancel button — plain text in primary colour, no border */
+.br-nav-cancel {
+  justify-self: end;
+  background: none;
+  border: none;
+  color: var(--pm-primary);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-family: var(--pm-font);
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.br-nav-cancel:hover {
+  opacity: 0.7;
 }
 
 /* Horizontal Nav (Tabs) Style integrated from Tips */
