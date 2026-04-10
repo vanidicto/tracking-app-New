@@ -1,8 +1,9 @@
 // src/components/EmergencyAlert.jsx
-import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, ShieldAlert, MapPin } from 'lucide-react';
 import { useEmergencyAlert } from '../context/EmergencyAlertContext';
+import { useBraceletUsers } from '../context/BraceletDataProvider';
 import './EmergencyAlert.css';
 
 // Derive a 1–3 priority level from the SOS payload.
@@ -16,7 +17,7 @@ function getSosLevel(sosValue) {
 
 const LEVEL_LABEL = { 1: 'Level 1', 2: 'Level 2', 3: 'Level 3' };
 
-function AlertCard({ user, onDismiss }) {
+function AlertCard({ user, onDismiss, onViewLocation }) {
   const level = getSosLevel(user.sos);
 
   return (
@@ -75,22 +76,31 @@ function AlertCard({ user, onDismiss }) {
       <div className="ea-sep" />
 
       {/* ── View Location ── */}
-      <Link
+      <button
         className="ea-btn-primary"
-        to={`/app/userProfile/${user.id}`}
-        state={{ personData: user }}
-        onClick={() => onDismiss(user.id)}
+        onClick={() => onViewLocation(user)}
       >
         <MapPin size={16} strokeWidth={2.5} />
         View Location
-      </Link>
+      </button>
     </div>
   );
 }
 
 export default function EmergencyAlert({ addressCache }) {
   const { activeAlerts, dismissAlert } = useEmergencyAlert();
+  const { setMapViewState } = useBraceletUsers();
+  const navigate = useNavigate();
   const overlayRef = useRef(null);
+
+  // Navigate to home map and fly to the SOS user's position
+  const handleViewLocation = useCallback((user) => {
+    if (user.position && Array.isArray(user.position)) {
+      setMapViewState({ center: user.position, zoom: 18 });
+    }
+    dismissAlert(user.id);
+    navigate('/app');
+  }, [setMapViewState, dismissAlert, navigate]);
 
   // Focus trap
   useEffect(() => {
@@ -130,6 +140,7 @@ export default function EmergencyAlert({ addressCache }) {
           user={current}
           addressCache={addressCache}
           onDismiss={dismissAlert}
+          onViewLocation={handleViewLocation}
         />
       </div>
     </div>

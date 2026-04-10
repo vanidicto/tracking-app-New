@@ -303,6 +303,7 @@
   color: #7f1d1d;
   font-size: 14px;
   font-weight: 800;
+  font-family: inherit;
   text-decoration: none;
   border: none;
   cursor: pointer;
@@ -312,6 +313,8 @@
     inset 0 1px 0 rgba(255, 255, 255, 1);
   transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .ea-btn-primary:hover {
