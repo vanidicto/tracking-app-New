@@ -1,42 +1,90 @@
-/* Account Sub-Menu Styles */
+/* ═══════════════════════════════════════════
+   Account Sub-Menu  —  Modern Redesign
+   ═══════════════════════════════════════════ */
 
+/* ── Page canvas ── */
 .acm-main {
-  padding-top: 32px;
+  padding-top: 0;
+  padding-bottom: 40px;
 }
 
-/* User identity block */
+/* ══════════════════════════════════════════
+   PROFILE HERO
+   ══════════════════════════════════════════ */
 .acm-identity {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  margin-bottom: 28px;
+  gap: 10px;
+  padding: 40px 24px 32px;
+  background: linear-gradient(145deg,
+      rgba(164, 38, 44, 0.08) 0%,
+      rgba(164, 38, 44, 0.03) 60%,
+      transparent 100%);
+  border: 1px solid rgba(164, 38, 44, 0.18);
+  border-radius: 20px;
+  margin: 4px 4px 16px;
+  overflow: hidden;
+}
+
+/* Decorative blurred orb behind avatar */
+.acm-identity::before {
+  content: "";
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(164, 38, 44, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+/* Avatar with glow ring */
+.acm-avatar-wrap {
+  position: relative;
+  z-index: 1;
 }
 
 .acm-avatar {
-  width: 64px;
-  height: 64px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-  border: 2px solid var(--border);
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px rgba(164, 38, 44, 0.35),
+    0 8px 24px rgba(164, 38, 44, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.acm-avatar:hover {
+  transform: scale(1.04);
+  box-shadow:
+    0 0 0 4px rgba(164, 38, 44, 0.5),
+    0 12px 32px rgba(164, 38, 44, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .acm-identity-text {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
   min-width: 0;
+  z-index: 1;
 }
 
 .acm-identity-name {
   margin: 0;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: var(--text);
+  letter-spacing: -0.3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -45,52 +93,95 @@
 .acm-identity-email {
   margin: 0;
   font-size: 13px;
+  font-weight: 500;
   color: var(--text);
-  opacity: 0.55;
+  opacity: 0.5;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Menu list */
+/* ══════════════════════════════════════════
+   SECTION LABEL
+   ══════════════════════════════════════════ */
+.acm-section-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--pm-primary, #a4262c);
+  opacity: 0.7;
+  padding: 16px 20px 6px;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════
+   MENU LIST
+   ══════════════════════════════════════════ */
 .acm-menu {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin: 0 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
+/* ── Individual row ── */
 .acm-menu-item {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   width: 100%;
-  padding: 18px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
+  padding: 16px 18px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  position: relative;
+  transition: background 0.18s ease;
+}
+
+/* Divider between rows */
+.acm-menu-item+.acm-menu-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 54px;
+  /* aligns with icon edge */
+  right: 0;
+  height: 1px;
+  background: var(--border);
+  opacity: 0.6;
 }
 
 .acm-menu-item:hover {
   background: rgba(164, 38, 44, 0.04);
-  border-color: rgba(164, 38, 44, 0.3);
 }
 
 .acm-menu-item:active {
-  transform: scale(0.985);
+  background: rgba(164, 38, 44, 0.08);
+  transform: scale(0.995);
 }
 
-/* Icon pill */
+/* ── Icon pill ── */
 .acm-menu-icon-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.acm-menu-item:hover .acm-menu-icon-wrap {
+  transform: scale(1.08);
 }
 
 .acm-icon-info {
@@ -103,37 +194,65 @@
   color: #16a34a;
 }
 
-/* Text block */
+/* ── Text block ── */
 .acm-menu-text {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
 .acm-menu-label {
-  font-size: 15px;
+  font-size: 14.5px;
   font-weight: 700;
   color: var(--text);
+  letter-spacing: -0.1px;
 }
 
 .acm-menu-desc {
   font-size: 12px;
   color: var(--text);
-  opacity: 0.55;
+  opacity: 0.48;
   line-height: 1.4;
 }
 
-/* Chevron */
+/* ── Chevron ── */
 .acm-menu-arrow {
   color: var(--text);
-  opacity: 0.35;
+  opacity: 0.25;
   flex-shrink: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-/* Dark mode */
+.acm-menu-item:hover .acm-menu-arrow {
+  opacity: 0.55;
+  transform: translateX(3px);
+}
+
+/* ══════════════════════════════════════════
+   DARK MODE
+   ══════════════════════════════════════════ */
+html.pm-dark .acm-identity {
+  background: linear-gradient(145deg,
+      rgba(164, 38, 44, 0.14) 0%,
+      rgba(164, 38, 44, 0.05) 60%,
+      transparent 100%);
+  border-bottom-color: rgba(164, 38, 44, 0.25);
+}
+
+html.pm-dark .acm-menu {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+}
+
 html.pm-dark .acm-menu-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html.pm-dark .acm-menu-item:active {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+html.pm-dark .acm-avatar {
+  border-color: rgba(255, 255, 255, 0.1);
 }
