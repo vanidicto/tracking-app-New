@@ -67,6 +67,38 @@
     opacity: 0.9;
 }
 
+/* Read-only avatar — no interaction cues */
+.br-avatar-section .br-avatar-wrapper--readonly {
+    cursor: default;
+}
+
+.br-avatar-section .br-avatar-wrapper--readonly:hover .br-avatar-circle {
+    opacity: 1;
+}
+
+/* Edit button in the navbar */
+.br-nav-edit-btn {
+    background: none;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--pm-primary, #A4262C);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s, opacity 0.15s;
+    min-width: 40px;
+    text-align: right;
+}
+
+.br-nav-edit-btn:hover {
+    background: rgba(164, 38, 44, 0.08);
+}
+
+.br-nav-edit-btn:active {
+    opacity: 0.7;
+}
+
 /* Dark Mode Overrides for Account */
 html.pm-dark .br-danger-card {
     background: rgba(164, 38, 44, 0.1);
@@ -95,7 +127,10 @@ html.pm-dark .br-danger-card {
     flex-shrink: 0;
     transition: color 0.15s;
 }
-.br-pw-eye:hover { color: var(--pm-primary, #A4262C); }
+
+.br-pw-eye:hover {
+    color: var(--pm-primary, #A4262C);
+}
 
 /* Error border on confirm field */
 .br-input-group--error {
@@ -127,11 +162,13 @@ html.pm-dark .br-danger-card {
     gap: 10px;
     margin-top: 8px;
 }
+
 .br-pw-strength-bars {
     display: flex;
     gap: 4px;
     flex: 1;
 }
+
 .br-pw-bar {
     flex: 1;
     height: 4px;
@@ -141,10 +178,21 @@ html.pm-dark .br-danger-card {
 }
 
 /* Filled segment colours */
-.br-pw-bar--filled.br-pw-bar--weak   { background: #e74c3c; }
-.br-pw-bar--filled.br-pw-bar--fair   { background: #f39c12; }
-.br-pw-bar--filled.br-pw-bar--good   { background: #2980b9; }
-.br-pw-bar--filled.br-pw-bar--strong { background: #27ae60; }
+.br-pw-bar--filled.br-pw-bar--weak {
+    background: #e74c3c;
+}
+
+.br-pw-bar--filled.br-pw-bar--fair {
+    background: #f39c12;
+}
+
+.br-pw-bar--filled.br-pw-bar--good {
+    background: #2980b9;
+}
+
+.br-pw-bar--filled.br-pw-bar--strong {
+    background: #27ae60;
+}
 
 /* Strength label */
 .br-pw-strength-label {
@@ -154,10 +202,22 @@ html.pm-dark .br-danger-card {
     min-width: 58px;
     text-align: right;
 }
-.br-pw-strength-label--weak   { color: #e74c3c; }
-.br-pw-strength-label--fair   { color: #f39c12; }
-.br-pw-strength-label--good   { color: #2980b9; }
-.br-pw-strength-label--strong { color: #27ae60; }
+
+.br-pw-strength-label--weak {
+    color: #e74c3c;
+}
+
+.br-pw-strength-label--fair {
+    color: #f39c12;
+}
+
+.br-pw-strength-label--good {
+    color: #2980b9;
+}
+
+.br-pw-strength-label--strong {
+    color: #27ae60;
+}
 
 /* Update Password button */
 .br-btn-change-pw {
@@ -177,13 +237,25 @@ html.pm-dark .br-danger-card {
     transition: filter 0.2s, transform 0.15s;
     margin-top: 4px;
 }
-.br-btn-change-pw:hover:not(:disabled)  { filter: brightness(1.12); }
-.br-btn-change-pw:active:not(:disabled) { transform: scale(0.97); }
+
+.br-btn-change-pw:hover:not(:disabled) {
+    filter: brightness(1.12);
+}
+
+.br-btn-change-pw:active:not(:disabled) {
+    transform: scale(0.97);
+}
+
 .br-btn-change-pw:disabled {
     opacity: 0.4;
     cursor: not-allowed;
 }
 
 /* Dark mode */
-html.pm-dark .br-pw-bar { background: rgba(255,255,255,0.12); }
-html.pm-dark .br-pw-error-banner { background: rgba(231,76,60,0.7); }
+html.pm-dark .br-pw-bar {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+html.pm-dark .br-pw-error-banner {
+    background: rgba(231, 76, 60, 0.7);
+}

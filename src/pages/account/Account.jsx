@@ -15,6 +15,8 @@ export default function Account() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const [displayName, setDisplayName] = useState(currentUser?.displayName || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   const [photoURL, setPhotoURL] = useState(currentUser?.photoURL || "");
@@ -195,6 +197,19 @@ export default function Account() {
     navigate('/app', { state: { openProfile: true } });
   };
 
+  const handleEditToggle = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelEdit = () => {
+    // Revert all unsaved changes
+    setDisplayName(currentUser?.displayName || "");
+    setEmail(currentUser?.email || "");
+    setPhotoURL(currentUser?.photoURL || "");
+    setPhotoFile(null);
+    setIsEditing(false);
+  };
+
   return (
     <div className="br-page">
       <header className="br-navbar">
@@ -202,19 +217,30 @@ export default function Account() {
           <ChevronLeft size={24} color="#444" />
         </button>
         <h1 className="br-nav-title">Account</h1>
-        <div className="br-nav-spacer"></div>
+        {!isEditing ? (
+          <button className="br-nav-edit-btn" onClick={handleEditToggle}>
+            Edit
+          </button>
+        ) : (
+          <div className="br-nav-spacer"></div>
+        )}
       </header>
 
       <main className="br-main">
         <div className="br-avatar-section">
-          <div className="br-avatar-wrapper" onClick={handlePhotoClick}>
+          <div
+            className={`br-avatar-wrapper${isEditing ? '' : ' br-avatar-wrapper--readonly'}`}
+            onClick={isEditing ? handlePhotoClick : undefined}
+          >
             <div className="br-avatar-circle">
               <img src={photoURL || avatar} alt="Avatar" className="br-avatar-img" />
-              <div className="br-avatar-edit">
-                <Camera size={12} color="#A4262C" />
-              </div>
+              {isEditing && (
+                <div className="br-avatar-edit">
+                  <Camera size={12} color="#A4262C" />
+                </div>
+              )}
             </div>
-            <p className="br-avatar-label">Upload Profile Photo</p>
+            {isEditing && <p className="br-avatar-label">Upload Profile Photo</p>}
           </div>
           <input
             type="file"
@@ -245,6 +271,7 @@ export default function Account() {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Enter your name"
+                  readOnly={!isEditing}
                 />
               </div>
             </div>
@@ -259,6 +286,7 @@ export default function Account() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isGoogleUser}
+                  readOnly={!isEditing}
                 />
               </div>
               {isGoogleUser && <p className="br-hint">Your email is managed securely by Google and cannot be changed here.</p>}
@@ -473,18 +501,20 @@ export default function Account() {
         </div>
       </main>
 
-      <footer className="br-footer">
-        <button className="br-btn-secondary" onClick={handleBack}>
-          Cancel
-        </button>
-        <button
-          className="br-btn-primary"
-          onClick={handleSave}
-          disabled={saving || sendingVerification || linkingGoogle || (displayName === currentUser?.displayName && photoURL === currentUser?.photoURL && email === currentUser?.email)}
-        >
-          {saving ? "Saving..." : "Save"}
-        </button>
-      </footer>
+      {isEditing && (
+        <footer className="br-footer">
+          <button className="br-btn-secondary" onClick={handleCancelEdit}>
+            Cancel
+          </button>
+          <button
+            className="br-btn-primary"
+            onClick={handleSave}
+            disabled={saving || sendingVerification || linkingGoogle || (displayName === currentUser?.displayName && photoURL === currentUser?.photoURL && email === currentUser?.email)}
+          >
+            {saving ? "Saving..." : "Save"}
+          </button>
+        </footer>
+      )}
     </div>
   );
 }
