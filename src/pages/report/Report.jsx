@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronRight, ShieldAlert } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { collection, query, onSnapshot, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { useBraceletUsers } from '../../context/BraceletDataProvider';
@@ -59,8 +59,7 @@ const Report = () => {
       // Since reports are generated when SOS turns OFF, we treat them as "Resolved"
       displayStatus: {
         text: 'Marked Safe',
-        color: 'green',
-        icon: ShieldAlert
+        color: 'green'
       },
       // Map fields for the modal
       braceletStatus: report.braceletStatus ? 'On' : 'Off',
@@ -101,7 +100,6 @@ const Report = () => {
         <ul className="incident-list" aria-label="Incident list">
           {reports.map(rawReport => {
             const incident = getEnrichedReport(rawReport);
-            const IconComponent = incident.displayStatus.icon;
 
             return (
               <li
@@ -121,8 +119,12 @@ const Report = () => {
                   }}
                   className="incident-link-wrapper"
                 >
-                  <div className={`incident-icon-wrapper ${incident.displayStatus.color}`}>
-                    <IconComponent size={20} />
+                  <div className="incident-avatar-wrapper">
+                    <img
+                      src={incident.user.avatar}
+                      alt={incident.user.name}
+                      className="incident-avatar-img"
+                    />
                   </div>
 
                   <div className="incident-details">
