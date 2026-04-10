@@ -19,7 +19,9 @@ const TopBar = ({ onProfileClick }) => {
     if (path.includes("/app/report/")) return "Incident Report";
     if (path.includes("/app/report")) return "Report";
     if (path.includes("/app/myBracelet")) return "My Bracelet";
-    if (path.includes("/app/account")) return "Account Settings";
+    if (path.includes("/app/account/info")) return "Account Information";
+    if (path.includes("/app/account/security")) return "Security & Password";
+    if (path.includes("/app/account")) return "Account";
     if (path.includes("/app/help")) return "Help Articles";
     if (path.includes("/app/about")) return "About PingMe";
     if (path.includes("/app/userProfile")) return "User Profile";

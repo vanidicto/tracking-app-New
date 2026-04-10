@@ -19,7 +19,9 @@ import Onboarding from "./pages/onboarding/Onboarding";
 
 import "./App.css";
 
+import AccountMenu from "./pages/account/AccountMenu";
 import Account from "./pages/account/Account";
+import AccountSecurity from "./pages/account/AccountSecurity";
 import MyBracelet from "./pages/my-bracelet/MyBracelet";
 import Tips from "./pages/tips/Tips";
 import About from "./pages/about/About";
@@ -72,7 +74,9 @@ function App() {
               <Route path="userProfile/:userId" element={<UserProfile />} />
 
               {/* Profile modal routes */}
-              <Route path="account" element={<Account />} />
+              <Route path="account" element={<AccountMenu />} />
+              <Route path="account/info" element={<Account />} />
+              <Route path="account/security" element={<AccountSecurity />} />
               <Route path="my-bracelet" element={<MyBracelet />} />
               <Route path="tips" element={<Tips />} />
               <Route path="about" element={<About />} />

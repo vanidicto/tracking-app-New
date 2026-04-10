@@ -1,0 +1,139 @@
+/* Account Sub-Menu Styles */
+
+.acm-main {
+  padding-top: 32px;
+}
+
+/* User identity block */
+.acm-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 28px;
+}
+
+.acm-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+}
+
+.acm-identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.acm-identity-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.acm-identity-email {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.55;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Menu list */
+.acm-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.acm-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+
+.acm-menu-item:hover {
+  background: rgba(164, 38, 44, 0.04);
+  border-color: rgba(164, 38, 44, 0.3);
+}
+
+.acm-menu-item:active {
+  transform: scale(0.985);
+}
+
+/* Icon pill */
+.acm-menu-icon-wrap {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.acm-icon-info {
+  background: rgba(164, 38, 44, 0.1);
+  color: var(--pm-primary, #a4262c);
+}
+
+.acm-icon-security {
+  background: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+
+/* Text block */
+.acm-menu-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.acm-menu-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.acm-menu-desc {
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.55;
+  line-height: 1.4;
+}
+
+/* Chevron */
+.acm-menu-arrow {
+  color: var(--text);
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+
+/* Dark mode */
+html.pm-dark .acm-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
