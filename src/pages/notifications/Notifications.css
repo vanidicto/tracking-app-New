@@ -3,7 +3,7 @@
 /* Notifications page — extends the shared br-page layout */
 
 .notif-main {
-  padding: 0px 16px;
+  padding: 0;
 }
 
 .notif-loading {
@@ -38,18 +38,55 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
 }
 
-/* Individual item */
+/* ── Swipe-to-delete wrapper ── */
+.notif-swipe-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Red reveal layer — fixed to the RIGHT edge, same width as DELETE_WIDTH (80px) */
+.notif-swipe-delete-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;                   /* matches DELETE_WIDTH in JS */
+  background: #c0392b;
+  border-radius: 12px 0 0 12px;  /* rounded top-left + bottom-left — always visible */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notif-swipe-delete-btn {
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--pm-font);
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 0;
+}
+
+/* Individual item — draggable foreground card */
 .notif-item {
   display: flex;
   align-items: flex-start;
   padding: 14px 16px;
-  border-radius: var(--pm-radius-md);
+  width: 100%;
+  box-sizing: border-box;
   cursor: pointer;
-  transition: background-color 0.2s;
-  position: relative;
+  background: var(--pm-bg, #fff);
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .notif-item:hover {
@@ -57,18 +94,7 @@
 }
 
 .notif-item.unread {
-  background-color: rgba(164, 38, 44, 0.06);
-}
-
-.notif-item.unread::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 4px;
-  background-color: var(--pm-primary);
-  border-radius: 0 4px 4px 0;
+  /* No background tint — unread state is indicated by bold title alone */
 }
 
 /* Icon / avatar */
@@ -118,32 +144,6 @@
   font-size: 11px;
   color: var(--pm-text-muted);
   white-space: nowrap;
-}
-
-.notif-delete-btn {
-  background: none;
-  border: none;
-  color: var(--pm-text-muted);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  opacity: 0;
-  transition: opacity 0.15s, color 0.15s;
-}
-
-.notif-item:hover .notif-delete-btn {
-  opacity: 1;
-}
-
-.notif-delete-btn:hover {
-  color: var(--pm-danger);
-}
-
-/* Mobile touch — always show delete on small screens */
-@media (max-width: 767px) {
-  .notif-delete-btn {
-    opacity: 0.5;
-  }
 }
 
 /* Center Title Strategy */
