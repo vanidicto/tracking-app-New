@@ -9,7 +9,7 @@ import { useBraceletUsers } from "../../context/BraceletDataProvider";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import MapLoader from "../../components/loading/MapLoader";
 import HomeSidePanel from "../../components/HomeSidePanel";
-import { Navigation, X, Plus, Minus } from "lucide-react";
+import { Navigation, X, Plus, Minus, Search } from "lucide-react";
 
 function Home() {
   const { braceletUsers, loading, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
@@ -97,7 +97,12 @@ function Home() {
   };
 
   // Map search bar: real-time filtered suggestions
-  const mapSearchSuggestions = useMemo(() => {
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [locationError, setLocationError] = useState(false);
+
+  // Map search bar: real-time filtered suggestions
+  const userSuggestions = useMemo(() => {
     const q = mapSearch.trim().toLowerCase();
     if (!q) return [];
     return (braceletUsers || [])
@@ -105,6 +110,51 @@ function Home() {
       .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
       .slice(0, 8);
   }, [braceletUsers, mapSearch]);
+
+  useEffect(() => {
+    const q = mapSearch.trim();
+    if (!q) {
+      setLocationSuggestions([]);
+      setIsSearchingLocation(false);
+      setLocationError(false);
+      return;
+    }
+
+    if (userSuggestions.length > 0) {
+      setLocationSuggestions([]);
+      setIsSearchingLocation(false);
+      setLocationError(false);
+      return;
+    }
+
+    setIsSearchingLocation(true);
+    setLocationError(false);
+
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5`);
+        const data = await response.json();
+        setLocationSuggestions(data || []);
+      } catch (err) {
+        console.error("Geocoding fetch error:", err);
+        setLocationSuggestions([]);
+        setLocationError(true);
+      } finally {
+        setIsSearchingLocation(false);
+      }
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [mapSearch, userSuggestions.length]);
+
+  const handleLocationSelect = (loc) => {
+    setMapSearch("");
+    setSearchFocused(false);
+    mapSearchRef.current?.blur();
+    if (mapRef.current) {
+      mapRef.current.flyTo([parseFloat(loc.lat), parseFloat(loc.lon)], 16, { duration: 1.2 });
+    }
+  };
 
   const handleMapSearchSelect = (u) => {
     setMapSearch("");
@@ -291,32 +341,72 @@ function Home() {
               onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
               autoComplete="off"
             />
-            <Navigation size={16} className="map-search-nav-icon" />
+            {mapSearch.length > 0 ? (
+              <X 
+                size={16} 
+                className="map-search-nav-icon" 
+                style={{ cursor: "pointer" }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setMapSearch("");
+                  mapSearchRef.current?.focus();
+                }}
+              />
+            ) : (
+              <Search size={16} className="map-search-nav-icon" />
+            )}
           </div>
 
           {/* Suggestions dropdown */}
-          {searchFocused && mapSearchSuggestions.length > 0 && (
-            <ul className="map-search-dropdown">
-              {mapSearchSuggestions.map((u) => (
-                <li
-                  key={u.id}
-                  className="map-search-item"
-                  onMouseDown={() => handleMapSearchSelect(u)}
-                >
-                  <img src={u.avatar} alt={u.name} className="map-search-avatar" />
-                  <div className="map-search-item-info">
-                    <span className="map-search-item-name">{u.name}</span>
-                    <span className={`map-search-item-status ${u.sos ? "sos" : u.online ? "online" : "offline"}`}>
-                      {u.sos ? "🚨 SOS" : u.online ? "Online" : "Offline"}
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
+          {searchFocused && (
+            <>
+              {userSuggestions.length > 0 && (
+                <ul className="map-search-dropdown">
+                  {userSuggestions.map((u) => (
+                    <li
+                      key={u.id}
+                      className="map-search-item"
+                      onMouseDown={() => handleMapSearchSelect(u)}
+                    >
+                      <img src={u.avatar} alt={u.name} className="map-search-avatar" />
+                      <div className="map-search-item-info">
+                        <span className="map-search-item-name">{u.name}</span>
+                        <span className={`map-search-item-status ${u.sos ? "sos" : u.online ? "online" : "offline"}`}>
+                          {u.sos ? "🚨 SOS" : u.online ? "Online" : "Offline"}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
 
-          {searchFocused && mapSearch.trim() && mapSearchSuggestions.length === 0 && (
-            <div className="map-search-no-results">No users found</div>
+              {userSuggestions.length === 0 && locationSuggestions.length > 0 && (
+                <ul className="map-search-dropdown">
+                  {locationSuggestions.map((loc, i) => (
+                    <li
+                      key={i}
+                      className="map-search-item"
+                      onMouseDown={() => handleLocationSelect(loc)}
+                    >
+                      <div className="map-search-item-info" style={{ paddingLeft: "8px" }}>
+                        <span className="map-search-item-name">{loc.display_name}</span>
+                        <span className="map-search-item-status" style={{ color: "#8b0000" }}>📍 Location Match</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {mapSearch.trim() && userSuggestions.length === 0 && isSearchingLocation && (
+                <div className="map-search-no-results">Searching locations...</div>
+              )}
+
+              {mapSearch.trim() && userSuggestions.length === 0 && locationSuggestions.length === 0 && !isSearchingLocation && (
+                <div className="map-search-no-results">
+                   {locationError ? "Error fetching locations" : "No user or location found"}
+                </div>
+              )}
+            </>
           )}
         </div>
 
