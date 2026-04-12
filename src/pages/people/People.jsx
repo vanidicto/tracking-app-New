@@ -37,6 +37,7 @@ function People() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [deleteModalInfo, setDeleteModalInfo] = useState({ open: false, braceletId: null });
   const [pendingRequests, setPendingRequests] = useState([]);
 
   useEffect(() => {
@@ -104,11 +105,15 @@ function People() {
     });
   }, [braceletUsers, searchQuery]);
 
-  const handleDeleteBracelet = async (e, braceletId) => {
+  const handleOpenDeleteModal = (e, braceletId) => {
     e.preventDefault();
     e.stopPropagation();
+    setDeleteModalInfo({ open: true, braceletId });
+  };
 
-    if (!window.confirm("Are you sure you want to unlink this bracelet from your account?")) return;
+  const confirmDeleteBracelet = async () => {
+    const braceletId = deleteModalInfo.braceletId;
+    if (!braceletId) return;
 
     try {
       const auth = getAuth();
@@ -122,11 +127,11 @@ function People() {
         [`braceletNicknames.${braceletId}`]: deleteField()
       });
 
-      alert("Bracelet unlinked successfully.");
-      window.location.reload();
+      setDeleteModalInfo({ open: false, braceletId: null });
     } catch (err) {
       console.error("Error unlinking bracelet:", err);
-      alert("Failed to unlink bracelet.");
+      alert("Failed to unlink connection.");
+      setDeleteModalInfo({ open: false, braceletId: null });
     }
   };
 
@@ -506,7 +511,7 @@ function People() {
 
                 <button
                   className="delete-person-btn"
-                  onClick={(e) => handleDeleteBracelet(e, person.id)}
+                  onClick={(e) => handleOpenDeleteModal(e, person.id)}
                   aria-label="Delete"
                 >
                   <Trash2 size={20} />
@@ -537,6 +542,39 @@ function People() {
             >
               Okay
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModalInfo.open && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Trash2 size={48} color="#A4262C" strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
+              Unlink Bracelet?
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+              Are you sure you want to unlink this connection? You will no longer be able to track this device unless you send a new request.
+            </p>
+            <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+              <button 
+                className="btn-next" 
+                style={{ width: '100%', justifyContent: 'center', background: '#A4262C' }}
+                onClick={confirmDeleteBracelet}
+              >
+                Unlink
+              </button>
+              <button 
+                className="btn-cancel" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => setDeleteModalInfo({ open: false, braceletId: null })}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
