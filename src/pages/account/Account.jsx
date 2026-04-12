@@ -1,15 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   updateProfile,
   updateEmail,
 } from "firebase/auth";
-import { doc, collection, query, where, getDocs, writeBatch } from "firebase/firestore";
+import { doc, collection, query, where, getDocs, writeBatch, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { useToast } from "../../context/ToastContext";
 import avatar from "../../assets/red.webp";
-import { Camera, ChevronLeft, User, Mail } from "lucide-react";
+import { Camera, ChevronLeft, User, Mail, Phone } from "lucide-react";
 import "./Account.css";
 
 export default function Account() {
@@ -22,8 +22,29 @@ export default function Account() {
   const [displayName, setDisplayName] = useState(currentUser?.displayName || "");
   const [email, setEmail] = useState(currentUser?.email || "");
   const [photoURL, setPhotoURL] = useState(currentUser?.photoURL || "");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [initialPhone, setInitialPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
   const [photoFile, setPhotoFile] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const fetchPhone = async () => {
+        try {
+          const docRef = doc(db, "appUsers", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists() && docSnap.data().phone) {
+            setPhoneNumber(docSnap.data().phone);
+            setInitialPhone(docSnap.data().phone);
+          }
+        } catch (error) {
+          console.error("Error fetching phone:", error);
+        }
+      };
+      fetchPhone();
+    }
+  }, [currentUser]);
 
   const isGoogleUser = currentUser?.providerData.some(
     (p) => p.providerId === "google.com"
@@ -49,6 +70,13 @@ export default function Account() {
 
   const handleSave = async () => {
     if (!currentUser) return;
+
+    if (phoneNumber && phoneNumber.length !== 11) {
+      setPhoneError("Please enter a valid 11-digit phone number.");
+      return;
+    }
+    setPhoneError("");
+
     setSaving(true);
     try {
       let finalPhotoURL = currentUser.photoURL;
@@ -93,6 +121,7 @@ export default function Account() {
           name: displayName,
           email: email,
           avatar: finalPhotoURL,
+          phone: phoneNumber,
         });
 
         const q = query(
@@ -105,6 +134,7 @@ export default function Account() {
         });
 
         await batch.commit();
+        setInitialPhone(phoneNumber);
       } catch (dbError) {
         console.error("Error cascading profile updates to Firestore:", dbError);
       }
@@ -144,6 +174,7 @@ export default function Account() {
     setDisplayName(currentUser?.displayName || "");
     setEmail(currentUser?.email || "");
     setPhotoURL(currentUser?.photoURL || "");
+    setPhoneNumber(initialPhone);
     setPhotoFile(null);
     setIsEditing(false);
   };
@@ -242,6 +273,30 @@ export default function Account() {
                 </p>
               )}
             </div>
+
+            <div className="br-field">
+              <label className="br-label">Phone Number</label>
+              <div className="br-input-group">
+                <Phone size={18} className="br-icon" />
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  className="br-input"
+                  value={phoneNumber}
+                  onChange={(e) => {
+                    setPhoneNumber(e.target.value.replace(/\D/g, ""));
+                    setPhoneError("");
+                  }}
+                  placeholder="+63 9XX XXX XXXX"
+                  readOnly={!isEditing}
+                />
+              </div>
+              {phoneError && (
+                <p style={{ color: "#A4262C", fontSize: "0.85rem", marginTop: "4px", marginBottom: "0" }}>
+                  {phoneError}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </main>
@@ -258,7 +313,8 @@ export default function Account() {
               saving ||
               (displayName === currentUser?.displayName &&
                 photoURL === currentUser?.photoURL &&
-                email === currentUser?.email)
+                email === currentUser?.email &&
+                phoneNumber === initialPhone)
             }
           >
             {saving ? "Saving..." : "Save"}
