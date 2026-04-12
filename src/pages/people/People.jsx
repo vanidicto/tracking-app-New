@@ -258,24 +258,26 @@ function People() {
 
   return (
     <main className="people-page-container">
-      <div className="people-header-section">
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Search Name"
-            className="people-search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="search-icon-wrapper">
-            <SearchIcon />
+      {braceletUsers.length > 0 && (
+        <div className="people-header-section">
+          <div className="search-wrapper">
+            <input
+              type="text"
+              placeholder="Search Name"
+              className="people-search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="search-icon-wrapper">
+              <SearchIcon />
+            </div>
           </div>
-        </div>
 
-        <button className="add-people-btn" onClick={handleOpenAddBraceletModal}>
-          <Plus size={24} />
-        </button>
-      </div>
+          <button className="add-people-btn" onClick={handleOpenAddBraceletModal}>
+            <Plus size={24} />
+          </button>
+        </div>
+      )}
 
       {/* Add Bracelet Modal */}
       {isModalOpen && (
@@ -450,6 +452,22 @@ function People() {
               </div>
             </div>
           ))
+        ) : braceletUsers.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'var(--pm-text-muted)', textAlign: 'center' }}>
+             <User size={56} strokeWidth={1.2} style={{ opacity: 0.5, marginBottom: '16px' }} />
+             <p style={{ margin: 0, fontSize: '16px' }}>You haven't added anyone yet</p>
+             <button 
+                onClick={handleOpenAddBraceletModal}
+                style={{ marginTop: '24px', background: 'var(--pm-primary)', color: 'white', border: 'none', borderRadius: '40px', padding: '14px 28px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 14px rgba(164,38,44,0.3)', transition: 'transform 0.2s' }}
+             >
+                Add People
+             </button>
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'var(--pm-text-muted)', textAlign: 'center' }}>
+             <div style={{ opacity: 0.5, marginBottom: '16px', transform: 'scale(1.5)' }}><SearchIcon /></div>
+             <p style={{ margin: 0, fontSize: '15px' }}>No people found matching "{searchQuery}"</p>
+          </div>
         ) : (
           
           filteredUsers.map((person) => (
