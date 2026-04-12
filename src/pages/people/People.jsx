@@ -3,6 +3,8 @@ import './People.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
 import { useBraceletUsers } from '../../context/BraceletDataProvider';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../context/ToastContext';
 import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, collection, addDoc, serverTimestamp, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
@@ -34,6 +36,8 @@ const SearchIcon = () => (
 function People() {
   const navigate = useNavigate();
   const { braceletUsers, loading, error } = useBraceletUsers();
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -127,7 +131,23 @@ function People() {
         [`braceletNicknames.${braceletId}`]: deleteField()
       });
 
+      // Immediate UI refresh without reload
+      queryClient.setQueryData(['braceletUsers', user.uid], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          users: old.users.filter(u => u.id !== braceletId),
+          appUserData: {
+            ...old.appUserData,
+            linkedBraceletsID: old.appUserData?.linkedBraceletsID?.filter(id => id !== braceletId)
+          }
+        };
+      });
+
       setDeleteModalInfo({ open: false, braceletId: null });
+      if (addToast) {
+        addToast('Connection successfully unlinked', 'success');
+      }
     } catch (err) {
       console.error("Error unlinking bracelet:", err);
       alert("Failed to unlink connection.");
