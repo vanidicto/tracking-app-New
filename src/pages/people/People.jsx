@@ -6,7 +6,7 @@ import { useBraceletUsers } from '../../context/BraceletDataProvider';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '../../context/ToastContext';
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, collection, addDoc, serverTimestamp, query, where, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, collection, addDoc, serverTimestamp, query, where, onSnapshot, deleteDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { Plus, X, Trash2, User, CreditCard, Pencil, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import Skeleton from '../../components/skeleton/Skeleton';
@@ -43,6 +43,7 @@ function People() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [deleteModalInfo, setDeleteModalInfo] = useState({ open: false, braceletId: null });
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [approvedPopupInfo, setApprovedPopupInfo] = useState({ open: false, data: null });
 
   useEffect(() => {
     const auth = getAuth();
@@ -57,13 +58,41 @@ function People() {
           const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
           setPendingRequests(items);
         });
-        return () => unsub();
+
+        // NEW LISTENER FOR APPROVALS
+        const qApproved = query(
+          collection(db, 'notifications'),
+          where('appUserId', '==', user.uid),
+          where('type', '==', 'connection_approved_popup')
+        );
+        const unsubApproved = onSnapshot(qApproved, (snapshot) => {
+          const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (items.length > 0) {
+             const newest = items[0]; 
+             setApprovedPopupInfo({ open: true, data: newest });
+             // Force TanStack to reload appUsers and braceletUsers for instant UI refresh
+             queryClient.invalidateQueries(['braceletUsers', user.uid]);
+          }
+        });
+
+        return () => { unsub(); unsubApproved(); };
       } else {
         setPendingRequests([]);
       }
     });
     return () => unsubscribeAuth();
-  }, []);
+  }, [queryClient]);
+
+  const handleDismissApprovalModal = async () => {
+     if (approvedPopupInfo.data) {
+        try {
+           await deleteDoc(doc(db, 'notifications', approvedPopupInfo.data.id));
+        } catch (e) {
+           console.error("Failed to dismiss modal:", e);
+        }
+     }
+     setApprovedPopupInfo({ open: false, data: null });
+  };
 
   const handleOpenAddBraceletModal = () => {
     try {
@@ -595,6 +624,29 @@ function People() {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Approval Success Modal */}
+      {approvedPopupInfo.open && approvedPopupInfo.data && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <CheckCircle2 size={48} color="var(--pm-primary)" strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
+              Request Approved!
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+              You are now connected to {approvedPopupInfo.data.ownerName}'s bracelet.
+            </p>
+            <button 
+              className="btn-next" 
+              style={{ width: '100%', justifyContent: 'center' }}
+              onClick={handleDismissApprovalModal}
+            >
+              Great!
+            </button>
           </div>
         </div>
       )}

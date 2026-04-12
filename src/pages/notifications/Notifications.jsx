@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Trash2, BellOff, CheckSquare, Square, CheckCheck, CheckCircle } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import { useBraceletUsers } from '../../context/BraceletDataProvider';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import logo from '../../assets/logo.png';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -265,6 +265,10 @@ const Notifications = () => {
       const appUserRef = doc(db, 'appUsers', item.requesterId);
       const appUserSnap = await getDoc(appUserRef);
       
+      const ownerRef = doc(db, 'appUsers', item.appUserId);
+      const ownerSnap = await getDoc(ownerRef);
+      let ownerName = ownerSnap.exists() ? (ownerSnap.data().name || "Unknown") : "Unknown";
+
       if (appUserSnap.exists()) {
          const updates = {
            linkedBraceletsID: arrayUnion(item.braceletId)
@@ -275,7 +279,15 @@ const Notifications = () => {
          await updateDoc(appUserRef, updates);
       }
       
-
+      // Spawn approval modal trigger for the requester
+      await addDoc(collection(db, 'notifications'), {
+        appUserId: item.requesterId,
+        type: 'connection_approved_popup',
+        ownerName: ownerName,
+        braceletId: item.braceletId,
+        read: false,
+        time: serverTimestamp()
+      });
 
       // 3. Delete notification
       await deleteNotification(e, item.id);
