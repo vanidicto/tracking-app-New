@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Trash2, BellOff, CheckSquare, Square, CheckCheck, CheckCircle } from 'lucide-react';
 import { useNotifications } from '../../context/NotificationContext';
 import { useBraceletUsers } from '../../context/BraceletDataProvider';
-import { doc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, arrayUnion, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import logo from '../../assets/logo.png';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -268,36 +268,17 @@ const Notifications = () => {
   const handleApproveConnection = async (e, item) => {
     e.stopPropagation();
     try {
-      // Fetch the owner's details to populate the requester's personal contacts
-      const ownerRef = doc(db, 'appUsers', item.appUserId);
-      const ownerSnap = await getDoc(ownerRef);
-      let ownerName = "Unknown";
-      let ownerPhone = "N/A";
-
-      if (ownerSnap.exists()) {
-         const ownerData = ownerSnap.data();
-         ownerName = ownerData.name || "Unknown";
-         ownerPhone = ownerData.phone || ownerData.phoneNumber || "N/A";
-      }
-
-      // 1. Link the bracelet to the requester's appUser doc AND update their personal contacts
+      // 1. Link the bracelet to the requester's appUser doc
       const appUserRef = doc(db, 'appUsers', item.requesterId);
       const appUserSnap = await getDoc(appUserRef);
       
-      let fetchedRequesterName = item.requesterName || "Unknown";
-      let fetchedRequesterPhone = item.requesterPhone || "N/A";
+      const ownerRef = doc(db, 'appUsers', item.appUserId);
+      const ownerSnap = await getDoc(ownerRef);
+      let ownerName = ownerSnap.exists() ? (ownerSnap.data().name || "Unknown") : "Unknown";
 
       if (appUserSnap.exists()) {
-         const appUserData = appUserSnap.data();
-         fetchedRequesterName = appUserData.name || fetchedRequesterName;
-         fetchedRequesterPhone = appUserData.phone || appUserData.phoneNumber || fetchedRequesterPhone;
-
          const updates = {
-           linkedBraceletsID: arrayUnion(item.braceletId),
-           personalContacts: arrayUnion({
-              name: ownerName,
-              contactNo: ownerPhone
-           })
+           linkedBraceletsID: arrayUnion(item.braceletId)
          };
          if (item.nickname) {
            updates[`braceletNicknames.${item.braceletId}`] = item.nickname;
@@ -305,18 +286,15 @@ const Notifications = () => {
          await updateDoc(appUserRef, updates);
       }
       
-      // 2. Add requester to owner's Emergency Contacts in braceletUsers
-      const braceletRef = doc(db, 'braceletUsers', item.braceletId);
-      const braceletSnap = await getDoc(braceletRef);
-      if (braceletSnap.exists()) {
-         const newContact = {
-            name: fetchedRequesterName,
-            contactNo: fetchedRequesterPhone
-         };
-         await updateDoc(braceletRef, {
-            emergencyContacts: arrayUnion(newContact)
-         });
-      }
+      // Spawn approval modal trigger for the requester
+      await addDoc(collection(db, 'notifications'), {
+        appUserId: item.requesterId,
+        type: 'connection_approved_popup',
+        ownerName: ownerName,
+        braceletId: item.braceletId,
+        read: false,
+        time: serverTimestamp()
+      });
 
       // 3. Delete notification
       await deleteNotification(e, item.id);

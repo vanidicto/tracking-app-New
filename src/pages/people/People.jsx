@@ -3,8 +3,10 @@ import './People.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useMemo, useEffect } from 'react';
 import { useBraceletUsers } from '../../context/BraceletDataProvider';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '../../context/ToastContext';
 import { getAuth } from "firebase/auth";
-import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, collection, addDoc, serverTimestamp, query, where, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, deleteField, collection, addDoc, serverTimestamp, query, where, onSnapshot, deleteDoc } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 import { Plus, X, Trash2, User, CreditCard, Pencil, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
 import Skeleton from '../../components/skeleton/Skeleton';
@@ -34,11 +36,14 @@ const SearchIcon = () => (
 function People() {
   const navigate = useNavigate();
   const { braceletUsers, loading, error } = useBraceletUsers();
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [isPhoneWarningModalOpen, setIsPhoneWarningModalOpen] = useState(false);
+  const [deleteModalInfo, setDeleteModalInfo] = useState({ open: false, braceletId: null });
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [approvedPopupInfo, setApprovedPopupInfo] = useState({ open: false, data: null });
 
   useEffect(() => {
     const auth = getAuth();
@@ -53,31 +58,49 @@ function People() {
           const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
           setPendingRequests(items);
         });
-        return () => unsub();
+
+        // NEW LISTENER FOR APPROVALS
+        const qApproved = query(
+          collection(db, 'notifications'),
+          where('appUserId', '==', user.uid),
+          where('type', '==', 'connection_approved_popup')
+        );
+        const unsubApproved = onSnapshot(qApproved, (snapshot) => {
+          const items = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (items.length > 0) {
+             const newest = items[0]; 
+             setApprovedPopupInfo({ open: true, data: newest });
+             // Force TanStack to reload appUsers and braceletUsers for instant UI refresh
+             queryClient.invalidateQueries(['braceletUsers', user.uid]);
+          }
+        });
+
+        return () => { unsub(); unsubApproved(); };
       } else {
         setPendingRequests([]);
       }
     });
     return () => unsubscribeAuth();
-  }, []);
+  }, [queryClient]);
 
-  const handleOpenAddBraceletModal = async () => {
+  const handleDismissApprovalModal = async () => {
+     if (approvedPopupInfo.data) {
+        try {
+           await deleteDoc(doc(db, 'notifications', approvedPopupInfo.data.id));
+        } catch (e) {
+           console.error("Failed to dismiss modal:", e);
+        }
+     }
+     setApprovedPopupInfo({ open: false, data: null });
+  };
+
+  const handleOpenAddBraceletModal = () => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
       if (!user) {
         alert("You must be logged in to link a bracelet.");
         return;
-      }
-      const appUserRef = doc(db, 'appUsers', user.uid);
-      const appUserSnap = await getDoc(appUserRef);
-      
-      if (appUserSnap.exists()) {
-        const phone = appUserSnap.data().phone;
-        if (!phone || phone.trim() === '') {
-          setIsPhoneWarningModalOpen(true);
-          return;
-        }
       }
       setIsModalOpen(true);
     } catch (e) {
@@ -115,11 +138,15 @@ function People() {
     });
   }, [braceletUsers, searchQuery]);
 
-  const handleDeleteBracelet = async (e, braceletId) => {
+  const handleOpenDeleteModal = (e, braceletId) => {
     e.preventDefault();
     e.stopPropagation();
+    setDeleteModalInfo({ open: true, braceletId });
+  };
 
-    if (!window.confirm("Are you sure you want to unlink this bracelet from your account?")) return;
+  const confirmDeleteBracelet = async () => {
+    const braceletId = deleteModalInfo.braceletId;
+    if (!braceletId) return;
 
     try {
       const auth = getAuth();
@@ -133,11 +160,27 @@ function People() {
         [`braceletNicknames.${braceletId}`]: deleteField()
       });
 
-      alert("Bracelet unlinked successfully.");
-      window.location.reload();
+      // Immediate UI refresh without reload
+      queryClient.setQueryData(['braceletUsers', user.uid], (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          users: old.users.filter(u => u.id !== braceletId),
+          appUserData: {
+            ...old.appUserData,
+            linkedBraceletsID: old.appUserData?.linkedBraceletsID?.filter(id => id !== braceletId)
+          }
+        };
+      });
+
+      setDeleteModalInfo({ open: false, braceletId: null });
+      if (addToast) {
+        addToast('Connection successfully unlinked', 'success');
+      }
     } catch (err) {
       console.error("Error unlinking bracelet:", err);
-      alert("Failed to unlink bracelet.");
+      alert("Failed to unlink connection.");
+      setDeleteModalInfo({ open: false, braceletId: null });
     }
   };
 
@@ -269,24 +312,26 @@ function People() {
 
   return (
     <main className="people-page-container">
-      <div className="people-header-section">
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Search Name"
-            className="people-search-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="search-icon-wrapper">
-            <SearchIcon />
+      {braceletUsers.length > 0 && (
+        <div className="people-header-section">
+          <div className="search-wrapper">
+            <input
+              type="text"
+              placeholder="Search Name"
+              className="people-search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="search-icon-wrapper">
+              <SearchIcon />
+            </div>
           </div>
-        </div>
 
-        <button className="add-people-btn" onClick={handleOpenAddBraceletModal}>
-          <Plus size={24} />
-        </button>
-      </div>
+          <button className="add-people-btn" onClick={handleOpenAddBraceletModal}>
+            <Plus size={24} />
+          </button>
+        </div>
+      )}
 
       {/* Add Bracelet Modal */}
       {isModalOpen && (
@@ -461,6 +506,22 @@ function People() {
               </div>
             </div>
           ))
+        ) : braceletUsers.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'var(--pm-text-muted)', textAlign: 'center' }}>
+             <User size={56} strokeWidth={1.2} style={{ opacity: 0.5, marginBottom: '16px' }} />
+             <p style={{ margin: 0, fontSize: '16px' }}>You haven't added anyone yet</p>
+             <button 
+                onClick={handleOpenAddBraceletModal}
+                style={{ marginTop: '24px', background: 'var(--pm-primary)', color: 'white', border: 'none', borderRadius: '40px', padding: '14px 28px', fontSize: '15px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 14px rgba(164,38,44,0.3)', transition: 'transform 0.2s' }}
+             >
+                Add People
+             </button>
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'var(--pm-text-muted)', textAlign: 'center' }}>
+             <div style={{ opacity: 0.5, marginBottom: '16px', transform: 'scale(1.5)' }}><SearchIcon /></div>
+             <p style={{ margin: 0, fontSize: '15px' }}>No people found matching "{searchQuery}"</p>
+          </div>
         ) : (
           
           filteredUsers.map((person) => (
@@ -499,7 +560,7 @@ function People() {
 
                 <button
                   className="delete-person-btn"
-                  onClick={(e) => handleDeleteBracelet(e, person.id)}
+                  onClick={(e) => handleOpenDeleteModal(e, person.id)}
                   aria-label="Delete"
                 >
                   <Trash2 size={20} />
@@ -534,34 +595,31 @@ function People() {
         </div>
       )}
 
-      {/* Phone Warning Modal */}
-      {isPhoneWarningModalOpen && (
+      {/* Delete Confirmation Modal */}
+      {deleteModalInfo.open && (
         <div className="add-bracelet-backdrop">
           <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-              <AlertTriangle size={48} color="#A4262C" strokeWidth={1.5} />
+              <Trash2 size={48} color="#A4262C" strokeWidth={1.5} />
             </div>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
-              Phone Number Required
+              Unlink Bracelet?
             </h2>
             <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
-              To ensure safety and identification, please add your phone number in Account Information before linking a bracelet.
+              Are you sure you want to unlink this connection? You will no longer be able to track this device unless you send a new request.
             </p>
             <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
               <button 
                 className="btn-next" 
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => {
-                  setIsPhoneWarningModalOpen(false);
-                  navigate('/app/account/info');
-                }}
+                style={{ width: '100%', justifyContent: 'center', background: '#A4262C' }}
+                onClick={confirmDeleteBracelet}
               >
-                Go to Account Information
+                Unlink
               </button>
               <button 
                 className="btn-cancel" 
                 style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => setIsPhoneWarningModalOpen(false)}
+                onClick={() => setDeleteModalInfo({ open: false, braceletId: null })}
               >
                 Cancel
               </button>
@@ -569,6 +627,30 @@ function People() {
           </div>
         </div>
       )}
+      {/* Approval Success Modal */}
+      {approvedPopupInfo.open && approvedPopupInfo.data && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <CheckCircle2 size={48} color="var(--pm-primary)" strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
+              Request Approved!
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+              You are now connected to {approvedPopupInfo.data.ownerName}'s bracelet.
+            </p>
+            <button 
+              className="btn-next" 
+              style={{ width: '100%', justifyContent: 'center' }}
+              onClick={handleDismissApprovalModal}
+            >
+              Great!
+            </button>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }

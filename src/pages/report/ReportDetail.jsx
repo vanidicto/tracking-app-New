@@ -43,10 +43,34 @@ const ReportDetail = () => {
           logging: false,
         });
 
-        const link = document.createElement('a');
         const safeName = (incident?.user?.name || 'incident').replace(/\s+/g, '_').toLowerCase();
-        link.download = `pingme_incident_${safeName}_${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
+        const fileName = `pingme_incident_${safeName}_${Date.now()}.png`;
+        const dataUrl = canvas.toDataURL('image/png');
+
+        // Feature detection for universal native share (Mobile/PWA)
+        if (navigator.share && navigator.canShare) {
+          try {
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+            const file = new File([blob], fileName, { type: 'image/png' });
+
+            if (navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'PingMe Incident Report',
+                text: `Incident Report for ${incident?.user?.name || 'Bracelet'}`,
+                files: [file]
+              });
+              return; // Successfully shared, skip standard download
+            }
+          } catch (err) {
+            console.log('Share API aborted or failed, falling back to download...', err);
+          }
+        }
+
+        // Standard PC Web Fallback
+        const link = document.createElement('a');
+        link.download = fileName;
+        link.href = dataUrl;
         link.click();
       } catch (err) {
         console.error('Export failed:', err);
