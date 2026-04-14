@@ -5,6 +5,7 @@ import { ChevronLeft, User, CreditCard, CheckCircle2 } from 'lucide-react';
 import { doc, setDoc, getDoc, serverTimestamp, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import SuccessModal from '../../components/SuccessModal';
 import './MyBracelet.css';
 
 const MyBraceletConfig = () => {
@@ -15,6 +16,7 @@ const MyBraceletConfig = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isAlreadyConfigured, setIsAlreadyConfigured] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [modalConfig, setModalConfig] = useState({ isOpen: false, title: '', message: '' });
     const [originalData, setOriginalData] = useState({ braceletName: '', serialNumber: '' });
 
     const [formData, setFormData] = useState({
@@ -146,15 +148,27 @@ const MyBraceletConfig = () => {
                     location: { latitude: 0, longitude: 0, updatedAt: serverTimestamp() },
                     sos: { active: false, timestamp: null },
                 });
-                alert("Bracelet Configuration Registered!");
+                setModalConfig({
+                    isOpen: true,
+                    title: "Registration Successful",
+                    message: "Your bracelet configuration has been registered!"
+                });
             } else {
                 if (hasSerialChanged) {
                     await deleteDoc(doc(db, 'braceletUsers', originalSerial));
                     await deleteDoc(doc(db, 'deviceStatus', originalSerial));
                     setOriginalSerial(serial);
-                    alert("Serial Number Updated and Migrated Successfully!");
+                    setModalConfig({
+                        isOpen: true,
+                        title: "Migration Successful",
+                        message: "Serial Number updated and migrated successfully."
+                    });
                 } else {
-                    alert("Bracelet Configuration Updated!");
+                    setModalConfig({
+                        isOpen: true,
+                        title: "Update Successful",
+                        message: "Bracelet configuration updated successfully."
+                    });
                 }
             }
             
@@ -256,6 +270,13 @@ const MyBraceletConfig = () => {
                     </button>
                 </footer>
             )}
+
+            <SuccessModal 
+                isOpen={modalConfig.isOpen} 
+                title={modalConfig.title}
+                message={modalConfig.message}
+                onClose={() => setModalConfig({ ...modalConfig, isOpen: false })} 
+            />
         </div>
     );
 };
