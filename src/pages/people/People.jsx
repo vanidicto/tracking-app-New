@@ -44,6 +44,7 @@ function People() {
   const [deleteModalInfo, setDeleteModalInfo] = useState({ open: false, braceletId: null });
   const [pendingRequests, setPendingRequests] = useState([]);
   const [approvedPopupInfo, setApprovedPopupInfo] = useState({ open: false, data: null });
+  const [cancelModalInfo, setCancelModalInfo] = useState({ open: false, requestId: null, braceletId: null });
 
   useEffect(() => {
     const auth = getAuth();
@@ -184,6 +185,30 @@ function People() {
     }
   };
 
+  const handleOpenCancelModal = (e, req) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setCancelModalInfo({ open: true, requestId: req.id, braceletId: req.braceletId });
+  };
+
+  const confirmCancelRequest = async () => {
+    if (!navigator.onLine) {
+      alert("No internet connection. Please try again when you're online.");
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, 'notifications', cancelModalInfo.requestId));
+      setCancelModalInfo({ open: false, requestId: null, braceletId: null });
+      if (addToast) {
+        addToast('Connection request cancelled', 'success');
+      }
+    } catch (err) {
+      console.error("Error cancelling request:", err);
+      alert("Failed to cancel request. Please try again.");
+    }
+  };
+
   /**
    * Handles linking an existing registered bracelet to this guardian's account.
    * Uses getDoc with the Serial Number as the Document ID.
@@ -191,6 +216,15 @@ function People() {
   const handleAddBracelet = async (e) => {
     e.preventDefault();
     if (!newBraceletSerial.trim()) return;
+
+    const serialNum = newBraceletSerial.trim();
+    const pending = pendingRequests.find(r => r.braceletId === serialNum);
+
+    if (pending) {
+       setCancelModalInfo({ open: true, requestId: pending.id, braceletId: pending.braceletId });
+       setIsModalOpen(false);
+       return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -392,8 +426,17 @@ function People() {
                 <button type="button" className="btn-cancel" onClick={() => setIsModalOpen(false)}>
                   Cancel
                 </button>
-                <button type="submit" className="btn-next" disabled={isSubmitting}>
-                  {isSubmitting ? 'Linking...' : 'Link Bracelet'}
+                <button 
+                  type="submit" 
+                  className="btn-next" 
+                  disabled={isSubmitting}
+                  style={pendingRequests.some(r => r.braceletId === newBraceletSerial.trim()) ? { background: 'var(--pm-surface)', color: 'var(--pm-text)', border: '1px solid #ccc' } : {}}
+                >
+                  {isSubmitting 
+                    ? 'Processing...' 
+                    : pendingRequests.some(r => r.braceletId === newBraceletSerial.trim()) 
+                      ? 'Cancel Pending Request' 
+                      : 'Link Bracelet'}
                 </button>
               </div>
             </form>
@@ -478,6 +521,12 @@ function People() {
                      Request sent for Tracker ID: {req.braceletId}
                   </p>
                 </div>
+                <button 
+                  onClick={(e) => handleOpenCancelModal(e, req)}
+                  style={{ background: 'white', color: '#856404', border: '1px solid #ffeeba', padding: '6px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
               </div>
             ))}
           </>
@@ -651,6 +700,38 @@ function People() {
         </div>
       )}
 
+      {/* Cancel Confirmation Modal */}
+      {cancelModalInfo.open && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+               <Clock size={48} color="#856404" strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
+              Cancel Request?
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+              Are you sure you want to cancel this connection request for tracker {cancelModalInfo.braceletId}?
+            </p>
+            <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+               <button 
+                 className="btn-next" 
+                 style={{ width: '100%', justifyContent: 'center', background: '#856404', color: 'white' }}
+                 onClick={confirmCancelRequest}
+               >
+                 Yes, Cancel Request
+               </button>
+               <button 
+                 className="btn-cancel" 
+                 style={{ width: '100%', justifyContent: 'center' }}
+                 onClick={() => setCancelModalInfo({ open: false, requestId: null, braceletId: null })}
+               >
+                 No, Keep Pending
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

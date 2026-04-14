@@ -22,7 +22,7 @@ const SwipeableNotif = React.memo(({
   item, onDelete, onMarkRead,
   openId, setOpenId,
   selectMode, isChecked, onToggleCheck,
-  onNotifTap, onApproveTap,
+  onNotifTap, onApproveTap, onDeclineTap
 }) => {
   const startX         = useRef(null);
   const rawDx          = useRef(0);
@@ -196,14 +196,20 @@ const SwipeableNotif = React.memo(({
           <p className="notif-title">{item.title}</p>
           <p className="notif-message">{item.message}</p>
           {item.type === 'connection_request' && onApproveTap && (
-             <div className="notif-actions" style={{ marginTop: '8px' }}>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); onApproveTap(e, item); }}
-                  style={{ background: 'var(--pm-primary)', color: 'white', border: 'none', padding: '6px 16px', borderRadius: '8px', fontWeight: 'bold' }}
-                >
-                  Approve
-                </button>
-             </div>
+              <div className="notif-actions" style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                 <button 
+                   onClick={(e) => { e.stopPropagation(); onApproveTap(e, item); }}
+                   style={{ background: 'var(--pm-primary)', color: 'white', border: 'none', padding: '6px 16px', borderRadius: '8px', fontWeight: 'bold' }}
+                 >
+                   Approve
+                 </button>
+                 <button 
+                   onClick={(e) => { e.stopPropagation(); onDeclineTap(e, item); }}
+                   style={{ background: 'transparent', color: '#444', border: '1px solid #ccc', padding: '6px 16px', borderRadius: '8px', fontWeight: 'bold' }}
+                 >
+                   Decline
+                 </button>
+              </div>
           )}
         </div>
         <div className="notif-meta">
@@ -303,6 +309,33 @@ const Notifications = () => {
     } catch (err) {
       console.error("Error approving connection:", err);
       alert("Failed to approve connection.");
+    }
+  };
+
+  const handleDeclineConnection = async (e, item) => {
+    e.stopPropagation();
+    try {
+      const ownerRef = doc(db, 'appUsers', item.appUserId);
+      const ownerSnap = await getDoc(ownerRef);
+      let ownerName = ownerSnap.exists() ? (ownerSnap.data().name || "Someone") : "Someone";
+
+      // 1. Notify the requester that their request was declined
+      await addDoc(collection(db, 'notifications'), {
+        appUserId: item.requesterId,
+        type: 'connection_declined',
+        title: 'Connection Request Declined',
+        message: `${ownerName} declined your request to link with tracker ${item.braceletId}.`,
+        read: false,
+        time: serverTimestamp()
+      });
+
+      // 2. Delete the request notification
+      await deleteNotification(e, item.id);
+      showSuccessModal(1, "Connection request declined.");
+
+    } catch (err) {
+      console.error("Error declining connection:", err);
+      alert("Failed to decline request. Please try again.");
     }
   };
 
@@ -489,6 +522,7 @@ const Notifications = () => {
                 onToggleCheck={handleToggleCheck}
                 onNotifTap={handleNotifTap}
                 onApproveTap={handleApproveConnection}
+                onDeclineTap={handleDeclineConnection}
               />
             ))}
           </ul>
