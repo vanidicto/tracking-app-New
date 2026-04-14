@@ -92,6 +92,49 @@ const MyBraceletEmergency = () => {
         setErrors(newErrors);
     };
 
+    const handleConfirmDelete = async () => {
+        if (contactToDeleteIndex === null) return;
+        setIsSubmitting(true);
+        try {
+            const newContacts = [...contacts];
+            newContacts.splice(contactToDeleteIndex, 1);
+            
+            const braceletRef = doc(db, 'braceletUsers', serialNumber);
+            const contactsToSave = newContacts.map(c => ({
+                name: c.name.trim(),
+                contactNo: c.contactNo.trim()
+            }));
+
+            await setDoc(braceletRef, {
+                emergencyContacts: contactsToSave
+            }, { merge: true });
+
+            setContacts(newContacts);
+            setOriginalContacts(contactsToSave);
+            
+            const newErrors = [...errors];
+            newErrors.splice(contactToDeleteIndex, 1);
+            setErrors(newErrors);
+
+            setIsEditing(false);
+
+            setContactToDeleteIndex(null);
+            setModalConfig({
+                isOpen: true,
+                title: "Successfully Removed",
+                message: "The contact has been deleted from your emergency list.",
+                hideButton: true,
+                autoClose: true
+            });
+        } catch (error) {
+            console.error("Error deleting contact:", error);
+            alert("Failed to delete contact.");
+            setContactToDeleteIndex(null);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleCancelEdit = () => {
         setContacts(originalContacts);
         setErrors([]);
@@ -303,20 +346,10 @@ const MyBraceletEmergency = () => {
             <ConfirmationModal 
                 isOpen={contactToDeleteIndex !== null}
                 onClose={() => setContactToDeleteIndex(null)}
-                onConfirm={() => {
-                    handleRemoveContact(contactToDeleteIndex);
-                    setContactToDeleteIndex(null);
-                    setModalConfig({
-                        isOpen: true,
-                        title: "Successfully Removed",
-                        message: "The contact has been deleted from your emergency list.",
-                        hideButton: true,
-                        autoClose: true
-                    });
-                }}
+                onConfirm={handleConfirmDelete}
                 title="Remove Contact?"
                 message="Are you sure you want to remove this emergency contact? This action cannot be undone."
-                confirmText="Remove"
+                confirmText={isSubmitting ? "Removing..." : "Remove"}
                 cancelText="Cancel"
                 isDanger={true}
             />
