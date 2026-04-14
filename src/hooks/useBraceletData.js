@@ -335,8 +335,18 @@ export function useSosReportGenerator(braceletUsers) {
   // Track when + where SOS was first activated for each bracelet user
   const sosStartData = useRef(new Map()); // braceletId → { startTime, startPosition }
 
+  const isFirstRun = useRef(true);
+
   useEffect(() => {
     if (!currentUser || !braceletUsers?.length) return;
+
+    if (isFirstRun.current) {
+        braceletUsers.forEach((user) => {
+            previousSosStates.current.set(user.id, user.sos || false);
+        });
+        isFirstRun.current = false;
+        return;
+    }
 
     braceletUsers.forEach((user) => {
       const currentSos = user.sos || false;
@@ -345,7 +355,6 @@ export function useSosReportGenerator(braceletUsers) {
       /**
        * LOGIC: SOS False → True transition detector.
        * Capture the exact moment and position when the user first called for help.
-       * previousSos may be `undefined` on first mount — treat that as false.
        */
       if (!previousSos && currentSos === true) {
         sosStartData.current.set(user.id, {

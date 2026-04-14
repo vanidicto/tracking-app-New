@@ -57,8 +57,7 @@ import MapLoader from "../../components/loading/MapLoader";
 
 // New decoupled modules
 import * as geofenceService from "../../services/geofenceService";
-import * as geofenceUtils from "../../utils/geofenceUtils";
-import * as notificationService from "../../services/notificationService";
+import { useGeofenceMonitor } from "../../context/GeofenceMonitorProvider";
 import GeofenceGradient from "../../components/map/GeofenceGradient";
 
 // Initialize Leaflet icons (Boilerplate moved to mapHelpers)
@@ -90,17 +89,14 @@ const Places = () => {
   const focusUserId  = location.state?.focusUserId  ?? null;
 
   // Custom hook to fetch bracelet users and their positions
-  const { braceletUsers, loading, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
-
-  // Address cache for popup location display
-  const [activeAlerts, setActiveAlerts] = useState([]);
+  const { braceletUsers, addressCache, mapViewState, setMapViewState } = useBraceletUsers();
+  
+  // Use the global geofence monitor instead of fetching locally
+  const { geofences, geofencesLoaded, activeAlerts } = useGeofenceMonitor();
 
   const groupedMarkers = useMemo(() => {
     return mapHelpers.groupUsersByLocation(braceletUsers);
   }, [braceletUsers]);
-
-  // List of geofences fetched from Firestore
-  const [geofences, setGeofences] = useState([]);
 
   // State to toggle the Monitor Popup
   const [isMonitorOpen, setIsMonitorOpen] = useState(false);
@@ -183,80 +179,8 @@ const Places = () => {
   const featureGroupRef = useRef(null);
   const pendingLayerRef = useRef(null);
 
-  // Ref to debounce/cache alerts locally to avoid spamming Firestore
-  const alertedUsersRef = useRef(new Set());
-
   // Auth context for the current logged-in user (the monitor/app user)
   const { currentUser } = useAuth();
-
-  /**
-   * Effect: Fetches and syncs geofences from Firestore.
-   * Filters by the current user's UID and updates the local state in real-time.
-   */
-  useEffect(() => {
-    if (!currentUser) {
-      setGeofences([]);
-      return;
-    }
-
-    const q = query(
-      collection(db, "geofences"),
-      where("appUserId", "==", currentUser.uid)
-    );
-
-    // Set up a real-time listener for the geofences collection
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedZones = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          appUserName: currentUser.displayName,
-          id: doc.id,
-          name: data.name,
-          radius: data.radius,
-          latlngs: data.coordinates, // Store coordinates {lat, lng}
-          type: data.type,
-        };
-      });
-      setGeofences(fetchedZones);
-    });
-
-    return () => unsubscribe();
-  }, [currentUser]);
-
-
-
-  /**
-   * Memoized geofence transition calculations.
-   * Only recalculates when braceletUsers or geofences actually change.
-   */
-  const geofenceResult = useMemo(
-    () => geofenceUtils.checkGeofenceTransitions(
-      braceletUsers,
-      geofences,
-      alertedUsersRef.current
-    ),
-    [braceletUsers, geofences]
-  );
-
-  /**
-   * Effect: Process geofence side-effects from memoized result.
-   */
-  useEffect(() => {
-    const { currentAlerts, newlyDetected, usersToUpdateOffline } = geofenceResult;
-
-    setActiveAlerts(currentAlerts);
-
-    // Update statuses for users who left their zones
-    usersToUpdateOffline.forEach(status => {
-      updateDoc(doc(db, 'deviceStatus', status.id), { currentGeofenceId: null })
-        .catch(e => console.error("Error clearing geofence status", e));
-    });
-
-    // Save notifications for entries
-    if (newlyDetected.length > 0) {
-      newlyDetected.forEach(det => notificationService.saveGeofenceNotification(currentUser, det));
-    }
-  }, [geofenceResult, currentUser]);
 
   /**
    * Centers and flies the map to a specific geofence when clicked in the list.
@@ -402,8 +326,7 @@ const Places = () => {
 
   // if (loading) return <LoadingSpinner />;
 
-
-  if (loading) {
+  if (!geofencesLoaded) {
     return (
       <div className="home-layout" style={{ position: 'relative' }}>
         <MapLoader text="Syncing Safety Zones..." fullScreen={true} lightTheme={false} />

@@ -8,6 +8,7 @@ import ProfileModal from '../components/ProfileModal';
 import { NotificationProvider } from '../context/NotificationContext';
 import { BraceletDataProvider, useBraceletUsers } from '../context/BraceletDataProvider';
 import { EmergencyAlertProvider } from '../context/EmergencyAlertContext';
+import { GeofenceMonitorProvider } from '../context/GeofenceMonitorProvider';
 import EmergencyAlert from '../components/EmergencyAlert';
 import './AppLayout.css';
 
@@ -84,14 +85,16 @@ const AppLayout = () => {
     <NotificationProvider>
       <BraceletDataProvider>
         <EmergencyAlertProvider>
-          <AppLayoutInner
-            shouldHideSidebar={shouldHideSidebar}
-            shouldHideTopBar={shouldHideTopBar}
-            shouldHideNavbar={shouldHideNavbar}
-            isUserProfile={isUserProfile}
-            isProfileModalOpen={isProfileModalOpen}
-            setIsProfileModalOpen={setIsProfileModalOpen}
-          />
+          <GeofenceMonitorProvider>
+            <AppLayoutInner
+              shouldHideSidebar={shouldHideSidebar}
+              shouldHideTopBar={shouldHideTopBar}
+              shouldHideNavbar={shouldHideNavbar}
+              isUserProfile={isUserProfile}
+              isProfileModalOpen={isProfileModalOpen}
+              setIsProfileModalOpen={setIsProfileModalOpen}
+            />
+          </GeofenceMonitorProvider>
         </EmergencyAlertProvider>
       </BraceletDataProvider>
     </NotificationProvider>

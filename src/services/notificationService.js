@@ -5,7 +5,7 @@ import { collection, addDoc, serverTimestamp, query, where, getDocs, limit, doc,
 /**
  * Saves a geofence entry notification to Firestore.
  */
-export const saveGeofenceNotification = async (currentUser, detection) => {
+export const saveGeofenceNotification = async (currentUser, detection) => { 
     if (!currentUser) return;
     const { user, zone, message } = detection;
 
