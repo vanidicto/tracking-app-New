@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { ChevronLeft, Users, Eye } from "lucide-react";
+import { ChevronLeft, Users } from "lucide-react";
 import {
   collection,
   query,
@@ -224,13 +224,7 @@ export default function MyBraceletObservers() {
           </div>
         )}
 
-        {/* ── Real-time note ── */}
-        {!isLoading && (
-          <p className="obs-realtime-note">
-            <Eye size={11} strokeWidth={2} />
-            {/* Updates in real time when observers change their profile */}
-          </p>
-        )}
+
       </main>
     </div>
   );
