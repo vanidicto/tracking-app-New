@@ -120,6 +120,7 @@ function People() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingPerson, setEditingPerson] = useState(null);
   const [editNickname, setEditNickname] = useState('');
+  const [isConfirmNicknameOpen, setIsConfirmNicknameOpen] = useState(false);
 
   /**
    * Memoized filtered and sorted user list.
@@ -311,13 +312,19 @@ function People() {
   };
 
   /**
-   * Handles updating the nickname in Firestore.
-   * If nickname is empty, it removes the override (resets to default).
+   * Intercepts the Save Changes click to open a confirmation modal first.
    */
-  const handleUpdateNickname = async (e) => {
+  const handleUpdateNickname = (e) => {
     e.preventDefault();
     if (!editingPerson) return;
+    setIsConfirmNicknameOpen(true);
+  };
 
+  /**
+   * Performs the actual Firestore nickname update after user confirms.
+   * If nickname is empty, it removes the override (resets to default).
+   */
+  const confirmUpdateNickname = async () => {
     setIsSubmitting(true);
     try {
       const auth = getAuth();
@@ -331,12 +338,17 @@ function People() {
         [`braceletNicknames.${editingPerson.id}`]: nicknameValue || deleteField()
       });
 
-      alert("Nickname updated successfully.");
+      if (addToast) {
+        addToast('Nickname updated successfully', 'success');
+      }
+      setIsConfirmNicknameOpen(false);
       setIsEditModalOpen(false);
       window.location.reload();
     } catch (err) {
       console.error("Error updating nickname:", err);
-      alert("Failed to update nickname.");
+      if (addToast) {
+        addToast('Failed to update nickname', 'error');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -497,6 +509,40 @@ function People() {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Confirm Nickname Change Modal */}
+      {isConfirmNicknameOpen && (
+        <div className="add-bracelet-backdrop">
+          <div className="add-bracelet-modal-content" style={{ maxWidth: '400px', textAlign: 'center', padding: '32px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <Pencil size={48} color="var(--pm-primary)" strokeWidth={1.5} />
+            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--pm-text)' }}>
+              Confirm Nickname Change?
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: 'var(--pm-text-muted)', marginBottom: '24px', lineHeight: '1.5' }}>
+              Are you sure you want to {editNickname.trim() ? `change the nickname to "${editNickname.trim()}"` : 'reset the nickname to default'}?
+            </p>
+            <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
+              <button 
+                className="btn-next" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={confirmUpdateNickname}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Saving...' : 'Yes, Save Changes'}
+              </button>
+              <button 
+                className="btn-cancel" 
+                style={{ width: '100%', justifyContent: 'center' }}
+                onClick={() => setIsConfirmNicknameOpen(false)}
+              >
+                No, Go Back
+              </button>
+            </div>
           </div>
         </div>
       )}
