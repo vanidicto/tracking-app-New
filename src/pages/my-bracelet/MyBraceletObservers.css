@@ -1,0 +1,213 @@
+/* ────────────────────────────────────────────────────────────────────────────
+   MyBraceletObservers.css
+   Authorized Observers – Real-time Profile Screen
+──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page main ── */
+.obs-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 28px;
+  padding-bottom: 40px;
+}
+
+/* ── Section header row ── */
+.obs-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.obs-section-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--pm-primary, #a4262c);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.obs-count-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pm-primary, #a4262c);
+  background: rgba(164, 38, 44, 0.08);
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.3px;
+}
+
+/* ── Observer list card ── */
+.obs-list-card {
+  background: var(--pm-surface, #fff);
+  border-radius: 18px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ── Individual observer row ── */
+.obs-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  transition: background 0.15s;
+}
+.obs-row:hover { background: rgba(0, 0, 0, 0.02); }
+
+.obs-row--bordered {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ── Avatar wrapper — adds the subtle ring ── */
+.obs-avatar-wrap {
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* ── Real photo avatar ── */
+.obs-photo-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* Two-layer border: white inner ring + brand-tinted outer ring */
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3.5px rgba(164, 38, 44, 0.2);
+  display: block;
+}
+
+/* ── Initial avatar (fallback) ── */
+.obs-initial-avatar {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: var(--pm-font, inherit);
+  letter-spacing: 0.5px;
+  user-select: none;
+  /* Matches photo-avatar's double-ring style */
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 3.5px rgba(164, 38, 44, 0.2);
+  flex-shrink: 0;
+}
+
+/* ── Observer info ── */
+.obs-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.obs-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--pm-text, #222);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.obs-sub {
+  font-size: 12px;
+  color: #aaa;
+  font-weight: 500;
+}
+
+/* ── Active status dot ── */
+.obs-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+/* ── Loading state ── */
+.obs-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.obs-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(164, 38, 44, 0.15);
+  border-top-color: var(--pm-primary, #a4262c);
+  border-radius: 50%;
+  animation: obs-spin 0.7s linear infinite;
+}
+
+@keyframes obs-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Empty state ── */
+.obs-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+}
+
+.obs-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(164, 38, 44, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.obs-empty-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pm-text, #333);
+  margin: 0;
+}
+
+.obs-empty-sub {
+  font-size: 13px;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 260px;
+}
+
+/* ── Real-time note at bottom ── */
+.obs-realtime-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #ccc;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Dark mode ── */
+html.pm-dark .obs-list-card      { background: var(--pm-surface); border-color: rgba(255,255,255,0.06); }
+html.pm-dark .obs-row:hover       { background: rgba(255,255,255,0.03); }
+html.pm-dark .obs-row--bordered   { border-bottom-color: rgba(255,255,255,0.06); }
+html.pm-dark .obs-photo-avatar    { box-shadow: 0 0 0 2px var(--pm-surface), 0 0 0 3.5px rgba(164,38,44,0.3); }
+html.pm-dark .obs-initial-avatar  { box-shadow: 0 0 0 2px var(--pm-surface), 0 0 0 3.5px rgba(164,38,44,0.3); }
+html.pm-dark .obs-name            { color: var(--pm-text); }
+html.pm-dark .obs-empty-icon      { background: rgba(164,38,44,0.12); }
+html.pm-dark .obs-empty-title     { color: var(--pm-text); }
