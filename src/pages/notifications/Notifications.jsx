@@ -292,13 +292,25 @@ const Notifications = () => {
          await updateDoc(appUserRef, updates);
       }
       
-      // Spawn approval modal trigger for the requester
+      // 2. Spawn approval modal trigger and persistent notification for the requester
       await addDoc(collection(db, 'notifications'), {
         appUserId: item.requesterId,
         type: 'connection_approved_popup',
+        title: 'Connection Request Approved',
+        message: `${ownerName} approved your request to link with tracker ${item.braceletId}.`,
         ownerName: ownerName,
         braceletId: item.braceletId,
         read: false,
+        time: serverTimestamp()
+      });
+
+      // 2b. Add an acknowledgement history record for the owner (User B)
+      await addDoc(collection(db, 'notifications'), {
+        appUserId: item.appUserId,
+        type: 'action_summary',
+        title: 'Request Approved',
+        message: `You approved ${item.requesterName}'s request for tracker ${item.braceletId}.`,
+        read: true,
         time: serverTimestamp()
       });
 

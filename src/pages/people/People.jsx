@@ -87,7 +87,7 @@ function People() {
   const handleDismissApprovalModal = async () => {
      if (approvedPopupInfo.data) {
         try {
-           await deleteDoc(doc(db, 'notifications', approvedPopupInfo.data.id));
+           await updateDoc(doc(db, 'notifications', approvedPopupInfo.data.id), { read: true });
         } catch (e) {
            console.error("Failed to dismiss modal:", e);
         }
