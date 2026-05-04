@@ -6,6 +6,7 @@ import { collection, query, where, onSnapshot, doc, updateDoc } from 'firebase/f
 import { db } from '../config/firebaseConfig';
 import * as geofenceUtils from '../utils/geofenceUtils';
 import * as notificationService from '../services/notificationService';
+import { recordLocationHistory } from '../services/locationHistoryService';
 
 const GeofenceMonitorContext = createContext(null);
 
@@ -37,6 +38,18 @@ export function GeofenceMonitorProvider({ children }) {
     // Map of pending exit timers — key: "userId-zoneId", value: timeoutId
     // Used to debounce exit notifications so GPS jitter doesn't cause spam
     const exitTimersRef = useRef(new Map());
+
+    // Tracks the last-recorded position per bracelet to detect significant movement.
+    // Key: braceletId, Value: { lat, lng }
+    // Only writes a new history entry when displacement exceeds MIN_POS_DELTA (~5.5 m).
+    const lastPositionsRef = useRef(new Map());
+
+    /**
+     * MIN_POS_DELTA — Minimum coordinate delta to record a new history entry.
+     * 0.00005 degrees ≈ 5.5 metres at the equator.
+     * This prevents static GPS noise from filling up the 20-slot history cap.
+     */
+    const MIN_POS_DELTA = 0.00005;
 
     // 1. Fetch Geofences
     useEffect(() => {
@@ -94,9 +107,46 @@ export function GeofenceMonitorProvider({ children }) {
         // we skip notifications to avoid alerting for people who were already in the zone.
         // The checking logic above will have added them to alertedUsersRef and updated the DB if needed.
         if (isFirstRun.current) {
-            isFirstRun.current = false;
+            // Only finish the "first run" seeding once we actually have user data.
+            // This prevents the system from recording the initial position as a movement.
+            if (braceletUsers && braceletUsers.length > 0) {
+                braceletUsers.forEach(user => {
+                    if (Array.isArray(user.position) && user.position.length === 2) {
+                        lastPositionsRef.current.set(user.id, {
+                            lat: user.position[0],
+                            lng: user.position[1],
+                        });
+                    }
+                });
+                isFirstRun.current = false;
+            }
             return;
         }
+
+        // ── Record location history for users who have moved significantly ──
+        // Runs on every braceletUsers update (every ~5s GPS tick).
+        // Only writes when the user has moved more than MIN_POS_DELTA to avoid jitter spam.
+        braceletUsers.forEach(user => {
+            if (!Array.isArray(user.position) || user.position.length !== 2) return;
+
+            const [lat, lng] = user.position;
+            const lastPos = lastPositionsRef.current.get(user.id);
+
+            const hasMoved =
+                !lastPos ||
+                Math.abs(lat - lastPos.lat) > MIN_POS_DELTA ||
+                Math.abs(lng - lastPos.lng) > MIN_POS_DELTA;
+
+            if (hasMoved) {
+                lastPositionsRef.current.set(user.id, { lat, lng });
+
+                // Fire-and-forget — non-blocking, won't stall the render cycle
+                recordLocationHistory(user.id, lat, lng, {
+                    battery: user.battery,
+                    online: user.online,
+                }).catch(err => console.error('locationHistory write failed:', err));
+            }
+        });
 
         // ── Handle ENTRY notifications (fire immediately) ──
         newlyDetected.forEach(det => {
